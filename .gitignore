@@ -21,8 +21,17 @@ Acesso Web para Consultas.pdf
 # Dependências (geradas por install, não se versiona)
 /vendor/
 /node_modules/
+/public/build/
+/bootstrap/cache/*.php
+/storage/*.key
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+!.gitignore
 
 # Logs e lixo de sistema
 *.log
 .DS_Store
 Thumbs.db
+.phpunit.result.cache
