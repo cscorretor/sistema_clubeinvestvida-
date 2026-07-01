@@ -17,6 +17,7 @@ Acesso Web para Consultas.pdf
 # Segredos e ambiente
 .env
 .env.*
+!.env.example
 
 # Dependências (geradas por install, não se versiona)
 /vendor/
