@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ProfissaoController;
 use App\Models\Cliente;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -34,4 +35,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])
         ->whereNumber('cliente')
         ->name('clientes.show');
+
+    Route::get('/api/profissoes', [ProfissaoController::class, 'index'])
+        ->name('api.profissoes.index');
 });
