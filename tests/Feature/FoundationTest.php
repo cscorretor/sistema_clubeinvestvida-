@@ -24,5 +24,13 @@ class FoundationTest extends TestCase
 
         $hash = DB::table('usuarios')->value('senha_hash');
         $this->assertTrue(Hash::check('TestPassword!123', $hash));
+
+        $this->seed();
+
+        $this->assertSame(
+            $hash,
+            DB::table('usuarios')->value('senha_hash'),
+            'Executar o seeder novamente não deve redefinir a senha do administrador.',
+        );
     }
 }

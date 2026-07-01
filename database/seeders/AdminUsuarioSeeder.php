@@ -11,6 +11,12 @@ class AdminUsuarioSeeder extends Seeder
 {
     public function run(): void
     {
+        $email = env('SEED_ADMIN_EMAIL', 'admin@clubeinvestvida.local');
+
+        if (DB::table('usuarios')->where('email', $email)->exists()) {
+            return;
+        }
+
         $password = env('SEED_ADMIN_PASSWORD');
 
         if (! $password) {
@@ -21,15 +27,15 @@ class AdminUsuarioSeeder extends Seeder
             }
         }
 
-        DB::table('usuarios')->updateOrInsert(
-            ['email' => env('SEED_ADMIN_EMAIL', 'admin@clubeinvestvida.local')],
-            [
-                'nome' => env('SEED_ADMIN_NAME', 'Administrador'),
-                'senha_hash' => Hash::make($password),
-                'perfil' => 'ADMIN',
-                'duas_etapas' => false,
-                'ativo' => true,
-            ],
-        );
+        DB::table('usuarios')->insert([
+            'nome' => env('SEED_ADMIN_NAME', 'Administrador'),
+            'email' => $email,
+            'senha_hash' => Hash::make($password),
+            'perfil' => 'ADMIN',
+            'duas_etapas' => false,
+            'ativo' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

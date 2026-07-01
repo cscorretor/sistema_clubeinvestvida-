@@ -1,3 +1,18 @@
+# Sistema Clube Investvida
+
+Backend Laravel 12 para a operação da Clube Investvida Corretora de Seguros.
+
+- PHP 8.2 e MariaDB
+- Laravel Fortify com autenticação em duas etapas
+- Fila síncrona e scheduler por cron, sem processos residentes
+- Destino: Hostinger Business compartilhada
+
+Consulte o [guia de implantação na Hostinger](docs/DEPLOY_HOSTINGER_BUSINESS.md).
+
+Nunca versione `.env`, arquivos `.bak`, PDFs de manuais ou a pasta de backup do Segflex.
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
