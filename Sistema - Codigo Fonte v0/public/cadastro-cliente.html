@@ -29,21 +29,37 @@ tailwind.config = {
   .btn-ghost{background:#fff;border:1px solid #E2E8F0}.btn-ghost:hover{background:#f8fafc}
   .step-n{width:1.6rem;height:1.6rem;border-radius:999px;background:#003461;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
   .hint{font-size:.72rem}
+.nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
+  .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+  .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
+  .chip{font-size:.66rem;font-weight:600;padding:.1rem .45rem;border-radius:999px}
 </style>
 </head>
-<body class="min-h-screen">
-
-<!-- Topbar -->
-<header class="bg-navy text-white">
-  <div class="max-w-5xl mx-auto px-5 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
+<body>
+<div class="flex min-h-screen">
+  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
+    <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
+      <div class="w-9 h-9 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
       <div><div class="font-head font-bold leading-none">Clube Investvida</div>
-      <div class="text-[11px] text-blue-200 leading-none mt-1">Sistema · Seguros de Pessoas</div></div>
+      <div class="text-[11px] text-blue-200 mt-1">Seguros de Pessoas</div></div>
     </div>
-    <div class="text-xs text-blue-200">Cadastro de Cliente</div>
-  </div>
-</header>
+    <nav class="nav p-3 space-y-1 flex-1">
+      <a href="dashboard.html"><span>▦</span> Dashboard</a>
+      <a href="clientes.html" class="on"><span>◉</span> Clientes</a>
+      <a href="apolice-pessoas.html"><span>❤</span> Apólices</a>
+      <a href="leads.html"><span>◔</span> Leads / CRM</a>
+      <a href="chamados.html"><span>◷</span> Chamados</a>
+      <a href="financeiro.html"><span>$</span> Financeiro</a>
+      <a href="cofre.html"><span>⛁</span> Cofre Digital</a>
+      <a href="configuracoes.html"><span>⚙</span> Configurações</a>
+    </nav>
+    <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
+  </aside>
+  <div class="flex-1 flex flex-col">
+    <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
+      <a href="clientes.html" class="text-sm text-slate-500 hover:text-navy">‹ Clientes</a>
+      <div class="ml-auto w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-semibold">AD</div>
+    </header>
 
 <main class="max-w-5xl mx-auto px-5 py-6">
 
@@ -323,5 +339,7 @@ F.addEventListener('submit',e=>{
 // estado inicial
 novoEndereco(); novoTel(); novoEml(); setPessoa(true);
 </script>
+  </div>
+</div>
 </body>
 </html>

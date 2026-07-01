@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha do Cliente — Clube Investvida</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{colors:{navy:"#003461",navy2:"#004B87",orange:"#FF6B00",ink:"#1A1C1E",line:"#E2E8F0",surface:"#F4F7F9"},fontFamily:{head:["Manrope"],body:["Inter"]}}}}</script>
+<style>
+ body{font-family:"Inter",sans-serif;background:#F4F7F9;color:#1A1C1E}.font-head{font-family:"Manrope",sans-serif}
+ .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
+ .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+ .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
+ .card{background:#fff;border:1px solid #E2E8F0;border-radius:.75rem}
+ .chip{font-size:.66rem;font-weight:600;padding:.1rem .45rem;border-radius:999px}
+ .inp{border:1px solid #E2E8F0;border-radius:.5rem;padding:.5rem .7rem;font-size:.9rem;background:#fff}
+ .inp:focus{outline:none;border-color:#003461;box-shadow:0 0 0 3px rgba(0,75,135,.12)}
+</style>
+<style>th{font-size:.68rem;text-transform:uppercase;letter-spacing:.03em;color:#64748b;font-weight:600;text-align:left}td,th{padding:.55rem .7rem}</style>
+</head><body>
+<div class="flex min-h-screen">
+  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
+    <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
+      <div class="w-9 h-9 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
+      <div><div class="font-head font-bold leading-none">Clube Investvida</div>
+      <div class="text-[11px] text-blue-200 mt-1">Seguros de Pessoas</div></div>
+    </div>
+    <nav class="nav p-3 space-y-1 flex-1">
+      <a href="dashboard.html" data-k="dash"><span>▦</span> Dashboard</a>
+      <a href="clientes.html" data-k="cli"><span>◉</span> Clientes</a>
+      <a href="apolice-pessoas.html" data-k="apo"><span>❤</span> Apólices</a>
+      <a href="leads.html" data-k="leads"><span>◔</span> Leads / CRM</a>
+      <a href="chamados.html" data-k="cham"><span>◷</span> Chamados</a>
+      <a href="financeiro.html" data-k="fin"><span>$</span> Financeiro</a>
+      <a href="cofre.html" data-k="cofre"><span>⛁</span> Cofre Digital</a>
+      <a href="configuracoes.html" data-k="cfg"><span>⚙</span> Configurações</a>
+    </nav>
+    <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
+  </aside>
+  <div class="flex-1 flex flex-col">
+    <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
+      <a href="clientes.html" class="text-sm text-slate-500 hover:text-navy">‹ Clientes</a>
+      <div class="ml-auto w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-semibold">AD</div>
+    </header>
+    <main class="p-5">
+      <!-- Cabeçalho do cliente -->
+      <div class="card p-5 mb-4 flex items-start justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-full bg-navy/10 text-navy flex items-center justify-center text-lg font-head font-bold">AM</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-xl font-head font-bold text-navy">Ana Beatriz Moraes</h1>
+              <span class="chip bg-green-100 text-green-700">Ativo</span>
+              <span class="chip bg-blue-50 text-navy2">Efetivo</span>
+            </div>
+            <p class="text-sm text-slate-500 mt-1">CPF 088.***.***-40 · Blumenau/SC · Cliente desde 08/2023</p>
+            <div class="flex gap-3 mt-2 text-sm text-slate-600">
+              <span>📞 (47) 99606-6663</span><span>✉ ana.moraes@email.com</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <a href="cadastro-cliente.html" class="bg-white border border-line px-3 py-2 rounded-md text-sm font-semibold">Editar</a>
+          <a href="apolice-pessoas.html" class="bg-navy text-white px-3 py-2 rounded-md text-sm font-semibold">+ Nova apólice</a>
+          <button class="bg-green-600 text-white px-3 py-2 rounded-md text-sm font-semibold">WhatsApp</button>
+        </div>
+      </div>
+
+      <!-- Mini indicadores -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+        <div class="card p-3"><div class="text-xs text-slate-500">Apólices ativas</div><div class="font-head font-bold text-navy text-lg">3</div></div>
+        <div class="card p-3"><div class="text-xs text-slate-500">Prêmio mensal</div><div class="font-head font-bold text-navy text-lg">R$ 1.230</div></div>
+        <div class="card p-3"><div class="text-xs text-slate-500">Documentos</div><div class="font-head font-bold text-navy text-lg">7</div></div>
+        <div class="card p-3"><div class="text-xs text-slate-500">Próx. renovação</div><div class="font-head font-bold text-orange text-lg">15/08</div></div>
+      </div>
+
+      <!-- Abas -->
+      <div class="flex gap-5 border-b border-line mb-4 text-sm overflow-x-auto">
+        <button class="tab pb-2 border-b-2 border-orange text-navy font-semibold" data-t="apolices">Apólices</button>
+        <button class="tab pb-2 text-slate-500" data-t="docs">Documentos</button>
+        <button class="tab pb-2 text-slate-500" data-t="chamados">Chamados</button>
+        <button class="tab pb-2 text-slate-500" data-t="timeline">Linha do tempo</button>
+        <button class="tab pb-2 text-slate-500" data-t="dados">Dados</button>
+      </div>
+
+      <section data-p="apolices">
+        <div class="card overflow-hidden">
+          <table class="w-full text-sm"><thead class="bg-slate-50 border-b border-line"><tr>
+            <th>Ramo</th><th>Seguradora</th><th>Apólice</th><th>Vigência</th><th>Prêmio</th><th>Status</th></tr></thead>
+            <tbody>
+             <tr class="border-t border-line/70"><td><span class="chip bg-blue-50 text-navy2">Vida</span></td><td>Bradesco</td><td>IV-88291</td><td>até 15/08/2026</td><td>R$ 280/mês</td><td><span class="chip bg-green-100 text-green-700">Ativa</span></td></tr>
+             <tr class="border-t border-line/70"><td><span class="chip bg-blue-50 text-navy2">Previdência</span></td><td>Icatu</td><td>PR-11902</td><td>vitalícia</td><td>R$ 700/mês</td><td><span class="chip bg-green-100 text-green-700">Ativa</span></td></tr>
+             <tr class="border-t border-line/70"><td><span class="chip bg-blue-50 text-navy2">Saúde</span></td><td>SulAmérica</td><td>SA-4471</td><td>até 02/09/2026</td><td>R$ 250/mês</td><td><span class="chip bg-green-100 text-green-700">Ativa</span></td></tr>
+            </tbody></table>
+        </div>
+      </section>
+
+      <section data-p="docs" class="hidden">
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <div class="card p-3"><div class="flex justify-between"><span class="text-xl">📄</span><span class="chip bg-green-100 text-green-700">Verificado</span></div><div class="text-sm font-medium mt-2">Apólice_Vida.pdf</div></div>
+          <div class="card p-3"><div class="flex justify-between"><span class="text-xl">📄</span><span class="chip bg-green-100 text-green-700">Verificado</span></div><div class="text-sm font-medium mt-2">CNH.jpg</div></div>
+          <div class="card p-3"><div class="flex justify-between"><span class="text-xl">📄</span><span class="chip bg-amber-100 text-amber-700">Pendente</span></div><div class="text-sm font-medium mt-2">DPS_Saude.pdf</div></div>
+        </div>
+      </section>
+
+      <section data-p="chamados" class="hidden">
+        <div class="card overflow-hidden"><table class="w-full text-sm"><thead class="bg-slate-50 border-b border-line"><tr>
+          <th>Assunto</th><th>Tipo</th><th>Prazo</th><th>Status</th></tr></thead><tbody>
+          <tr class="border-t border-line/70"><td>Acompanhar emissão da apólice</td><td>Seguro</td><td>05/07/2026</td><td><span class="chip bg-amber-100 text-amber-700">Pendente</span></td></tr>
+          <tr class="border-t border-line/70"><td>Atualizar beneficiários</td><td>Cliente</td><td>—</td><td><span class="chip bg-green-100 text-green-700">Finalizado</span></td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section data-p="timeline" class="hidden">
+        <ol class="relative border-l-2 border-line ml-2 space-y-4 pl-5">
+          <li><span class="absolute -left-[7px] w-3 h-3 rounded-full bg-navy"></span><div class="text-xs text-slate-400">30/06/2026</div><div class="text-sm">Apólice de Previdência criada (Icatu).</div></li>
+          <li><span class="absolute -left-[7px] w-3 h-3 rounded-full bg-orange"></span><div class="text-xs text-slate-400">28/06/2026</div><div class="text-sm">WhatsApp enviado: renovação do seguro de vida.</div></li>
+          <li><span class="absolute -left-[7px] w-3 h-3 rounded-full bg-slate-300"></span><div class="text-xs text-slate-400">02/08/2023</div><div class="text-sm">Cliente cadastrada (origem: indicação).</div></li>
+        </ol>
+      </section>
+
+      <section data-p="dados" class="hidden">
+        <div class="card p-5 grid md:grid-cols-3 gap-4 text-sm">
+          <div><div class="text-xs text-slate-500">Nascimento</div>11/07/1992 (33 anos)</div>
+          <div><div class="text-xs text-slate-500">Estado civil</div>Casada</div>
+          <div><div class="text-xs text-slate-500">Profissão</div>Operadora de telemarketing</div>
+          <div><div class="text-xs text-slate-500">Faixa de renda</div>R$ 2.500–5.000</div>
+          <div><div class="text-xs text-slate-500">Produtor</div>Corretora</div>
+          <div><div class="text-xs text-slate-500">Endereço</div>Rua Florianópolis, 140 — Velha, Blumenau/SC</div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.nav a').forEach(a=>{if(a.dataset.k==='cli')a.classList.add('on')});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.className='tab pb-2 text-slate-500');
+  b.className='tab pb-2 border-b-2 border-orange text-navy font-semibold';
+  document.querySelectorAll('[data-p]').forEach(s=>s.classList.add('hidden'));
+  document.querySelector('[data-p="'+b.dataset.t+'"]').classList.remove('hidden');
+});
+</script>
+</body></html>
