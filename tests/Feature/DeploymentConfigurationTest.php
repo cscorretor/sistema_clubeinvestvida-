@@ -65,6 +65,7 @@ class DeploymentConfigurationTest extends TestCase
         $this->assertStringContainsString('read -rsp', $script);
         $this->assertStringContainsString('random_bytes(32)', $script);
         $this->assertStringContainsString('env.production.example', $script);
+        $this->assertStringContainsString("'DB_HOST' => '127.0.0.1'", $script);
         $this->assertStringContainsString('chmod 600', $script);
         $this->assertStringNotContainsString('echo "$DB_PASSWORD"', $script);
         $this->assertStringNotContainsString('echo "$ADMIN_PASSWORD"', $script);
