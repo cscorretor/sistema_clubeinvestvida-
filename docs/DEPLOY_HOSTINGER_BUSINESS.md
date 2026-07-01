@@ -55,9 +55,13 @@ Preencha `APP_URL`, credenciais do banco, e-mail e senha inicial do administrado
 Instale as dependências e gere a chave:
 
 ```bash
-composer2 install --no-dev --prefer-dist --no-interaction --optimize-autoloader
-php artisan key:generate
+PHP_BIN=/opt/alt/php82/usr/bin/php
+COMPOSER_PATH="$(command -v composer2)"
+"$PHP_BIN" "$COMPOSER_PATH" install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+"$PHP_BIN" artisan key:generate
 ```
+
+Na Hostinger, o comando `php` do terminal pode apontar para uma versão diferente da selecionada para o site. O script de implantação detecta e exige explicitamente o PHP 8.2.
 
 Garanta escrita apenas nas pastas exigidas pelo Laravel:
 
@@ -73,7 +77,7 @@ O script executa migrations, seeders idempotentes, caches de produção e copia 
 bash deploy/hostinger/deploy.sh
 ```
 
-Se o PHP selecionado pelo terminal tiver outro caminho, descubra-o com `which php` e execute:
+O script detecta automaticamente `/opt/alt/php82/usr/bin/php` na Hostinger. Se o PHP 8.2 estiver em outro caminho, execute:
 
 ```bash
 PHP_BIN=/caminho/retornado/php bash deploy/hostinger/deploy.sh

@@ -39,6 +39,23 @@ class DeploymentConfigurationTest extends TestCase
         $this->assertStringNotContainsString("require __DIR__.'/../vendor", $frontController);
     }
 
+    public function test_deploy_forca_php_82_tambem_para_o_composer(): void
+    {
+        $script = file_get_contents(
+            base_path('deploy/hostinger/deploy.sh')
+        );
+
+        $this->assertStringContainsString('/opt/alt/php82/usr/bin/php', $script);
+        $this->assertStringContainsString(
+            '"$PHP_BIN" "$COMPOSER_PATH" install',
+            $script
+        );
+        $this->assertStringContainsString(
+            'PHP 8.2 é obrigatório',
+            $script
+        );
+    }
+
     public function test_endpoint_de_saude_esta_disponivel(): void
     {
         $this->get('/up')->assertOk();
