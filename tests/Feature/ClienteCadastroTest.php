@@ -1,0 +1,173 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Produtor;
+use App\Models\Usuario;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+
+class ClienteCadastroTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_admin_pode_abrir_o_formulario_de_cadastro(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+
+        $this->actingAs($admin)
+            ->get('/clientes/novo')
+            ->assertOk()
+            ->assertSee('Cadastro de Cliente')
+            ->assertSee('Finalizar cadastro');
+    }
+
+    public function test_cadastra_cliente_com_relacionamentos_e_auditoria_sem_cpf_em_texto_puro(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+
+        $response = $this->actingAs($admin)->post('/clientes', $this->validPayload());
+
+        $response->assertRedirect('/clientes/novo');
+        $response->assertSessionHas('status');
+
+        $this->assertDatabaseHas('clientes', [
+            'codigo' => 'CLI-000001',
+            'nome' => 'Maria da Silva',
+            'cpf_cnpj' => '52998224725',
+            'email_padrao' => 'maria@example.com',
+            'celular_padrao' => '(11) 99999-8888',
+        ]);
+        $this->assertDatabaseHas('cliente_enderecos', [
+            'cep' => '01310930',
+            'cidade' => 'São Paulo',
+            'uf' => 'SP',
+            'padrao' => true,
+        ]);
+        $this->assertDatabaseHas('cliente_telefones', [
+            'tipo' => 'WHATSAPP',
+            'numero' => '(11) 99999-8888',
+            'padrao' => true,
+        ]);
+        $this->assertDatabaseHas('cliente_emails', [
+            'email' => 'maria@example.com',
+            'padrao' => true,
+        ]);
+        $this->assertDatabaseHas('cliente_conjuge', [
+            'nome' => 'João da Silva',
+            'cpf' => '11144477735',
+        ]);
+        $this->assertDatabaseHas('cliente_cnh', [
+            'numero_registro' => '12345678900',
+            'categoria' => 'B',
+        ]);
+        $this->assertDatabaseHas('audit_log', [
+            'usuario' => 'usuario#'.$admin->id,
+            'entidade' => 'clientes',
+            'entidade_id' => 1,
+            'acao' => 'CRIAR',
+        ]);
+
+        $auditJson = (string) DB::table('audit_log')->value('dados_depois');
+        $this->assertStringNotContainsString('52998224725', $auditJson);
+        $this->assertStringNotContainsString('11144477735', $auditJson);
+        $this->assertStringNotContainsString('maria@example.com', $auditJson);
+        $this->assertStringContainsString('[PROTEGIDO]', $auditJson);
+    }
+
+    public function test_rejeita_cpf_invalido_sem_gravar_cliente_ou_auditoria(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+        $payload = $this->validPayload();
+        $payload['cpf_cnpj'] = '111.111.111-11';
+
+        $response = $this->actingAs($admin)
+            ->from('/clientes/novo')
+            ->post('/clientes', $payload);
+
+        $response->assertRedirect('/clientes/novo');
+        $response->assertSessionHasErrors('cpf_cnpj');
+        $this->assertDatabaseCount('clientes', 0);
+        $this->assertDatabaseCount('audit_log', 0);
+    }
+
+    public function test_rejeita_email_invalido_no_servidor(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+        $payload = $this->validPayload();
+        $payload['emails'][0]['email'] = 'email-invalido';
+
+        $response = $this->actingAs($admin)
+            ->from('/clientes/novo')
+            ->post('/clientes', $payload);
+
+        $response->assertRedirect('/clientes/novo');
+        $response->assertSessionHasErrors('emails.0.email');
+        $this->assertDatabaseCount('clientes', 0);
+    }
+
+    public function test_produtor_cadastra_cliente_direto_na_propria_carteira(): void
+    {
+        $produtor = Produtor::create(['nome' => 'Produtor da carteira', 'ativo' => true]);
+        $usuario = Usuario::factory()->produtor($produtor->id)->create();
+        $payload = $this->validPayload();
+        $payload['nome'] = 'Cliente do produtor';
+
+        $this->actingAs($usuario)->post('/clientes', $payload)->assertRedirect('/clientes/novo');
+
+        $this->assertDatabaseHas('clientes', [
+            'nome' => 'Cliente do produtor',
+            'produtor_id' => $produtor->id,
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validPayload(): array
+    {
+        return [
+            'pessoa' => 'PF',
+            'nome' => 'Maria da Silva',
+            'cpf_cnpj' => '529.982.247-25',
+            'nascimento' => '1988-04-15',
+            'estado_civil' => 'CASADO',
+            'sexo' => 'F',
+            'profissao' => 'Professora',
+            'faixa_renda' => 'De R$ 5.000,01 a R$ 10.000',
+            'tipo_cliente' => 'PROSPECT',
+            'intermedio' => 'Indicação',
+            'conjuge' => [
+                'nome' => 'João da Silva',
+                'cpf' => '111.444.777-35',
+                'nascimento' => '1987-03-10',
+            ],
+            'tem_cnh' => '1',
+            'cnh' => [
+                'numero_registro' => '12345678900',
+                'categoria' => 'b',
+                'validade' => '2030-10-20',
+                'primeira_habilitacao' => '2007-02-01',
+            ],
+            'endereco_padrao' => 0,
+            'enderecos' => [[
+                'tipo' => 'RESIDENCIAL',
+                'cep' => '01310-930',
+                'logradouro' => 'Avenida Paulista',
+                'numero' => '1000',
+                'complemento' => 'Apto 10',
+                'bairro' => 'Bela Vista',
+                'cidade' => 'São Paulo',
+                'uf' => 'sp',
+            ]],
+            'telefones' => [[
+                'tipo' => 'WHATSAPP',
+                'numero' => '(11) 99999-8888',
+            ]],
+            'emails' => [[
+                'email' => 'MARIA@EXAMPLE.COM',
+            ]],
+        ];
+    }
+}

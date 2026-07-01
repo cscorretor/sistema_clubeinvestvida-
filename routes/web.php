@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClienteController;
 use App\Models\Cliente;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -18,4 +19,12 @@ Route::middleware('auth')->group(function (): void {
 
         return response()->noContent();
     })->name('clientes.access');
+
+    Route::get('/clientes/novo', [ClienteController::class, 'create'])
+        ->can('create', Cliente::class)
+        ->name('clientes.create');
+
+    Route::post('/clientes', [ClienteController::class, 'store'])
+        ->can('create', Cliente::class)
+        ->name('clientes.store');
 });

@@ -24,7 +24,11 @@ class ClientePolicy
 
     public function create(Usuario $usuario): bool
     {
-        return $usuario->isProdutor() || $usuario->pode('clientes', 'pode_editar');
+        if ($usuario->isProdutor()) {
+            return $usuario->produtor_id !== null;
+        }
+
+        return $usuario->pode('clientes', 'pode_editar');
     }
 
     public function update(Usuario $usuario, Cliente $cliente): bool
