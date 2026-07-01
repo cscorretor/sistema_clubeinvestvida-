@@ -43,25 +43,15 @@ Se o GitHub pedir autenticação, use um token de acesso ou configure uma chave 
 
 ## 3. Criar o ambiente de produção
 
-Copie o modelo e edite somente no servidor:
+Execute o configurador interativo. Ele solicita as senhas sem mostrá-las, cria o `.env` com permissão restrita e gera a chave da aplicação:
 
 ```bash
-cp deploy/hostinger/env.production.example .env
-nano .env
+bash deploy/hostinger/configure-env.sh
 ```
 
-Preencha `APP_URL`, credenciais do banco, e-mail e senha inicial do administrador. Não envie esse `.env` ao GitHub.
+Não envie o conteúdo do `.env` ao GitHub ou por mensagens.
 
-Instale as dependências e gere a chave:
-
-```bash
-PHP_BIN=/opt/alt/php82/usr/bin/php
-COMPOSER_PATH="$(command -v composer2)"
-"$PHP_BIN" "$COMPOSER_PATH" install --no-dev --prefer-dist --no-interaction --optimize-autoloader
-"$PHP_BIN" artisan key:generate
-```
-
-Na Hostinger, o comando `php` do terminal pode apontar para uma versão diferente da selecionada para o site. O script de implantação detecta e exige explicitamente o PHP 8.2.
+Na Hostinger, o comando `php` do terminal pode apontar para uma versão diferente da selecionada para o site. Os scripts de configuração e implantação usam e exigem explicitamente `/opt/alt/php82/usr/bin/php`.
 
 Garanta escrita apenas nas pastas exigidas pelo Laravel:
 

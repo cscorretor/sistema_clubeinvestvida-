@@ -56,6 +56,20 @@ class DeploymentConfigurationTest extends TestCase
         );
     }
 
+    public function test_configurador_interativo_protege_segredos_e_gera_app_key(): void
+    {
+        $script = file_get_contents(
+            base_path('deploy/hostinger/configure-env.sh')
+        );
+
+        $this->assertStringContainsString('read -rsp', $script);
+        $this->assertStringContainsString('random_bytes(32)', $script);
+        $this->assertStringContainsString('env.production.example', $script);
+        $this->assertStringContainsString('chmod 600', $script);
+        $this->assertStringNotContainsString('echo "$DB_PASSWORD"', $script);
+        $this->assertStringNotContainsString('echo "$ADMIN_PASSWORD"', $script);
+    }
+
     public function test_endpoint_de_saude_esta_disponivel(): void
     {
         $this->get('/up')->assertOk();
