@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financeiro — Clube Investvida</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{colors:{navy:"#003461",navy2:"#004B87",orange:"#FF6B00",ink:"#1A1C1E",line:"#E2E8F0",surface:"#F4F7F9"},fontFamily:{head:["Manrope"],body:["Inter"]}}}}</script>
+<style>
+ body{font-family:"Inter",sans-serif;background:#F4F7F9;color:#1A1C1E}.font-head{font-family:"Manrope",sans-serif}
+ .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
+ .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+ .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
+ .card{background:#fff;border:1px solid #E2E8F0;border-radius:.75rem}
+ .chip{font-size:.66rem;font-weight:600;padding:.1rem .45rem;border-radius:999px}
+ .inp{border:1px solid #E2E8F0;border-radius:.5rem;padding:.5rem .7rem;font-size:.9rem;background:#fff}
+</style>
+<style>th{font-size:.68rem;text-transform:uppercase;letter-spacing:.03em;color:#64748b;font-weight:600;text-align:left}td,th{padding:.6rem .7rem}</style>
+</head><body>
+<div class="flex min-h-screen">
+  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
+    <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
+      <div class="w-9 h-9 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
+      <div><div class="font-head font-bold leading-none">Clube Investvida</div>
+      <div class="text-[11px] text-blue-200 mt-1">Seguros de Pessoas</div></div>
+    </div>
+    <nav class="nav p-3 space-y-1 flex-1">
+      <a href="dashboard.html" data-k="dash"><span>▦</span> Dashboard</a>
+      <a href="clientes.html" data-k="cli"><span>◉</span> Clientes</a>
+      <a href="apolice-pessoas.html" data-k="apo"><span>❤</span> Apólices</a>
+      <a href="leads.html" data-k="leads"><span>◔</span> Leads / CRM</a>
+      <a href="financeiro.html" data-k="fin"><span>$</span> Financeiro</a>
+      <a href="cofre.html" data-k="cofre"><span>⛁</span> Cofre Digital</a>
+      <a href="configuracoes.html" data-k="cfg"><span>⚙</span> Configurações</a>
+    </nav>
+    <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
+  </aside>
+  <div class="flex-1 flex flex-col">
+    <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
+      <div class="ml-auto w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-semibold">AD</div>
+    </header>
+    <main class="p-5">
+      <h1 class="text-2xl font-head font-bold text-navy mb-1">Financeiro — Comissões</h1>
+      <p class="text-sm text-slate-500 mb-5">Recebimentos, parcelas e rateio de produtores — dados ilustrativos.</p>
+
+      <!-- Resumo -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+        <div class="card p-4"><div class="text-xs text-slate-500">A receber (aberto)</div><div class="text-xl font-head font-bold text-navy">R$ 128.450</div></div>
+        <div class="card p-4"><div class="text-xs text-slate-500">Recebido no mês</div><div class="text-xl font-head font-bold text-green-700">R$ 42.180</div></div>
+        <div class="card p-4"><div class="text-xs text-slate-500">A pagar (despesas)</div><div class="text-xl font-head font-bold text-navy">R$ 18.900</div></div>
+        <div class="card p-4"><div class="text-xs text-slate-500">Saldo (pagar × receber)</div><div class="text-xl font-head font-bold text-orange">+ R$ 23.280</div></div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="card p-3 mb-4 flex flex-wrap gap-3 items-end">
+        <div><label class="text-xs text-slate-500">Período (vencimento)</label><br><input type="month" class="inp mt-1"></div>
+        <div><label class="text-xs text-slate-500">Seguradora</label><br><select class="inp mt-1"><option>Todas</option><option>Bradesco</option><option>Icatu</option><option>SulAmérica</option></select></div>
+        <div><label class="text-xs text-slate-500">Status</label><br><select class="inp mt-1"><option>Aberto</option><option>Liquidado</option><option>Todas</option></select></div>
+        <button class="bg-orange text-white px-4 py-2.5 rounded-md text-sm font-semibold">Filtrar</button>
+        <button id="baixar" class="ml-auto bg-navy text-white px-4 py-2.5 rounded-md text-sm font-semibold">Baixar selecionadas</button>
+      </div>
+
+      <!-- Parcelas de comissão -->
+      <div class="card overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 border-b border-line"><tr>
+            <th><input type="checkbox" id="all"></th><th>Cliente / Apólice</th><th>Ramo</th><th>Seguradora</th>
+            <th>Parcela</th><th>Vencimento</th><th>Prêmio</th><th>Comissão</th><th>Status</th></tr></thead>
+          <tbody id="tb"></tbody>
+        </table>
+      </div>
+
+      <!-- Rateio -->
+      <div class="card p-5 mt-4">
+        <h2 class="font-head font-semibold text-navy mb-3">Rateio de produtores (apólice selecionada)</h2>
+        <table class="w-full text-sm"><thead><tr><th>Produtor</th><th>Papel</th><th>%</th><th>Comissão</th></tr></thead>
+          <tbody>
+            <tr class="border-t border-line/70"><td class="py-2">Pâmela C. de Souza</td><td class="text-slate-600">Agente</td><td>60%</td><td class="font-medium">R$ 8.008</td></tr>
+            <tr class="border-t border-line/70"><td class="py-2">Marco</td><td class="text-slate-600">Indicação</td><td>25%</td><td class="font-medium">R$ 3.465</td></tr>
+            <tr class="border-t border-line/70"><td class="py-2">Corretora</td><td class="text-slate-600">Casa</td><td>15%</td><td class="font-medium">R$ 2.079</td></tr>
+          </tbody></table>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.nav a').forEach(a=>{if(a.dataset.k==='fin')a.classList.add('on')});
+const parc=[
+ ['Ana B. Moraes — Vida','Vida','Bradesco','3/12','15/07/2026','R$ 280','R$ 56','ABERTO'],
+ ['Roberto Khern — Previdência','Previdência','Icatu','5/12','20/07/2026','R$ 600','R$ 120','ABERTO'],
+ ['Carlos Lima — Saúde','Saúde','SulAmérica','7/12','02/08/2026','R$ 420','R$ 63','ABERTO'],
+ ['Patrícia Fenili — Vida','Vida','MetLife','2/12','10/08/2026','R$ 350','R$ 70','LIQUIDADO'],
+];
+const cor={ABERTO:'bg-amber-100 text-amber-700',LIQUIDADO:'bg-green-100 text-green-700',CANCELADO:'bg-red-100 text-red-700'};
+document.getElementById('tb').innerHTML=parc.map(p=>`<tr class="border-t border-line/70">
+ <td><input type="checkbox" class="rowchk"></td><td class="font-medium">${p[0]}</td>
+ <td><span class="chip bg-blue-50 text-navy2">${p[1]}</span></td><td class="text-slate-600">${p[2]}</td>
+ <td>${p[3]}</td><td class="text-slate-600">${p[4]}</td><td>${p[5]}</td><td class="font-medium">${p[6]}</td>
+ <td><span class="chip ${cor[p[7]]}">${p[7]}</span></td></tr>`).join('');
+document.getElementById('all').onclick=e=>document.querySelectorAll('.rowchk').forEach(c=>c.checked=e.target.checked);
+document.getElementById('baixar').onclick=()=>{const n=[...document.querySelectorAll('.rowchk')].filter(c=>c.checked).length;
+ alert(n?`Baixar ${n} parcela(s) de comissão.\n\nProtótipo — a baixa real entra com o backend.`:'Selecione ao menos uma parcela.');};
+</script>
+</body></html>

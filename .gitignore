@@ -1,0 +1,28 @@
+# ============================================================
+# .gitignore — sistema_clubeinvestvida
+# ============================================================
+
+# >>> DADOS SENSÍVEIS / PII — NUNCA versionar <<<
+# Backup do banco do Segflex contém CPFs e nomes reais de clientes.
+Backup Segflex SFN_6318509/
+*.bak
+
+# Manuais e materiais de referência pesados (ficam só no seu PC)
+Tutorial SegFlexNET.pdf
+Guia Comunicação.pdf
+Guia Consultas.pdf
+Guia Financeiro.pdf
+Acesso Web para Consultas.pdf
+
+# Segredos e ambiente
+.env
+.env.*
+
+# Dependências (geradas por install, não se versiona)
+/vendor/
+/node_modules/
+
+# Logs e lixo de sistema
+*.log
+.DS_Store
+Thumbs.db

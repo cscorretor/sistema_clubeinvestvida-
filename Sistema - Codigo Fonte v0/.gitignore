@@ -1,0 +1,9 @@
+# Ambiente / segredos — NUNCA versionar
+.env
+.env.*
+*.bak
+/vendor/
+/node_modules/
+*.log
+.DS_Store
+Thumbs.db

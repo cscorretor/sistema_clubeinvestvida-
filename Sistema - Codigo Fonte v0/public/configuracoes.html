@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurações — Clube Investvida</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{colors:{navy:"#003461",navy2:"#004B87",orange:"#FF6B00",ink:"#1A1C1E",line:"#E2E8F0",surface:"#F4F7F9"},fontFamily:{head:["Manrope"],body:["Inter"]}}}}</script>
+<style>
+ body{font-family:"Inter",sans-serif;background:#F4F7F9;color:#1A1C1E}.font-head{font-family:"Manrope",sans-serif}
+ .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
+ .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+ .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
+ .card{background:#fff;border:1px solid #E2E8F0;border-radius:.75rem}
+ .chip{font-size:.66rem;font-weight:600;padding:.1rem .45rem;border-radius:999px}
+ .inp{border:1px solid #E2E8F0;border-radius:.5rem;padding:.5rem .7rem;font-size:.9rem;background:#fff}
+</style>
+<style>th{font-size:.68rem;text-transform:uppercase;letter-spacing:.03em;color:#64748b;font-weight:600;text-align:left}td,th{padding:.6rem .7rem}
+ .perm{accent-color:#003461;width:1rem;height:1rem}</style>
+</head><body>
+<div class="flex min-h-screen">
+  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
+    <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
+      <div class="w-9 h-9 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
+      <div><div class="font-head font-bold leading-none">Clube Investvida</div>
+      <div class="text-[11px] text-blue-200 mt-1">Seguros de Pessoas</div></div>
+    </div>
+    <nav class="nav p-3 space-y-1 flex-1">
+      <a href="dashboard.html" data-k="dash"><span>▦</span> Dashboard</a>
+      <a href="clientes.html" data-k="cli"><span>◉</span> Clientes</a>
+      <a href="apolice-pessoas.html" data-k="apo"><span>❤</span> Apólices</a>
+      <a href="leads.html" data-k="leads"><span>◔</span> Leads / CRM</a>
+      <a href="financeiro.html" data-k="fin"><span>$</span> Financeiro</a>
+      <a href="cofre.html" data-k="cofre"><span>⛁</span> Cofre Digital</a>
+      <a href="configuracoes.html" data-k="cfg"><span>⚙</span> Configurações</a>
+    </nav>
+    <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
+  </aside>
+  <div class="flex-1 flex flex-col">
+    <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
+      <div class="ml-auto w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-semibold">AD</div>
+    </header>
+    <main class="p-5 max-w-5xl">
+      <h1 class="text-2xl font-head font-bold text-navy mb-1">Configurações</h1>
+      <p class="text-sm text-slate-500 mb-5">Usuários, permissões, segurança e auditoria.</p>
+
+      <!-- Abas -->
+      <div class="flex gap-5 border-b border-line mb-4 text-sm">
+        <button class="tab pb-2 border-b-2 border-orange text-navy font-semibold" data-t="users">Usuários & Permissões</button>
+        <button class="tab pb-2 text-slate-500" data-t="audit">Auditoria</button>
+        <button class="tab pb-2 text-slate-500" data-t="corp">Dados da Corretora</button>
+        <button class="tab pb-2 text-slate-500" data-t="seg">Segurança</button>
+      </div>
+
+      <!-- Usuários -->
+      <section data-p="users">
+        <div class="card overflow-hidden mb-4">
+          <table class="w-full text-sm"><thead class="bg-slate-50 border-b border-line"><tr>
+            <th>Usuário</th><th>Perfil</th><th>Clientes</th><th>Financeiro</th><th>Relatórios</th><th>Config.</th><th></th></tr></thead>
+            <tbody id="us"></tbody></table>
+        </div>
+        <button class="bg-navy text-white px-4 py-2 rounded-md text-sm font-semibold">+ Novo usuário</button>
+        <p class="text-xs text-slate-400 mt-3">Perfis: <b>Administrador</b> (tudo) · <b>Comum</b> (todos os clientes, com restrições) · <b>Produtor</b> (só os seus clientes). Marque o que cada perfil acessa.</p>
+      </section>
+
+      <!-- Auditoria -->
+      <section data-p="audit" class="hidden">
+        <div class="card overflow-hidden">
+          <table class="w-full text-sm"><thead class="bg-slate-50 border-b border-line"><tr>
+            <th>Data/Hora</th><th>Usuário</th><th>Ação</th><th>Registro</th></tr></thead><tbody id="au"></tbody></table>
+        </div>
+        <p class="text-xs text-slate-400 mt-3">Tudo que é criado, alterado ou excluído fica registrado aqui — o que o Segflex não permitia.</p>
+      </section>
+
+      <!-- Corretora -->
+      <section data-p="corp" class="hidden">
+        <div class="card p-5 grid md:grid-cols-2 gap-4">
+          <div><label class="text-xs text-slate-500">Razão social</label><input class="inp w-full mt-1" value="Clube Investvida Corretora de Seguros Ltda"></div>
+          <div><label class="text-xs text-slate-500">CNPJ</label><input class="inp w-full mt-1" placeholder="00.000.000/0001-00"></div>
+          <div><label class="text-xs text-slate-500">CRECI / SUSEP</label><input class="inp w-full mt-1"></div>
+          <div><label class="text-xs text-slate-500">E-mail de contato</label><input class="inp w-full mt-1" value="cscorretor@gmail.com"></div>
+        </div>
+      </section>
+
+      <!-- Segurança -->
+      <section data-p="seg" class="hidden">
+        <div class="card p-5 space-y-4">
+          <label class="flex items-center justify-between"><span><b class="text-sm">Verificação em duas etapas (2FA)</b><br><span class="text-xs text-slate-500">Exige código do app autenticador no login.</span></span><input type="checkbox" class="perm" checked></label>
+          <label class="flex items-center justify-between"><span><b class="text-sm">Bloqueio após tentativas</b><br><span class="text-xs text-slate-500">Trava o acesso após 5 senhas erradas.</span></span><input type="checkbox" class="perm" checked></label>
+          <label class="flex items-center justify-between"><span><b class="text-sm">Registro de auditoria</b><br><span class="text-xs text-slate-500">Mantém o histórico de todas as alterações.</span></span><input type="checkbox" class="perm" checked></label>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.nav a').forEach(a=>{if(a.dataset.k==='cfg')a.classList.add('on')});
+// abas
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>{x.className='tab pb-2 text-slate-500'});
+  b.className='tab pb-2 border-b-2 border-orange text-navy font-semibold';
+  document.querySelectorAll('[data-p]').forEach(s=>s.classList.add('hidden'));
+  document.querySelector('[data-p="'+b.dataset.t+'"]').classList.remove('hidden');
+});
+const users=[
+ {n:'Administrador',p:'Administrador',perm:[1,1,1,1]},
+ {n:'Pâmela C. de Souza',p:'Comum',perm:[1,1,1,0]},
+ {n:'Marco',p:'Produtor',perm:[1,0,1,0]},
+ {n:'Shaiane',p:'Comum',perm:[1,0,1,0]},
+];
+const pcor={Administrador:'bg-navy text-white',Comum:'bg-blue-50 text-navy2',Produtor:'bg-amber-100 text-amber-700'};
+document.getElementById('us').innerHTML=users.map(u=>`<tr class="border-t border-line/70">
+ <td class="font-medium">${u.n}</td><td><span class="chip ${pcor[u.p]}">${u.p}</span></td>
+ ${u.perm.map(v=>`<td><input type="checkbox" class="perm" ${v?'checked':''} ${u.p==='Administrador'?'disabled':''}></td>`).join('')}
+ <td class="text-right text-slate-400">⋯</td></tr>`).join('');
+const aud=[
+ ['30/06/2026 21:14','Administrador','CRIAR','Cliente #050070'],
+ ['30/06/2026 20:58','Pâmela','ALTERAR','Apólice #1182 (vigência)'],
+ ['30/06/2026 19:40','Marco','CRIAR','Lead #339'],
+ ['30/06/2026 18:05','Administrador','EXCLUIR','Parcela #7781'],
+];
+const acor={CRIAR:'bg-green-100 text-green-700',ALTERAR:'bg-amber-100 text-amber-700',EXCLUIR:'bg-red-100 text-red-700'};
+document.getElementById('au').innerHTML=aud.map(a=>`<tr class="border-t border-line/70">
+ <td class="text-slate-600">${a[0]}</td><td class="font-medium">${a[1]}</td>
+ <td><span class="chip ${acor[a[2]]}">${a[2]}</span></td><td class="text-slate-600">${a[3]}</td></tr>`).join('');
+</script>
+</body></html>
