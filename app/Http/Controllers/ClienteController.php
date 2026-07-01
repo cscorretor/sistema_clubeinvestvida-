@@ -4,14 +4,129 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreClienteRequest;
 use App\Models\Cliente;
+use App\Models\ClienteEndereco;
+use App\Models\Ramo;
 use App\Models\Usuario;
 use App\Services\AuditLogger;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class ClienteController extends Controller
 {
+    public function index(Request $request): View
+    {
+        Gate::authorize('viewAny', Cliente::class);
+
+        $filters = $request->validate([
+            'busca' => ['nullable', 'string', 'max:100'],
+            'tipo' => ['nullable', Rule::in(['TODOS', 'EFETIVO', 'PROSPECT', 'RELACIONAMENTO', 'CONDUTOR', 'LOCADOR'])],
+            'status' => ['nullable', Rule::in(['TODOS', 'ATIVO', 'INATIVO'])],
+            'ramo' => ['nullable', 'integer', 'exists:ramos,id'],
+            'cidade' => ['nullable', 'string', 'max:80'],
+        ]);
+
+        $usuario = $request->user();
+        abort_unless($usuario instanceof Usuario, 403);
+
+        $status = $filters['status'] ?? 'ATIVO';
+        $busca = trim((string) ($filters['busca'] ?? ''));
+        $digits = preg_replace('/\D/', '', $busca);
+
+        $clientes = Cliente::query()
+            ->visivelPara($usuario)
+            ->with([
+                'enderecos' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
+                'apolices.ramo',
+            ])
+            ->withMin([
+                'apolices as proxima_renovacao' => fn ($query) => $query
+                    ->whereIn('status', ['ATIVO', 'RENOVACAO'])
+                    ->whereDate('fim_vigencia', '>=', today()),
+            ], 'fim_vigencia')
+            ->when($busca !== '', function ($query) use ($busca, $digits): void {
+                $query->where(function ($query) use ($busca, $digits): void {
+                    $query->where('nome', 'like', "%{$busca}%")
+                        ->orWhere('codigo', 'like', "%{$busca}%");
+
+                    if ($digits !== '') {
+                        $query->orWhere('cpf_cnpj', 'like', "%{$digits}%");
+                    }
+
+                    $query->orWhereHas('telefones', function ($query) use ($busca, $digits): void {
+                        $query->where('numero', 'like', "%{$busca}%");
+
+                        if ($digits !== '') {
+                            $query->orWhereRaw(
+                                "REPLACE(REPLACE(REPLACE(REPLACE(numero, '(', ''), ')', ''), ' ', ''), '-', '') LIKE ?",
+                                ["%{$digits}%"],
+                            );
+                        }
+                    });
+                });
+            })
+            ->when(($filters['tipo'] ?? 'TODOS') !== 'TODOS', fn ($query) => $query->where('tipo_cliente', $filters['tipo']))
+            ->when($status !== 'TODOS', fn ($query) => $query->where('status', $status))
+            ->when(isset($filters['ramo']), fn ($query) => $query->whereHas('apolices', fn ($query) => $query->where('ramo_id', $filters['ramo'])))
+            ->when(isset($filters['cidade']), fn ($query) => $query->whereHas('enderecos', fn ($query) => $query->where('cidade', $filters['cidade'])))
+            ->orderBy('nome')
+            ->paginate(10)
+            ->withQueryString();
+
+        $cidades = ClienteEndereco::query()
+            ->whereHas('cliente', fn ($query) => $query->visivelPara($usuario))
+            ->whereNotNull('cidade')
+            ->where('cidade', '<>', '')
+            ->distinct()
+            ->orderBy('cidade')
+            ->pluck('cidade');
+
+        $ramos = Ramo::query()
+            ->where('grupo', 'PESSOAS')
+            ->orderBy('nome')
+            ->get();
+
+        return view('clientes.index', [
+            'clientes' => $clientes,
+            'cidades' => $cidades,
+            'ramos' => $ramos,
+            'filters' => [...$filters, 'status' => $status],
+        ]);
+    }
+
+    public function show(Request $request, int $cliente): View
+    {
+        Gate::authorize('viewAny', Cliente::class);
+
+        $usuario = $request->user();
+        abort_unless($usuario instanceof Usuario, 403);
+
+        $cliente = Cliente::query()
+            ->visivelPara($usuario)
+            ->with([
+                'produtor',
+                'conjuge',
+                'cnh',
+                'enderecos' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
+                'telefones' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
+                'emails' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
+                'apolices' => fn ($query) => $query->orderByDesc('created_at'),
+                'apolices.ramo',
+                'apolices.seguradora',
+                'apolices.parcelas',
+                'chamados' => fn ($query) => $query->latest(),
+                'auditLogs' => fn ($query) => $query->latest()->limit(20),
+            ])
+            ->findOrFail($cliente);
+
+        Gate::authorize('view', $cliente);
+
+        return view('clientes.show', compact('cliente'));
+    }
+
     public function create(): View
     {
         return view('clientes.create');

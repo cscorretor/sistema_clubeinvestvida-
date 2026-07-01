@@ -20,6 +20,9 @@ Route::middleware('auth')->group(function (): void {
         return response()->noContent();
     })->name('clientes.access');
 
+    Route::get('/clientes', [ClienteController::class, 'index'])
+        ->name('clientes.index');
+
     Route::get('/clientes/novo', [ClienteController::class, 'create'])
         ->can('create', Cliente::class)
         ->name('clientes.create');
@@ -27,4 +30,8 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/clientes', [ClienteController::class, 'store'])
         ->can('create', Cliente::class)
         ->name('clientes.store');
+
+    Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])
+        ->whereNumber('cliente')
+        ->name('clientes.show');
 });

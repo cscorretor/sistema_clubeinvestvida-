@@ -25,6 +25,7 @@ class AuditLog extends Model
         return [
             'dados_antes' => 'array',
             'dados_depois' => 'array',
+            'created_at' => 'datetime',
         ];
     }
 }

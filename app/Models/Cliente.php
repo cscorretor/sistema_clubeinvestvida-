@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Cliente extends Model
 {
@@ -78,6 +79,47 @@ class Cliente extends Model
     public function emails(): HasMany
     {
         return $this->hasMany(ClienteEmail::class);
+    }
+
+    public function apolices(): HasMany
+    {
+        return $this->hasMany(Apolice::class);
+    }
+
+    public function chamados(): HasMany
+    {
+        return $this->hasMany(Chamado::class);
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class, 'entidade_id')
+            ->where('entidade', 'clientes');
+    }
+
+    public function iniciais(): string
+    {
+        return Str::of($this->nome)
+            ->explode(' ')
+            ->filter()
+            ->take(2)
+            ->map(fn (string $parte): string => mb_strtoupper(mb_substr($parte, 0, 1)))
+            ->implode('');
+    }
+
+    public function documentoMascarado(): string
+    {
+        $digits = preg_replace('/\D/', '', (string) $this->cpf_cnpj);
+
+        if ($this->pessoa === 'PJ' && strlen($digits) === 14) {
+            return '**.***.***/****-'.substr($digits, -2);
+        }
+
+        if (strlen($digits) === 11) {
+            return substr($digits, 0, 3).'.***.***-'.substr($digits, -2);
+        }
+
+        return 'Não informado';
     }
 
     public function scopeVisivelPara(Builder $query, Usuario $usuario): Builder

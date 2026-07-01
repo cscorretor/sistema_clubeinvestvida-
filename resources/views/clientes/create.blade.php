@@ -45,7 +45,7 @@ tailwind.config = {
     </div>
     <nav class="nav p-3 space-y-1 flex-1">
       <a href="{{ route('dashboard') }}"><span>▦</span> Dashboard</a>
-      <a href="{{ route('clientes.create') }}" class="on"><span>◉</span> Clientes</a>
+      <a href="{{ route('clientes.index') }}" class="on"><span>◉</span> Clientes</a>
       <a href="#" aria-disabled="true"><span>❤</span> Apólices</a>
       <a href="#" aria-disabled="true"><span>◔</span> Leads / CRM</a>
       <a href="#" aria-disabled="true"><span>◷</span> Chamados</a>
@@ -57,7 +57,7 @@ tailwind.config = {
   </aside>
   <div class="flex-1 flex flex-col min-w-0">
     <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
-      <a href="{{ route('clientes.create') }}" class="text-sm text-slate-500 hover:text-navy">‹ Clientes</a>
+      <a href="{{ route('clientes.index') }}" class="text-sm text-slate-500 hover:text-navy">‹ Clientes</a>
       <div class="ml-auto w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-semibold">
         {{ mb_strtoupper(mb_substr(auth()->user()->nome, 0, 2)) }}
       </div>
