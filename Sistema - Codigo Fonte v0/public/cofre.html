@@ -1,108 +1,54 @@
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cofre Digital — Clube Investvida</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{navy:"#003461",navy2:"#004B87",orange:"#FF6B00",ink:"#1A1C1E",line:"#E2E8F0",surface:"#F4F7F9"},fontFamily:{head:["Manrope"],body:["Inter"]}}}}</script>
-<style>
- body{font-family:"Inter",sans-serif;background:#F4F7F9;color:#1A1C1E}.font-head{font-family:"Manrope",sans-serif}
- .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
- .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
- .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
- .card{background:#fff;border:1px solid #E2E8F0;border-radius:.75rem}
- .chip{font-size:.66rem;font-weight:600;padding:.1rem .45rem;border-radius:999px}
- .inp{border:1px solid #E2E8F0;border-radius:.5rem;padding:.5rem .7rem;font-size:.9rem;background:#fff}
-</style>
-<style>.drop{border:2px dashed #c7d2e0;border-radius:.9rem;background:#fff;transition:.15s}.drop.hot{border-color:#FF6B00;background:#fff7f0}.doc{background:#fff;border:1px solid #E2E8F0;border-radius:.7rem;padding:.9rem;cursor:pointer}.doc:hover{border-color:#003461}</style>
-</head><body>
-<div class="flex min-h-screen">
-  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
-    <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
-      <div class="w-9 h-9 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
-      <div><div class="font-head font-bold leading-none">Clube Investvida</div>
-      <div class="text-[11px] text-blue-200 mt-1">Seguros de Pessoas</div></div>
-    </div>
-    <nav class="nav p-3 space-y-1 flex-1">
-      <a href="dashboard.html" data-k="dash"><span>▦</span> Dashboard</a>
-      <a href="clientes.html" data-k="cli"><span>◉</span> Clientes</a>
-      <a href="apolice-pessoas.html" data-k="apo"><span>❤</span> Apólices</a>
-      <a href="leads.html" data-k="leads"><span>◔</span> Leads / CRM</a>
-      <a href="financeiro.html" data-k="fin"><span>$</span> Financeiro</a>
-      <a href="chamados.html" data-k="cham"><span>◷</span> Chamados</a>
-      <a href="cofre.html" data-k="cofre"><span>⛁</span> Cofre Digital</a>
-      <a href="configuracoes.html" data-k="cfg"><span>⚙</span> Configurações</a>
-    </nav>
-    <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
-  </aside>
-  <div class="flex-1 flex flex-col">
-    <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
-      <input class="inp flex-1 max-w-md" placeholder="Buscar documento, apólice, contrato…">
-      <button class="ml-auto bg-navy text-white px-4 py-2 rounded-md text-sm font-semibold">+ Novo documento</button>
-    </header>
-    <main class="p-5">
-      <div class="flex items-end justify-between flex-wrap gap-3 mb-4">
-        <div><h1 class="text-2xl font-head font-bold text-navy">Cofre Digital</h1>
-          <p class="text-sm text-slate-500">Documentos e apólices em um lugar seguro.</p></div>
-        <div class="inline-flex bg-white border border-line rounded-lg p-1 text-sm">
-          <button class="px-3 py-1.5 rounded-md bg-navy text-white font-semibold">Grade</button>
-          <button class="px-3 py-1.5 rounded-md text-slate-600 font-semibold">Lista</button>
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css"><title>Cofre Digital — Clube Investvida</title>
+<style>.drop{border:2px dashed #C7D2E0;border-radius:var(--r-lg);background:#fff;padding:34px;text-align:center;transition:.15s}.drop.hot{border-color:var(--orange);background:#FFF7F0}
+.docs{display:grid;grid-template-columns:1fr 1fr;gap:12px}.doc{border:1px solid var(--line);border-radius:var(--r);padding:12px;cursor:pointer}.doc:hover{border-color:var(--navy)}
+@media(max-width:720px){.docs{grid-template-columns:1fr}}</style></head><body>
+<h2 class="sr-only">Cofre digital de documentos</h2>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><img src="assets/brand/logo-simbolo-claro.svg" width="34" height="34" alt="">
+    <div><div class="bname">Clube Investvida</div><div class="btag">Corretora de Seguros</div></div></div>
+  <nav class="nav">
+    <a href="dashboard.html"><span class="ico">▦</span> Dashboard</a>
+    <a href="clientes.html"><span class="ico">◉</span> Clientes</a>
+    <a href="apolice-pessoas.html"><span class="ico">❤</span> Apólices</a>
+    <a href="leads.html"><span class="ico">◔</span> Leads / CRM</a>
+    <a href="chamados.html"><span class="ico">◷</span> Chamados</a>
+    <a href="financeiro.html"><span class="ico">$</span> Financeiro</a>
+    <a href="cofre.html" class="on" aria-current="page"><span class="ico">⛁</span> Cofre Digital</a>
+    <a href="configuracoes.html"><span class="ico">⚙</span> Configurações</a>
+  </nav>
+  <div class="foot">v0 · protótipo</div>
+</aside>
+  <div class="content">
+    <header class="topbar"><input class="input flex1" style="max-width:400px" placeholder="Buscar documento, apólice…"><button class="btn btn-primary" style="margin-left:auto">+ Novo documento</button></header>
+    <main class="main">
+      <div class="between wrap mb16"><div><h1 class="h1">Cofre Digital</h1><p class="lead">Documentos e apólices em um lugar seguro.</p></div></div>
+      <div class="grid" style="grid-template-columns:2fr 1fr">
+        <div>
+          <div class="drop mb16" id="drop"><div style="font-size:30px;color:rgba(0,80,146,.4)">⤓</div><div class="font-head" style="font-weight:700;color:var(--navy);margin-top:6px">Arraste arquivos aqui</div><div class="small faint">ou clique — PDF, DOCX, JPG (até 50 MB)</div></div>
+          <div class="row gap8 mb16" style="border-bottom:1px solid var(--line)"><button class="btn" style="border-bottom:2px solid var(--orange);border-radius:0;color:var(--navy);font-weight:700">Todos (24)</button><button class="btn muted" style="border-radius:0">Apólices (12)</button><button class="btn muted" style="border-radius:0">Contratos (8)</button><button class="btn muted" style="border-radius:0">Pessoais (4)</button></div>
+          <div class="docs" id="docs"></div>
         </div>
-      </div>
-
-      <div class="grid lg:grid-cols-3 gap-5">
-        <div class="lg:col-span-2">
-          <!-- Drop zone -->
-          <div id="drop" class="drop p-8 text-center mb-4">
-            <div class="text-3xl text-navy/50">⤓</div>
-            <div class="font-head font-semibold text-navy mt-2">Arraste arquivos aqui</div>
-            <div class="text-xs text-slate-400">ou clique para escolher — PDF, DOCX, JPG (até 50 MB)</div>
-          </div>
-          <!-- Abas -->
-          <div class="flex gap-5 border-b border-line mb-3 text-sm">
-            <button class="pb-2 border-b-2 border-orange text-navy font-semibold">Todos (24)</button>
-            <button class="pb-2 text-slate-500">Apólices (12)</button>
-            <button class="pb-2 text-slate-500">Contratos (8)</button>
-            <button class="pb-2 text-slate-500">Documentos pessoais (4)</button>
-          </div>
-          <div id="docs" class="grid sm:grid-cols-2 gap-3"></div>
-        </div>
-
-        <!-- Preview -->
-        <div class="card p-5 h-fit">
-          <div class="flex items-center justify-between mb-3"><h2 class="font-head font-semibold text-navy">Pré-visualização</h2></div>
-          <div class="rounded-lg border border-line bg-slate-50 h-48 flex items-center justify-center text-slate-300 text-4xl mb-4">PDF</div>
-          <dl class="text-sm space-y-2">
-            <div class="flex justify-between"><dt class="text-slate-500">Arquivo</dt><dd class="font-medium">Apolice_Vida_2026.pdf</dd></div>
-            <div class="flex justify-between"><dt class="text-slate-500">Categoria</dt><dd>Apólice</dd></div>
-            <div class="flex justify-between"><dt class="text-slate-500">Status</dt><dd><span class="chip bg-green-100 text-green-700">Verificado</span></dd></div>
-            <div class="flex justify-between"><dt class="text-slate-500">Cliente</dt><dd>Ana B. Moraes</dd></div>
+        <div class="card">
+          <h2 class="h2 mb16">Pré-visualização</h2>
+          <div style="border:1px solid var(--line);border-radius:var(--r);background:#F7F9FB;height:180px;display:flex;align-items:center;justify-content:center;color:#c8d2df;font-size:34px">PDF</div>
+          <dl class="mt16" style="font-size:14px">
+            <div class="between" style="padding:5px 0"><dt class="muted">Arquivo</dt><dd style="font-weight:500">Apolice_Vida_2026.pdf</dd></div>
+            <div class="between" style="padding:5px 0"><dt class="muted">Categoria</dt><dd>Apólice</dd></div>
+            <div class="between" style="padding:5px 0"><dt class="muted">Status</dt><dd><span class="chip chip-ok">Verificado</span></dd></div>
+            <div class="between" style="padding:5px 0"><dt class="muted">Cliente</dt><dd>Ana B. Moraes</dd></div>
           </dl>
-          <div class="grid grid-cols-3 gap-2 mt-4 text-xs">
-            <button class="bg-white border border-line rounded-md py-2 font-semibold">Baixar</button>
-            <button class="bg-white border border-line rounded-md py-2 font-semibold">Compartilhar</button>
-            <button class="bg-white border border-line rounded-md py-2 font-semibold text-red-600">Excluir</button>
-          </div>
+          <div class="row gap8 mt16"><button class="btn btn-ghost flex1" style="padding:8px">Baixar</button><button class="btn btn-ghost flex1" style="padding:8px">Compartilhar</button><button class="btn btn-ghost flex1" style="padding:8px;color:var(--danger)">Excluir</button></div>
         </div>
       </div>
     </main>
   </div>
 </div>
 <script>
-document.querySelectorAll('.nav a').forEach(a=>{if(a.dataset.k==='cofre')a.classList.add('on')});
-const docs=[
- {n:'Apolice_Vida_2026.pdf',c:'Apólice',s:'Verificado',sz:'4,2 MB'},
- {n:'Contrato_Prev_Icatu.pdf',c:'Contrato',s:'Pendente',sz:'1,8 MB'},
- {n:'CNH_AnaMoraes.jpg',c:'Documento',s:'Verificado',sz:'850 KB'},
- {n:'DPS_Saude_Carlos.pdf',c:'Documento',s:'Pendente',sz:'2,1 MB'},
-];
-const cor={Verificado:'bg-green-100 text-green-700',Pendente:'bg-amber-100 text-amber-700',Arquivado:'bg-slate-100 text-slate-500'};
-document.getElementById('docs').innerHTML=docs.map(d=>`<div class="doc">
-  <div class="flex items-center justify-between mb-2"><span class="text-2xl text-navy/40">📄</span>
-    <span class="chip ${cor[d.s]}">${d.s}</span></div>
-  <div class="font-medium text-sm truncate">${d.n}</div>
-  <div class="text-xs text-slate-400 mt-1">${d.c} · ${d.sz}</div></div>`).join('');
-const dz=document.getElementById('drop');
-dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('hot')});
-dz.addEventListener('dragleave',()=>dz.classList.remove('hot'));
-dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('hot');alert('Protótipo — upload real entra com o backend.');});
-</script>
-</body></html>
+var docs=[{n:'Apolice_Vida_2026.pdf',c:'Apólice',s:'Verificado',sz:'4,2 MB',cl:'chip-ok'},{n:'Contrato_Prev_Icatu.pdf',c:'Contrato',s:'Pendente',sz:'1,8 MB',cl:'chip-warn'},{n:'CNH_AnaMoraes.jpg',c:'Documento',s:'Verificado',sz:'850 KB',cl:'chip-ok'},{n:'DPS_Saude_Carlos.pdf',c:'Documento',s:'Pendente',sz:'2,1 MB',cl:'chip-warn'}];
+document.getElementById('docs').innerHTML=docs.map(function(d){return '<div class="doc"><div class="between mb16"><span style="font-size:22px">📄</span><span class="chip '+d.cl+'">'+d.s+'</span></div><div style="font-weight:500;font-size:14px">'+d.n+'</div><div class="small faint mt8">'+d.c+' · '+d.sz+'</div></div>';}).join('');
+var dz=document.getElementById('drop');dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('hot');});dz.addEventListener('dragleave',function(){dz.classList.remove('hot');});dz.addEventListener('drop',function(e){e.preventDefault();dz.classList.remove('hot');alert('Protótipo — upload real entra com o backend.');});
+</script></body></html>

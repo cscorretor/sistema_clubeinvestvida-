@@ -1,72 +1,99 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Entrar — Clube Investvida</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{navy:"#003461",navy2:"#004B87",orange:"#FF6B00",ink:"#1A1C1E",line:"#E2E8F0",surface:"#F4F7F9"},fontFamily:{head:["Manrope"],body:["Inter"]}}}}</script>
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
 <style>
- body{font-family:"Inter",sans-serif;background:#F4F7F9;color:#1A1C1E}.font-head{font-family:"Manrope",sans-serif}
- .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
- .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
- .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
- .card{background:#fff;border:1px solid #E2E8F0;border-radius:.75rem}
- .chip{font-size:.66rem;font-weight:600;padding:.1rem .45rem;border-radius:999px}
- .inp{border:1px solid #E2E8F0;border-radius:.5rem;padding:.5rem .7rem;font-size:.9rem;background:#fff}
- .inp:focus{outline:none;border-color:#003461;box-shadow:0 0 0 3px rgba(0,75,135,.12)}
+  .auth{display:grid;grid-template-columns:1.05fr .95fr;min-height:100vh}
+  .auth .brandcol{background:linear-gradient(160deg,#062A4A,#031B33);color:#fff;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
+  .auth .formcol{display:flex;align-items:center;justify-content:center;padding:28px}
+  .auth h1{font-family:Manrope;font-weight:800;font-size:30px;line-height:1.15;margin:0}
+  .auth .box{width:100%;max-width:360px}
+  .otp{display:flex;gap:8px}.otp input{width:100%;text-align:center;font-size:18px}
+  @media(max-width:760px){.auth{grid-template-columns:1fr}.auth .brandcol{display:none}}
 </style>
-<style>.bgn{background:linear-gradient(135deg,#003461,#00284c)}</style>
-</head><body>
-<div class="min-h-screen grid md:grid-cols-2">
-  <!-- Lado marca -->
-  <div class="bgn text-white hidden md:flex flex-col justify-between p-10">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-lg bg-orange flex items-center justify-center font-head font-bold text-lg">CI</div>
-      <div class="font-head font-bold text-lg">Clube Investvida</div>
+</head>
+<body>
+<h2 class="sr-only">Tela de login do sistema Clube Investvida com verificação em duas etapas</h2>
+<div class="auth">
+
+  <!-- Marca -->
+  <div class="brandcol">
+    <div class="row center gap8">
+      <img src="assets/brand/logo-simbolo-claro.svg" width="40" height="40" alt="">
+      <strong style="font-family:Manrope;font-size:17px">Clube Investvida</strong>
     </div>
     <div>
-      <h1 class="font-head font-bold text-3xl leading-tight">Proteção e patrimônio,<br>com gestão inteligente.</h1>
-      <p class="text-blue-200 mt-3 text-sm max-w-sm">Sistema de gestão de seguros de pessoas — Vida, Previdência, Saúde, Viagem e Renda.</p>
+      <h1>Proteção e patrimônio,<br>com gestão inteligente.</h1>
+      <p style="color:#9FB4CC;margin-top:12px;max-width:22rem">Sistema de gestão para seguros de pessoas — Vida, Previdência, Saúde, Viagem e Renda.</p>
     </div>
-    <div class="text-blue-300 text-xs">© 2026 Clube Investvida Corretora de Seguros</div>
+    <div class="small" style="color:#7E93AC">© 2026 Clube Investvida Corretora de Seguros</div>
   </div>
-  <!-- Lado formulário -->
-  <div class="flex items-center justify-center p-6">
-    <div class="w-full max-w-sm">
-      <div class="md:hidden flex items-center gap-2 mb-6"><div class="w-9 h-9 rounded-md bg-navy text-white flex items-center justify-center font-head font-bold">CI</div><span class="font-head font-bold text-navy">Clube Investvida</span></div>
-      <h2 class="font-head font-bold text-2xl text-navy">Entrar</h2>
-      <p class="text-sm text-slate-500 mb-6">Acesse o painel da corretora.</p>
 
-      <form id="fLogin" class="space-y-4">
-        <div><label class="text-xs font-semibold text-slate-600">E-mail</label>
-          <input type="email" class="inp w-full mt-1" placeholder="voce@clubeinvestvida.com" value="cscorretor@gmail.com"></div>
-        <div><label class="text-xs font-semibold text-slate-600">Senha</label>
-          <input type="password" class="inp w-full mt-1" placeholder="••••••••"></div>
-        <div class="flex items-center justify-between text-sm">
-          <label class="flex items-center gap-2 text-slate-600"><input type="checkbox" class="accent-navy"> Lembrar</label>
-          <a href="#" class="text-navy2 font-medium">Esqueci a senha</a>
+  <!-- Formulário -->
+  <div class="formcol">
+    <div class="box">
+      <img src="assets/brand/logo-horizontal.svg" alt="Clube Investvida — Corretora de Seguros" style="height:44px;margin-bottom:24px">
+
+      <!-- etapa 1 -->
+      <form id="fLogin" novalidate>
+        <h1 class="h1" style="font-size:22px">Entrar</h1>
+        <p class="lead" style="margin-bottom:18px">Acesse o painel da corretora.</p>
+        <div id="loginErr" class="alert alert-error mb16" style="display:none" role="alert">Credenciais inválidas. Tente novamente.</div>
+        <div class="field">
+          <label class="label" for="email">E-mail</label>
+          <input class="input" id="email" type="email" autocomplete="username" placeholder="voce@clubeinvestvida.com">
         </div>
-        <button class="w-full bg-navy text-white py-2.5 rounded-md font-semibold hover:bg-[#00284c]">Entrar</button>
+        <div class="field">
+          <label class="label" for="senha">Senha</label>
+          <input class="input" id="senha" type="password" autocomplete="current-password" placeholder="••••••••">
+        </div>
+        <div class="between small mb16">
+          <label class="row center gap8" style="gap:6px"><input type="checkbox"> Lembrar</label>
+          <a href="#">Esqueci a senha</a>
+        </div>
+        <button class="btn btn-primary btn-block" id="btnEntrar" type="submit">Entrar</button>
       </form>
 
-      <!-- 2FA (aparece após "entrar") -->
-      <form id="f2fa" class="space-y-4 hidden">
-        <p class="text-sm text-slate-600">Digite o código de 6 dígitos do seu app autenticador.</p>
-        <div class="flex gap-2 justify-between" id="otp"></div>
-        <button class="w-full bg-navy text-white py-2.5 rounded-md font-semibold hover:bg-[#00284c]">Confirmar</button>
-        <button type="button" id="volta" class="w-full text-slate-500 text-sm">‹ Voltar</button>
+      <!-- etapa 2FA -->
+      <form id="f2fa" style="display:none" novalidate>
+        <h1 class="h1" style="font-size:22px">Verificação</h1>
+        <p class="lead" style="margin-bottom:18px">Digite o código de 6 dígitos do seu app autenticador.</p>
+        <div class="otp mb16" id="otp" role="group" aria-label="Código de verificação"></div>
+        <button class="btn btn-primary btn-block" type="submit">Confirmar</button>
+        <button class="btn btn-ghost btn-block mt8" type="button" id="volta">‹ Voltar</button>
       </form>
 
-      <p class="text-xs text-slate-400 mt-6 text-center">Protegido por verificação em duas etapas (2FA).</p>
+      <p class="small faint mt16" style="text-align:center">Protegido por verificação em duas etapas (2FA).</p>
     </div>
   </div>
 </div>
+
 <script>
-// monta 6 caixinhas de OTP
-const otp=document.getElementById('otp');
-for(let i=0;i<6;i++){const c=document.createElement('input');c.maxLength=1;c.className='inp w-11 text-center text-lg';c.inputMode='numeric';
-  c.oninput=()=>{if(c.value&&c.nextSibling)c.nextSibling.focus()};otp.appendChild(c);}
-document.getElementById('fLogin').addEventListener('submit',e=>{e.preventDefault();
-  document.getElementById('fLogin').classList.add('hidden');document.getElementById('f2fa').classList.remove('hidden');otp.firstChild.focus();});
-document.getElementById('volta').onclick=()=>{document.getElementById('f2fa').classList.add('hidden');document.getElementById('fLogin').classList.remove('hidden');};
-document.getElementById('f2fa').addEventListener('submit',e=>{e.preventDefault();window.location.href='dashboard.html';});
+var otp=document.getElementById('otp');
+for(var i=0;i<6;i++){var c=document.createElement('input');c.className='input';c.maxLength=1;c.inputMode='numeric';c.setAttribute('aria-label','Dígito '+(i+1));
+  c.addEventListener('input',function(e){if(e.target.value&&e.target.nextSibling)e.target.nextSibling.focus();});otp.appendChild(c);}
+document.getElementById('fLogin').addEventListener('submit',function(e){
+  e.preventDefault();
+  var b=document.getElementById('btnEntrar');
+  b.innerHTML='<span class="spinner"></span> Entrando…';b.disabled=true;   // estado de carregamento
+  setTimeout(function(){
+    document.getElementById('fLogin').style.display='none';
+    document.getElementById('f2fa').style.display='block';
+    otp.firstChild.focus();
+  },650);
+});
+document.getElementById('volta').onclick=function(){
+  document.getElementById('f2fa').style.display='none';
+  var f=document.getElementById('fLogin');f.style.display='block';
+  var b=document.getElementById('btnEntrar');b.innerHTML='Entrar';b.disabled=false;
+};
+document.getElementById('f2fa').addEventListener('submit',function(e){e.preventDefault();window.location.href='dashboard.html';});
 </script>
-</body></html>
+</body>
+</html>

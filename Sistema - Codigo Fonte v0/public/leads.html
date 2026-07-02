@@ -1,93 +1,47 @@
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
 <title>Leads / CRM — Clube Investvida</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{navy:"#003461",navy2:"#004B87",orange:"#FF6B00",ink:"#1A1C1E",line:"#E2E8F0",surface:"#F4F7F9"},fontFamily:{head:["Manrope"],body:["Inter"]}}}}</script>
-<style>
- body{font-family:"Inter",sans-serif;background:#F4F7F9;color:#1A1C1E}.font-head{font-family:"Manrope",sans-serif}
- .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
- .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
- .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
- .card{background:#fff;border:1px solid #E2E8F0;border-radius:.75rem}
- .chip{font-size:.66rem;font-weight:600;padding:.1rem .45rem;border-radius:999px}
- .inp{border:1px solid #E2E8F0;border-radius:.5rem;padding:.5rem .7rem;font-size:.9rem;background:#fff}
-</style>
-<style>.col{min-width:230px;width:230px}.lead{background:#fff;border:1px solid #E2E8F0;border-radius:.6rem;padding:.7rem;cursor:grab}</style>
-</head><body>
-<div class="flex min-h-screen">
-  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
-    <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
-      <div class="w-9 h-9 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
-      <div><div class="font-head font-bold leading-none">Clube Investvida</div>
-      <div class="text-[11px] text-blue-200 mt-1">Seguros de Pessoas</div></div>
-    </div>
-    <nav class="nav p-3 space-y-1 flex-1">
-      <a href="dashboard.html" data-k="dash"><span>▦</span> Dashboard</a>
-      <a href="clientes.html" data-k="cli"><span>◉</span> Clientes</a>
-      <a href="apolice-pessoas.html" data-k="apo"><span>❤</span> Apólices</a>
-      <a href="leads.html" data-k="leads"><span>◔</span> Leads / CRM</a>
-      <a href="financeiro.html" data-k="fin"><span>$</span> Financeiro</a>
-      <a href="chamados.html" data-k="cham"><span>◷</span> Chamados</a>
-      <a href="cofre.html" data-k="cofre"><span>⛁</span> Cofre Digital</a>
-      <a href="configuracoes.html" data-k="cfg"><span>⚙</span> Configurações</a>
-    </nav>
-    <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
-  </aside>
-  <div class="flex-1 flex flex-col">
-    <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
-      <input class="inp flex-1 max-w-md" placeholder="Buscar lead…">
-      <button class="ml-auto bg-white border border-line px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-2">
-        <span class="text-orange">⟳</span> Importar Google Contatos</button>
-      <button class="bg-navy text-white px-4 py-2 rounded-md text-sm font-semibold">+ Novo lead</button>
-    </header>
-    <main class="p-5">
-      <div class="flex items-end justify-between flex-wrap gap-3 mb-4">
-        <div><h1 class="text-2xl font-head font-bold text-navy">Funil de Leads</h1>
-          <p class="text-sm text-slate-500">Da captação ao fechamento — com qualificação automática (ICP).</p></div>
-        <div class="flex gap-3 text-center">
-          <div class="card px-4 py-2"><div class="text-xs text-slate-500">Conversão</div><div class="font-head font-bold text-navy">4,2%</div></div>
-          <div class="card px-4 py-2"><div class="text-xs text-slate-500">Novos (hoje)</div><div class="font-head font-bold text-navy">24</div></div>
-          <div class="card px-4 py-2"><div class="text-xs text-slate-500">Em proposta</div><div class="font-head font-bold text-navy">R$ 1,2M</div></div>
-        </div>
+<style>.board{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}.col{min-width:236px;width:236px}
+.lead{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:11px;margin-bottom:8px;cursor:grab}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}</style></head><body>
+<h2 class="sr-only">Funil de leads do CRM</h2>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><img src="assets/brand/logo-simbolo-claro.svg" width="34" height="34" alt="">
+    <div><div class="bname">Clube Investvida</div><div class="btag">Corretora de Seguros</div></div></div>
+  <nav class="nav">
+    <a href="dashboard.html"><span class="ico">▦</span> Dashboard</a>
+    <a href="clientes.html"><span class="ico">◉</span> Clientes</a>
+    <a href="apolice-pessoas.html"><span class="ico">❤</span> Apólices</a>
+    <a href="leads.html" class="on" aria-current="page"><span class="ico">◔</span> Leads / CRM</a>
+    <a href="chamados.html"><span class="ico">◷</span> Chamados</a>
+    <a href="financeiro.html"><span class="ico">$</span> Financeiro</a>
+    <a href="cofre.html"><span class="ico">⛁</span> Cofre Digital</a>
+    <a href="configuracoes.html"><span class="ico">⚙</span> Configurações</a>
+  </nav>
+  <div class="foot">v0 · protótipo</div>
+</aside>
+  <div class="content">
+    <header class="topbar"><input class="input flex1" style="max-width:360px" placeholder="Buscar lead…"><button class="btn btn-ghost" style="margin-left:auto"><span style="color:var(--orange)">⟳</span> Importar Google Contatos</button><a href="campanhas.html" class="btn btn-ghost">Campanhas</a><a href="novo-lead.html" class="btn btn-primary">+ Novo lead</a></header>
+    <main class="main">
+      <div class="between wrap mb16"><div><h1 class="h1">Funil de Leads</h1><p class="lead">Da captação ao fechamento, com qualificação por ICP.</p></div>
+        <div class="row gap8"><div class="kpi" style="padding:8px 14px"><div class="k">Conversão</div><div class="v" style="font-size:18px">4,2%</div></div>
+        <div class="kpi" style="padding:8px 14px"><div class="k">Novos hoje</div><div class="v" style="font-size:18px">24</div></div>
+        <div class="kpi" style="padding:8px 14px"><div class="k">Em proposta</div><div class="v" style="font-size:18px">R$ 1,2M</div></div></div>
       </div>
-      <div class="flex gap-4 overflow-x-auto pb-4" id="board"></div>
+      <div class="board" id="board"></div>
     </main>
   </div>
 </div>
 <script>
-document.querySelectorAll('.nav a').forEach(a=>{if(a.dataset.k==='leads')a.classList.add('on')});
-const scoreCor={Quente:'bg-red-100 text-red-700',Morno:'bg-amber-100 text-amber-700',Frio:'bg-sky-100 text-sky-700'};
-const fonteCor='bg-slate-100 text-slate-600';
-const etapas=[
- {t:'Novos',cor:'#94a3b8',leads:[
-   {n:'Ricardo Mendonça',f:'Landing Page',r:'Vida',s:'Quente'},
-   {n:'Ana Silva',f:'Orgânico',r:'Previdência',s:'Morno'}]},
- {t:'Qualificados',cor:'#004B87',leads:[
-   {n:'Marcelo Batista',f:'Instagram',r:'Saúde',s:'Quente'},
-   {n:'Júlia Prado',f:'Indicação',r:'Vida',s:'Morno'}]},
- {t:'Proposta',cor:'#7c3aed',leads:[
-   {n:'Fernanda Reis',f:'Indicação',r:'Previdência',s:'Quente'}]},
- {t:'Fechados',cor:'#1E7A3D',leads:[
-   {n:'Paulo Henrique',f:'Landing Page',r:'Vida',s:'Quente'}]},
- {t:'Perdidos',cor:'#B3261E',leads:[
-   {n:'Lista fria 03',f:'Lista',r:'—',s:'Frio'}]},
-];
-document.getElementById('board').innerHTML=etapas.map(e=>`
- <div class="col">
-  <div class="flex items-center justify-between mb-2">
-    <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:${e.cor}"></span>
-      <span class="font-head font-semibold text-sm">${e.t}</span></div>
-    <span class="chip bg-slate-100 text-slate-500">${e.leads.length}</span></div>
-  <div class="space-y-2">${e.leads.map(l=>`
-    <div class="lead">
-      <div class="flex items-center justify-between">
-        <span class="font-medium text-sm">${l.n}</span>
-        <span class="chip ${scoreCor[l.s]}">${l.s}</span></div>
-      <div class="text-xs text-slate-400 mt-1">${l.f}</div>
-      <div class="mt-2 flex items-center justify-between">
-        <span class="chip bg-blue-50 text-navy2">${l.r}</span>
-        <div class="flex gap-1 text-slate-400 text-xs"><span>📞</span><span>✉</span><span>⋯</span></div></div>
-    </div>`).join('')}</div>
- </div>`).join('');
-</script>
-</body></html>
+var etapas=[{t:'Novos',c:'#94a3b8',l:[{n:'Ricardo Mendonça',f:'Landing Page',r:'Vida',s:'Quente'},{n:'Ana Silva',f:'Orgânico',r:'Previdência',s:'Morno'}]},
+{t:'Qualificados',c:'#005092',l:[{n:'Marcelo Batista',f:'Instagram',r:'Saúde',s:'Quente'},{n:'Júlia Prado',f:'Indicação',r:'Vida',s:'Morno'}]},
+{t:'Proposta',c:'#7c3aed',l:[{n:'Fernanda Reis',f:'Indicação',r:'Previdência',s:'Quente'}]},
+{t:'Fechados',c:'#1E7A3D',l:[{n:'Paulo Henrique',f:'Landing Page',r:'Vida',s:'Quente'}]},
+{t:'Perdidos',c:'#B3261E',l:[{n:'Lista fria 03',f:'Lista',r:'—',s:'Frio'}]}];
+var sc={Quente:'chip-danger',Morno:'chip-warn',Frio:'chip-info'};
+document.getElementById('board').innerHTML=etapas.map(function(e){return '<div class="col"><div class="between mb16"><span class="row center gap8"><span class="dot" style="background:'+e.c+'"></span><strong class="small">'+e.t+'</strong></span><span class="chip chip-neutral">'+e.l.length+'</span></div>'+
+ e.l.map(function(l){return '<div class="lead"><div class="between"><span style="font-weight:500;font-size:14px">'+l.n+'</span><span class="chip '+sc[l.s]+'">'+l.s+'</span></div><div class="small faint mt8">'+l.f+'</div><div class="between mt8"><span class="chip chip-info">'+l.r+'</span><span class="faint small">📞 ✉ ⋯</span></div></div>';}).join('')+'</div>';}).join('');
+</script></body></html>

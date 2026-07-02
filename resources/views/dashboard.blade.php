@@ -4,29 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel — Clube Investvida</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="{{ asset('assets/brand/favicon.svg') }}" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
+    <style>
+        .nav-disabled{display:flex;gap:11px;align-items:center;padding:9px 12px;border-radius:var(--r);font-size:14px;color:#718198;cursor:not-allowed}
+        .welcome-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+        .profile-line{display:flex;align-items:center;gap:12px}
+        @media(max-width:760px){.welcome-grid{grid-template-columns:1fr}}
+    </style>
 </head>
-<body class="min-h-screen bg-slate-100 text-slate-900">
-<main class="mx-auto max-w-3xl p-6 md:p-12">
-    <section class="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
-        <div class="mb-6 flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#FF6B00] font-bold text-white">CI</div>
-            <div>
-                <p class="text-sm text-slate-500">Clube Investvida</p>
-                <h1 class="text-2xl font-bold text-[#003461]">Autenticação concluída</h1>
-            </div>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="brand">
+            <img src="{{ asset('assets/brand/logo-simbolo-claro.svg') }}" width="34" height="34" alt="">
+            <div><div class="bname">Clube Investvida</div><div class="btag">Corretora de Seguros</div></div>
         </div>
+        <nav class="nav" aria-label="Navegação principal">
+            <a href="{{ route('dashboard') }}" class="on" aria-current="page"><span class="ico">▦</span> Dashboard</a>
+            <a href="{{ route('clientes.index') }}"><span class="ico">◉</span> Clientes</a>
+            <span class="nav-disabled"><span class="ico">❤</span> Apólices</span>
+            <span class="nav-disabled"><span class="ico">◔</span> Leads / CRM</span>
+            <span class="nav-disabled"><span class="ico">◷</span> Chamados</span>
+            <span class="nav-disabled"><span class="ico">$</span> Financeiro</span>
+            <span class="nav-disabled"><span class="ico">⛁</span> Cofre Digital</span>
+            <span class="nav-disabled"><span class="ico">⚙</span> Configurações</span>
+        </nav>
+        <div class="foot">Ambiente de homologação</div>
+    </aside>
 
-        <p class="text-slate-600">Olá, {{ auth()->user()->nome }}. Seu perfil é <strong>{{ auth()->user()->perfil }}</strong>.</p>
-        <p class="mt-2 text-sm text-slate-500">O painel completo será ligado aos dados reais na próxima fatia.</p>
+    <div class="content">
+        <header class="topbar">
+            <img src="{{ asset('assets/brand/logo-horizontal.svg') }}" alt="Clube Investvida — Corretora de Seguros" style="height:30px">
+            <div class="avatar mla" title="{{ auth()->user()->nome }}">{{ mb_strtoupper(mb_substr(auth()->user()->nome, 0, 2)) }}</div>
+        </header>
 
-        <form method="POST" action="{{ url('/logout') }}" class="mt-8">
-            @csrf
-            <button type="submit" class="rounded-md bg-[#003461] px-4 py-2 text-sm font-semibold text-white hover:bg-[#00284c]">
-                Sair
-            </button>
-        </form>
-    </section>
-</main>
+        <main class="main">
+            <div class="mb16">
+                <h1 class="h1">Dashboard</h1>
+                <p class="lead">Bem-vindo ao sistema de gestão da Clube Investvida.</p>
+            </div>
+
+            <div class="welcome-grid">
+                <section class="card">
+                    <div class="profile-line">
+                        <div class="avatar" style="width:48px;height:48px;font-size:15px">{{ mb_strtoupper(mb_substr(auth()->user()->nome, 0, 2)) }}</div>
+                        <div>
+                            <h2 class="h2">Autenticação concluída</h2>
+                            <p class="lead">Olá, {{ auth()->user()->nome }}. Seu perfil é <strong>{{ auth()->user()->perfil }}</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="alert alert-ok mt16">✓ Conexão segura e sessão autenticada.</div>
+                </section>
+
+                <section class="card">
+                    <h2 class="h2">Acesso rápido</h2>
+                    <p class="lead mb16">Continue pelos módulos já ligados ao banco.</p>
+                    <a href="{{ route('clientes.index') }}" class="btn btn-primary btn-block">Consultar clientes</a>
+                    @can('create', App\Models\Cliente::class)
+                        <a href="{{ route('clientes.create') }}" class="btn btn-action btn-block mt8">Cadastrar cliente</a>
+                    @endcan
+                </section>
+            </div>
+
+            <section class="card mt16">
+                <div class="between wrap">
+                    <div>
+                        <h2 class="h2">Próximos módulos</h2>
+                        <p class="lead">Apólices, leads, chamados, financeiro e cofre serão ligados gradualmente aos dados reais.</p>
+                    </div>
+                    <span class="chip chip-info">Em desenvolvimento</span>
+                </div>
+            </section>
+
+            <form method="POST" action="{{ url('/logout') }}" class="mt16">
+                @csrf
+                <button type="submit" class="btn btn-ghost">Sair com segurança</button>
+            </form>
+        </main>
+    </div>
+</div>
 </body>
 </html>

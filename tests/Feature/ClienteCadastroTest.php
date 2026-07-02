@@ -20,7 +20,10 @@ class ClienteCadastroTest extends TestCase
             ->get('/clientes/novo')
             ->assertOk()
             ->assertSee('Cadastro de Cliente')
-            ->assertSee('Finalizar cadastro');
+            ->assertSee('Finalizar cadastro')
+            ->assertSee('profissaoList', false)
+            ->assertSee('assets/css/laravel-utilities.css', false)
+            ->assertDontSee('cdn.tailwindcss.com', false);
     }
 
     public function test_cadastra_cliente_com_relacionamentos_e_auditoria_sem_cpf_em_texto_puro(): void

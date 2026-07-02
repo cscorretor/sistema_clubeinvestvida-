@@ -1,345 +1,175 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
 <title>Cadastro de Cliente — Clube Investvida</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script>
-tailwind.config = {
-  theme: { extend: {
-    colors: { navy:'#003461', navy2:'#004B87', orange:'#FF6B00', ink:'#1A1C1E', line:'#E2E8F0', surface:'#F4F7F9' },
-    fontFamily: { head:['Manrope','sans-serif'], body:['Inter','sans-serif'] }
-  } }
-}
-</script>
 <style>
-  body{font-family:'Inter',sans-serif;background:#F4F7F9;color:#1A1C1E}
-  h1,h2,h3,.font-head{font-family:'Manrope',sans-serif}
-  .lbl{font-size:.72rem;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:#475569}
-  .inp{width:100%;border:1px solid #E2E8F0;border-radius:.375rem;padding:.6rem .75rem;font-size:.92rem;background:#fff;transition:border .15s,box-shadow .15s}
-  .inp:focus{outline:none;border-color:#003461;box-shadow:0 0 0 3px rgba(0,75,135,.12)}
-  .inp.ok{border-color:#1E7A3D;box-shadow:0 0 0 3px rgba(30,122,61,.10)}
-  .inp.err{border-color:#B3261E;box-shadow:0 0 0 3px rgba(179,38,30,.10)}
-  .card{background:#fff;border:1px solid #E2E8F0;border-radius:.75rem}
-  .chip{font-size:.7rem;font-weight:600;padding:.15rem .5rem;border-radius:999px}
-  .btn-primary{background:#003461;color:#fff}.btn-primary:hover{background:#00284c}
-  .btn-ghost{background:#fff;border:1px solid #E2E8F0}.btn-ghost:hover{background:#f8fafc}
-  .step-n{width:1.6rem;height:1.6rem;border-radius:999px;background:#003461;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
-  .hint{font-size:.72rem}
-.nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
-  .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
-  .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
-  .chip{font-size:.66rem;font-weight:600;padding:.1rem .45rem;border-radius:999px}
-</style>
-</head>
-<body>
-<div class="flex min-h-screen">
-  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
-    <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
-      <div class="w-9 h-9 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
-      <div><div class="font-head font-bold leading-none">Clube Investvida</div>
-      <div class="text-[11px] text-blue-200 mt-1">Seguros de Pessoas</div></div>
-    </div>
-    <nav class="nav p-3 space-y-1 flex-1">
-      <a href="dashboard.html"><span>▦</span> Dashboard</a>
-      <a href="clientes.html" class="on"><span>◉</span> Clientes</a>
-      <a href="apolice-pessoas.html"><span>❤</span> Apólices</a>
-      <a href="leads.html"><span>◔</span> Leads / CRM</a>
-      <a href="chamados.html"><span>◷</span> Chamados</a>
-      <a href="financeiro.html"><span>$</span> Financeiro</a>
-      <a href="cofre.html"><span>⛁</span> Cofre Digital</a>
-      <a href="configuracoes.html"><span>⚙</span> Configurações</a>
-    </nav>
-    <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
-  </aside>
-  <div class="flex-1 flex flex-col">
-    <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
-      <a href="clientes.html" class="text-sm text-slate-500 hover:text-navy">‹ Clientes</a>
-      <div class="ml-auto w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-semibold">AD</div>
-    </header>
-
-<main class="max-w-5xl mx-auto px-5 py-6">
-
-  <div class="flex items-end justify-between mb-5 flex-wrap gap-3">
-    <div>
-      <h1 class="text-2xl font-bold text-navy">Cadastro de Cliente</h1>
-      <p class="text-sm text-slate-500">Preenchimento inteligente: CEP e validações automáticas para você digitar menos.</p>
-    </div>
-    <!-- Toggle PF / PJ -->
-    <div class="inline-flex bg-white border border-line rounded-lg p-1">
-      <button id="btnPF" class="px-4 py-1.5 rounded-md text-sm font-semibold bg-navy text-white">Pessoa Física</button>
-      <button id="btnPJ" class="px-4 py-1.5 rounded-md text-sm font-semibold text-slate-600">Pessoa Jurídica</button>
-    </div>
+ .sec{margin-bottom:16px}
+ .stepn{width:26px;height:26px;border-radius:var(--pill);background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:8px}
+ .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+ .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+ @media(max-width:720px){.grid2,.grid3{grid-template-columns:1fr}}
+ .toggle{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:4px}
+ .toggle button{border:0;background:none;padding:6px 16px;border-radius:var(--r-sm);font:600 14px Inter;color:var(--muted);cursor:pointer}
+ .toggle button.on{background:var(--navy);color:#fff}
+</style></head><body>
+<h2 class="sr-only">Formulário de cadastro de cliente com preenchimento automático de CEP e validação de CPF</h2>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">
+    <img src="assets/brand/logo-simbolo-claro.svg" width="34" height="34" alt="">
+    <div><div class="bname">Clube Investvida</div><div class="btag">Corretora de Seguros</div></div>
   </div>
-
-  <form id="form" class="space-y-5">
-
-    <!-- 1. Dados básicos -->
-    <section class="card p-5">
-      <div class="flex items-center gap-2 mb-4"><span class="step-n">1</span><h2 class="font-head font-semibold text-navy">Dados Básicos</h2></div>
-
-      <div class="grid md:grid-cols-2 gap-4">
-        <div class="md:col-span-2">
-          <label class="lbl" id="lblNome">Nome completo</label>
-          <input class="inp mt-1" id="nome" placeholder="Nome do cliente">
-        </div>
-
-        <div>
-          <label class="lbl" id="lblDoc">CPF</label>
-          <input class="inp mt-1" id="cpf" inputmode="numeric" placeholder="000.000.000-00">
-          <p class="hint mt-1 text-slate-400" id="cpfMsg">Validação automática ao digitar.</p>
-        </div>
-
-        <div id="wrapNasc">
-          <label class="lbl">Data de nascimento</label>
-          <input type="date" class="inp mt-1" id="nascimento">
-        </div>
-
-        <div>
-          <label class="lbl">Estado civil</label>
-          <select class="inp mt-1" id="estadoCivil">
-            <option value="">Selecione…</option>
-            <option>Solteiro</option><option>Casado</option><option>Divorciado</option>
-            <option>Viúvo</option><option>União Estável</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="lbl">Sexo</label>
-          <select class="inp mt-1" id="sexo">
-            <option value="">Selecione…</option><option>Feminino</option><option>Masculino</option><option>Outro</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="lbl">Profissão</label>
-          <input class="inp mt-1" id="profissao" placeholder="Ex.: Professor">
-        </div>
-
-        <div>
-          <label class="lbl">Faixa de renda</label>
-          <select class="inp mt-1" id="faixaRenda">
-            <option value="">Selecione…</option>
-            <option>Até R$ 2.500</option><option>De R$ 2.500,01 a R$ 5.000</option>
-            <option>De R$ 5.000,01 a R$ 10.000</option><option>Acima de R$ 10.000</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="lbl">Tipo de cliente</label>
-          <select class="inp mt-1" id="tipoCliente">
-            <option>Prospect</option><option>Efetivo</option><option>Relacionamento</option>
-          </select>
-        </div>
-        <div>
-          <label class="lbl">Origem / indicação</label>
-          <input class="inp mt-1" id="intermedio" placeholder="Ex.: Google, indicação de cliente">
+  <nav class="nav">
+    <a href="dashboard.html"><span class="ico">▦</span> Dashboard</a>
+    <a href="clientes.html" class="on" aria-current="page"><span class="ico">◉</span> Clientes</a>
+    <a href="apolice-pessoas.html"><span class="ico">❤</span> Apólices</a>
+    <a href="leads.html"><span class="ico">◔</span> Leads / CRM</a>
+    <a href="chamados.html"><span class="ico">◷</span> Chamados</a>
+    <a href="financeiro.html"><span class="ico">$</span> Financeiro</a>
+    <a href="cofre.html"><span class="ico">⛁</span> Cofre Digital</a>
+    <a href="configuracoes.html"><span class="ico">⚙</span> Configurações</a>
+  </nav>
+  <div class="foot">v0 · protótipo</div>
+</aside>
+  <div class="content">
+    <header class="topbar"><a href="clientes.html" class="muted">‹ Clientes</a><div class="avatar mla">AD</div></header>
+    <main class="main">
+      <div class="between wrap mb16">
+        <div><h1 class="h1">Cadastro de Cliente</h1><p class="lead">Preenchimento inteligente: CEP e validações automáticas.</p></div>
+        <div class="toggle" role="tablist" aria-label="Tipo de pessoa">
+          <button id="btnPF" class="on" type="button">Pessoa Física</button>
+          <button id="btnPJ" type="button">Pessoa Jurídica</button>
         </div>
       </div>
 
-      <!-- Cônjuge (condicional) -->
-      <div id="conjugeBox" class="mt-4 hidden">
-        <div class="rounded-lg bg-blue-50/60 border border-blue-100 p-4">
-          <div class="flex items-center gap-2 mb-3">
-            <span class="chip bg-navy text-white">Casado</span>
-            <h3 class="font-head font-semibold text-navy text-sm">Dados do Cônjuge</h3>
+      <div id="okMsg" class="alert alert-ok mb16" style="display:none" role="status">✓ Cadastro válido! (protótipo — gravação entra com o backend)</div>
+
+      <form id="form" novalidate>
+        <!-- 1 -->
+        <section class="card sec">
+          <h2 class="h2 mb16"><span class="stepn">1</span>Dados Básicos</h2>
+          <div class="grid2">
+            <div class="field" style="grid-column:1/-1"><label class="label" id="lblNome" for="nome">Nome completo</label><input class="input" id="nome"></div>
+            <div class="field"><label class="label" id="lblDoc" for="cpf">CPF</label><input class="input" id="cpf" inputmode="numeric" placeholder="000.000.000-00"><span class="hint" id="cpfMsg">Validação automática ao digitar.</span></div>
+            <div class="field" id="wrapNasc"><label class="label" for="nasc">Data de nascimento</label><input class="input" id="nasc" type="date"></div>
+            <div class="field"><label class="label" for="ec">Estado civil</label><select class="select" id="ec"><option value="">Selecione…</option><option>Solteiro</option><option>Casado</option><option>Divorciado</option><option>Viúvo</option><option>União Estável</option></select></div>
+            <div class="field"><label class="label" for="sexo">Sexo</label><select class="select" id="sexo"><option value="">Selecione…</option><option>Feminino</option><option>Masculino</option><option>Outro</option></select></div>
+            <div class="field ac"><label class="label" for="prof">Profissão</label>
+              <input class="input" id="prof" autocomplete="off" placeholder="Digite 3 letras…" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="profList">
+              <div id="profList" class="ac-list" role="listbox" style="display:none"></div>
+            </div>
+            <div class="field"><label class="label" for="fr">Faixa de renda</label><select class="select" id="fr"><option value="">Selecione…</option><option>Até R$ 2.500</option><option>De R$ 2.500,01 a R$ 5.000</option><option>De R$ 5.000,01 a R$ 10.000</option><option>Acima de R$ 10.000</option></select></div>
+            <div class="field"><label class="label" for="tc">Tipo de cliente</label><select class="select" id="tc"><option>Prospect</option><option>Efetivo</option><option>Relacionamento</option></select></div>
+            <div class="field"><label class="label" for="orig">Origem / indicação</label><input class="input" id="orig" placeholder="Ex.: Google, indicação"></div>
           </div>
-          <div class="grid md:grid-cols-3 gap-4">
-            <div><label class="lbl">Nome do cônjuge</label><input class="inp mt-1" id="conjNome"></div>
-            <div><label class="lbl">CPF do cônjuge</label><input class="inp mt-1" id="conjCpf" inputmode="numeric" placeholder="000.000.000-00"></div>
-            <div><label class="lbl">Nascimento</label><input type="date" class="inp mt-1" id="conjNasc"></div>
+          <div id="conjBox" class="mt16" style="display:none">
+            <div class="card" style="background:#F0F6FC;border-color:#D6E4F2">
+              <div class="row center gap8 mb16"><span class="chip chip-info">Casado</span><strong class="font-head">Dados do Cônjuge</strong></div>
+              <div class="grid3"><div class="field"><label class="label">Nome</label><input class="input"></div><div class="field"><label class="label">CPF</label><input class="input" inputmode="numeric"></div><div class="field"><label class="label">Nascimento</label><input class="input" type="date"></div></div>
+            </div>
           </div>
+          <label class="row center gap8 mt16" style="gap:8px;font-size:14px;color:var(--muted)"><input type="checkbox" id="temCnh"> Possui CNH</label>
+          <div id="cnhBox" class="grid3 mt8" style="display:none"><div class="field"><label class="label">Nº registro</label><input class="input"></div><div class="field"><label class="label">Categoria</label><input class="input" placeholder="B"></div><div class="field"><label class="label">Validade</label><input class="input" type="date"></div></div>
+        </section>
+
+        <!-- 2 -->
+        <section class="card sec">
+          <div class="between mb16"><h2 class="h2"><span class="stepn">2</span>Endereços</h2><button type="button" id="addEnd" class="btn btn-ghost" style="padding:6px 12px;color:var(--orange)">+ Adicionar</button></div>
+          <div id="ends"></div>
+        </section>
+
+        <!-- 3 -->
+        <section class="card sec">
+          <h2 class="h2 mb16"><span class="stepn">3</span>Telefones e E-mails</h2>
+          <div class="grid2">
+            <div><div class="between mb16"><span class="label">Telefones</span><button type="button" id="addTel" class="btn btn-ghost" style="padding:4px 10px;color:var(--orange)">+ Add</button></div><div id="tels"></div></div>
+            <div><div class="between mb16"><span class="label">E-mails</span><button type="button" id="addEml" class="btn btn-ghost" style="padding:4px 10px;color:var(--orange)">+ Add</button></div><div id="emls"></div></div>
+          </div>
+        </section>
+
+        <div class="between wrap" style="padding-bottom:40px">
+          <span class="small faint">Rascunho salvo automaticamente neste navegador.</span>
+          <div class="row gap8"><button type="button" id="draft" class="btn btn-ghost">Salvar rascunho</button><button type="submit" class="btn btn-primary">Finalizar cadastro →</button></div>
         </div>
-      </div>
-
-      <!-- CNH (toggle) -->
-      <div class="mt-4">
-        <label class="inline-flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
-          <input type="checkbox" id="temCnh" class="accent-navy w-4 h-4"> Possui CNH
-        </label>
-        <div id="cnhBox" class="hidden mt-3 grid md:grid-cols-4 gap-4">
-          <div><label class="lbl">Nº registro</label><input class="inp mt-1" id="cnhNumero"></div>
-          <div><label class="lbl">Categoria</label><input class="inp mt-1" id="cnhCat" placeholder="Ex.: B"></div>
-          <div><label class="lbl">Validade</label><input type="date" class="inp mt-1" id="cnhValidade"></div>
-          <div><label class="lbl">1ª habilitação</label><input type="date" class="inp mt-1" id="cnhPrimeira"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. Endereços -->
-    <section class="card p-5">
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-2"><span class="step-n">2</span><h2 class="font-head font-semibold text-navy">Endereços</h2></div>
-        <button type="button" id="addEnd" class="text-sm font-semibold text-orange hover:underline">+ Adicionar endereço</button>
-      </div>
-      <div id="enderecos" class="space-y-3"></div>
-    </section>
-
-    <!-- 3. Telefones & E-mails -->
-    <section class="card p-5">
-      <div class="flex items-center gap-2 mb-4"><span class="step-n">3</span><h2 class="font-head font-semibold text-navy">Telefones e E-mails</h2></div>
-      <div class="grid md:grid-cols-2 gap-5">
-        <div>
-          <div class="flex items-center justify-between mb-2"><span class="lbl">Telefones</span>
-            <button type="button" id="addTel" class="text-xs font-semibold text-orange hover:underline">+ Adicionar</button></div>
-          <div id="telefones" class="space-y-2"></div>
-        </div>
-        <div>
-          <div class="flex items-center justify-between mb-2"><span class="lbl">E-mails</span>
-            <button type="button" id="addEml" class="text-xs font-semibold text-orange hover:underline">+ Adicionar</button></div>
-          <div id="emails" class="space-y-2"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Ações -->
-    <div class="flex items-center justify-between flex-wrap gap-3 pb-10">
-      <p class="hint text-slate-400">Os dados são validados antes de salvar. Rascunho é guardado automaticamente neste navegador.</p>
-      <div class="flex gap-3">
-        <button type="button" id="btnDraft" class="btn-ghost px-5 py-2.5 rounded-md text-sm font-semibold">Salvar rascunho</button>
-        <button type="submit" class="btn-primary px-6 py-2.5 rounded-md text-sm font-semibold">Finalizar cadastro →</button>
-      </div>
-    </div>
-  </form>
-</main>
-
-<script>
-// ---------- Máscaras ----------
-const maskCPF = v => v.replace(/\D/g,'').slice(0,11)
-  .replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
-const maskCEP = v => v.replace(/\D/g,'').slice(0,8).replace(/(\d{5})(\d)/,'$1-$2');
-const maskFone = v => { v=v.replace(/\D/g,'').slice(0,11);
-  return v.length>10 ? v.replace(/(\d{2})(\d{5})(\d{4})/,'($1) $2-$3')
-                     : v.replace(/(\d{2})(\d{4})(\d{0,4})/,'($1) $2-$3').trim(); };
-
-// ---------- Validação de CPF (algoritmo oficial, local) ----------
-function cpfValido(cpf){
-  cpf = cpf.replace(/\D/g,''); if(cpf.length!==11||/^(\d)\1{10}$/.test(cpf)) return false;
-  let s=0; for(let i=0;i<9;i++) s+=parseInt(cpf[i])*(10-i);
-  let d=(s*10)%11; if(d===10)d=0; if(d!==parseInt(cpf[9])) return false;
-  s=0; for(let i=0;i<10;i++) s+=parseInt(cpf[i])*(11-i);
-  d=(s*10)%11; if(d===10)d=0; return d===parseInt(cpf[10]);
-}
-function ligaCPF(input,msg){
-  input.addEventListener('input',()=>{ input.value=maskCPF(input.value);
-    const dig=input.value.replace(/\D/g,''); input.classList.remove('ok','err');
-    if(!dig){ if(msg){msg.textContent='Validação automática ao digitar.';msg.className='hint mt-1 text-slate-400';} return; }
-    if(dig.length<11){ if(msg){msg.textContent='Digite os 11 dígitos.';msg.className='hint mt-1 text-slate-400';} return; }
-    if(cpfValido(dig)){ input.classList.add('ok'); if(msg){msg.textContent='✓ CPF válido';msg.className='hint mt-1 text-green-700 font-medium';} }
-    else { input.classList.add('err'); if(msg){msg.textContent='✗ CPF inválido';msg.className='hint mt-1 text-red-700 font-medium';} }
-  });
-}
-ligaCPF(document.getElementById('cpf'), document.getElementById('cpfMsg'));
-ligaCPF(document.getElementById('conjCpf'), null);
-
-// ---------- PF / PJ ----------
-const btnPF=document.getElementById('btnPF'), btnPJ=document.getElementById('btnPJ');
-function setPessoa(pf){
-  btnPF.className='px-4 py-1.5 rounded-md text-sm font-semibold '+(pf?'bg-navy text-white':'text-slate-600');
-  btnPJ.className='px-4 py-1.5 rounded-md text-sm font-semibold '+(!pf?'bg-navy text-white':'text-slate-600');
-  document.getElementById('lblNome').textContent = pf?'Nome completo':'Razão social';
-  document.getElementById('lblDoc').textContent  = pf?'CPF':'CNPJ';
-  document.getElementById('wrapNasc').style.display = pf?'':'none';
-}
-btnPF.onclick=()=>setPessoa(true); btnPJ.onclick=()=>setPessoa(false);
-
-// ---------- Cônjuge condicional ----------
-document.getElementById('estadoCivil').addEventListener('change',e=>{
-  document.getElementById('conjugeBox').classList.toggle('hidden', e.target.value!=='Casado');
-});
-// ---------- CNH toggle ----------
-document.getElementById('temCnh').addEventListener('change',e=>{
-  document.getElementById('cnhBox').classList.toggle('hidden', !e.target.checked);
-});
-
-// ---------- Endereços (múltiplos) + ViaCEP ----------
-const elEnd=document.getElementById('enderecos');
-function novoEndereco(){
-  const i=document.createElement('div'); i.className='rounded-lg border border-line p-4 bg-surface/40';
-  i.innerHTML=`
-    <div class="flex items-center justify-between mb-3">
-      <label class="inline-flex items-center gap-2 text-xs text-slate-600">
-        <input type="radio" name="endPadrao" class="accent-navy"> Endereço padrão</label>
-      <button type="button" class="rmEnd text-xs text-red-600 hover:underline">Remover</button>
-    </div>
-    <div class="grid md:grid-cols-6 gap-3">
-      <div class="md:col-span-2"><label class="lbl">CEP</label>
-        <div class="relative"><input class="inp mt-1 cep" inputmode="numeric" placeholder="00000-000">
-        <span class="cepStatus absolute right-3 top-3 text-xs"></span></div></div>
-      <div class="md:col-span-3"><label class="lbl">Logradouro</label><input class="inp mt-1 logradouro" placeholder="Rua / Avenida"></div>
-      <div><label class="lbl">Número</label><input class="inp mt-1 numero"></div>
-      <div class="md:col-span-2"><label class="lbl">Bairro</label><input class="inp mt-1 bairro"></div>
-      <div class="md:col-span-2"><label class="lbl">Cidade</label><input class="inp mt-1 cidade"></div>
-      <div><label class="lbl">UF</label><input class="inp mt-1 uf" maxlength="2"></div>
-      <div><label class="lbl">Complemento</label><input class="inp mt-1 compl"></div>
-    </div>`;
-  const cep=i.querySelector('.cep'), st=i.querySelector('.cepStatus');
-  cep.addEventListener('input',()=>{ cep.value=maskCEP(cep.value); });
-  cep.addEventListener('blur',async()=>{
-    const d=cep.value.replace(/\D/g,''); if(d.length!==8) return;
-    st.textContent='buscando…'; st.className='cepStatus absolute right-3 top-3 text-xs text-slate-400';
-    try{
-      const r=await fetch(`https://viacep.com.br/ws/${d}/json/`); const j=await r.json();
-      if(j.erro){ st.textContent='não encontrado'; st.className='cepStatus absolute right-3 top-3 text-xs text-red-600'; return; }
-      i.querySelector('.logradouro').value=j.logradouro||'';
-      i.querySelector('.bairro').value=j.bairro||'';
-      i.querySelector('.cidade').value=j.localidade||'';
-      i.querySelector('.uf').value=j.uf||'';
-      st.textContent='✓'; st.className='cepStatus absolute right-3 top-3 text-xs text-green-700 font-semibold';
-      i.querySelector('.numero').focus();
-    }catch(e){ st.textContent='falha'; st.className='cepStatus absolute right-3 top-3 text-xs text-red-600'; }
-  });
-  i.querySelector('.rmEnd').onclick=()=>i.remove();
-  elEnd.appendChild(i);
-}
-document.getElementById('addEnd').onclick=novoEndereco;
-
-// ---------- Telefones / E-mails (múltiplos) ----------
-const elTel=document.getElementById('telefones'), elEml=document.getElementById('emails');
-function novoTel(){
-  const i=document.createElement('div'); i.className='flex gap-2';
-  i.innerHTML=`<select class="inp w-32"><option>Celular</option><option>WhatsApp</option><option>Residencial</option><option>Comercial</option></select>
-    <input class="inp fone flex-1" inputmode="numeric" placeholder="(00) 00000-0000">
-    <button type="button" class="rm px-3 text-red-600">✕</button>`;
-  const f=i.querySelector('.fone'); f.addEventListener('input',()=>f.value=maskFone(f.value));
-  i.querySelector('.rm').onclick=()=>i.remove(); elTel.appendChild(i);
-}
-function novoEml(){
-  const i=document.createElement('div'); i.className='flex gap-2';
-  i.innerHTML=`<input type="email" class="inp flex-1" placeholder="email@exemplo.com">
-    <button type="button" class="rm px-3 text-red-600">✕</button>`;
-  i.querySelector('.rm').onclick=()=>i.remove(); elEml.appendChild(i);
-}
-document.getElementById('addTel').onclick=novoTel;
-document.getElementById('addEml').onclick=novoEml;
-
-// ---------- Rascunho automático (localStorage) ----------
-const F=document.getElementById('form');
-function salvarRascunho(){ const d={}; F.querySelectorAll('input,select').forEach((el,ix)=>{ if(el.id) d[el.id]=el.type==='checkbox'?el.checked:el.value; });
-  localStorage.setItem('rascunhoCliente',JSON.stringify(d)); }
-F.addEventListener('input',()=>{ clearTimeout(window._t); window._t=setTimeout(salvarRascunho,800); });
-document.getElementById('btnDraft').onclick=()=>{ salvarRascunho(); alert('Rascunho salvo neste navegador.'); };
-(function restaura(){ const r=localStorage.getItem('rascunhoCliente'); if(!r) return;
-  try{ const d=JSON.parse(r); Object.entries(d).forEach(([k,v])=>{ const el=document.getElementById(k); if(!el)return; if(el.type==='checkbox')el.checked=v; else el.value=v;
-    if(k==='estadoCivil'&&v==='Casado')document.getElementById('conjugeBox').classList.remove('hidden');
-    if(k==='temCnh'&&v)document.getElementById('cnhBox').classList.remove('hidden'); }); }catch(e){} })();
-
-// ---------- Submit (validação) ----------
-F.addEventListener('submit',e=>{
-  e.preventDefault();
-  const cpf=document.getElementById('cpf').value.replace(/\D/g,'');
-  if(!document.getElementById('nome').value.trim()) return alert('Informe o nome do cliente.');
-  if(cpf && !cpfValido(cpf)) return alert('O CPF informado é inválido.');
-  alert('✓ Cadastro válido!\n\nNesta versão de protótipo os dados ainda não são gravados no banco — esse será o próximo passo (backend Laravel + MariaDB).');
-});
-
-// estado inicial
-novoEndereco(); novoTel(); novoEml(); setPessoa(true);
-</script>
+      </form>
+    </main>
   </div>
 </div>
-</body>
-</html>
+<script>
+/* máscaras + CPF */
+function mCPF(v){return v.replace(/\D/g,'').slice(0,11).replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');}
+function mCEP(v){return v.replace(/\D/g,'').slice(0,8).replace(/(\d{5})(\d)/,'$1-$2');}
+function mFone(v){v=v.replace(/\D/g,'').slice(0,11);return v.length>10?v.replace(/(\d{2})(\d{5})(\d{4})/,'($1) $2-$3'):v.replace(/(\d{2})(\d{4})(\d{0,4})/,'($1) $2-$3').trim();}
+function cpfOk(c){c=c.replace(/\D/g,'');if(c.length!=11||/^(\d)\1{10}$/.test(c))return false;var s=0,i,d;for(i=0;i<9;i++)s+=c[i]*(10-i);d=(s*10)%11;if(d==10)d=0;if(d!=c[9])return false;s=0;for(i=0;i<10;i++)s+=c[i]*(11-i);d=(s*10)%11;if(d==10)d=0;return d==c[10];}
+var cpf=document.getElementById('cpf'),cpfMsg=document.getElementById('cpfMsg');
+cpf.addEventListener('input',function(){cpf.value=mCPF(cpf.value);var d=cpf.value.replace(/\D/g,'');cpf.classList.remove('is-ok','is-err');cpfMsg.className='hint';
+ if(!d){cpfMsg.textContent='Validação automática ao digitar.';return;}
+ if(d.length<11){cpfMsg.textContent='Digite os 11 dígitos.';return;}
+ if(cpfOk(d)){cpf.classList.add('is-ok');cpfMsg.className='hint ok';cpfMsg.textContent='✓ CPF válido';}
+ else{cpf.classList.add('is-err');cpfMsg.className='hint err';cpfMsg.textContent='✗ CPF inválido';}});
+
+/* PF/PJ */
+function pessoa(pf){document.getElementById('btnPF').className=pf?'on':'';document.getElementById('btnPJ').className=pf?'':'on';
+ document.getElementById('lblNome').textContent=pf?'Nome completo':'Razão social';document.getElementById('lblDoc').textContent=pf?'CPF':'CNPJ';
+ document.getElementById('wrapNasc').style.display=pf?'':'none';}
+document.getElementById('btnPF').onclick=function(){pessoa(true)};document.getElementById('btnPJ').onclick=function(){pessoa(false)};
+document.getElementById('ec').addEventListener('change',function(e){document.getElementById('conjBox').style.display=e.target.value=='Casado'?'block':'none';});
+document.getElementById('temCnh').addEventListener('change',function(e){document.getElementById('cnhBox').style.display=e.target.checked?'grid':'none';});
+
+/* Endereços + ViaCEP */
+var ends=document.getElementById('ends');
+function novoEnd(){var d=document.createElement('div');d.className='card sec';d.style.background='#FAFBFC';
+ d.innerHTML='<div class="between mb16"><label class="small muted"><input type="radio" name="epad"> Endereço padrão</label><button type="button" class="btn btn-ghost rm" style="padding:3px 10px;color:var(--danger)">Remover</button></div>'+
+ '<div class="grid3"><div class="field"><label class="label">CEP</label><input class="input cep" inputmode="numeric" placeholder="00000-000"><span class="hint cepst"></span></div>'+
+ '<div class="field" style="grid-column:span 2"><label class="label">Logradouro</label><input class="input logr"></div>'+
+ '<div class="field"><label class="label">Número</label><input class="input num"></div><div class="field"><label class="label">Bairro</label><input class="input bai"></div>'+
+ '<div class="field"><label class="label">Cidade</label><input class="input cid"></div><div class="field"><label class="label">UF</label><input class="input uf" maxlength="2"></div></div>';
+ var cep=d.querySelector('.cep'),st=d.querySelector('.cepst');
+ cep.addEventListener('input',function(){cep.value=mCEP(cep.value);});
+ cep.addEventListener('blur',function(){var x=cep.value.replace(/\D/g,'');if(x.length!=8)return;st.textContent='buscando…';st.className='hint';
+   fetch('https://viacep.com.br/ws/'+x+'/json/').then(function(r){return r.json();}).then(function(j){if(j.erro){st.className='hint err';st.textContent='não encontrado';return;}
+     d.querySelector('.logr').value=j.logradouro||'';d.querySelector('.bai').value=j.bairro||'';d.querySelector('.cid').value=j.localidade||'';d.querySelector('.uf').value=j.uf||'';
+     st.className='hint ok';st.textContent='✓';d.querySelector('.num').focus();}).catch(function(){st.className='hint err';st.textContent='falha';});});
+ d.querySelector('.rm').onclick=function(){d.remove();};ends.appendChild(d);}
+document.getElementById('addEnd').onclick=novoEnd;
+
+/* Tel/Email */
+var tels=document.getElementById('tels'),emls=document.getElementById('emls');
+function novoTel(){var d=document.createElement('div');d.className='row gap8 mb16';d.innerHTML='<select class="select" style="width:110px"><option>Celular</option><option>WhatsApp</option><option>Residencial</option><option>Comercial</option></select><input class="input fone flex1" inputmode="numeric" placeholder="(00) 00000-0000"><button type="button" class="btn btn-ghost rm" style="color:var(--danger);padding:6px 10px">✕</button>';var f=d.querySelector('.fone');f.addEventListener('input',function(){f.value=mFone(f.value);});d.querySelector('.rm').onclick=function(){d.remove();};tels.appendChild(d);}
+function novoEml(){var d=document.createElement('div');d.className='row gap8 mb16';d.innerHTML='<input type="email" class="input flex1" placeholder="email@exemplo.com"><button type="button" class="btn btn-ghost rm" style="color:var(--danger);padding:6px 10px">✕</button>';d.querySelector('.rm').onclick=function(){d.remove();};emls.appendChild(d);}
+document.getElementById('addTel').onclick=novoTel;document.getElementById('addEml').onclick=novoEml;
+
+/* Autocomplete PROFISSÃO — GET /api/profissoes?q= (fallback local no protótipo) */
+var LOCAL=['Administrador(a)','Advogado(a)','Analista de sistemas','Arquiteto(a)','Contador(a)','Corretor(a) de seguros','Dentista','Empresário(a)','Enfermeiro(a)','Engenheiro(a) civil','Farmacêutico(a)','Fisioterapeuta','Médico(a)','Motorista','Operador(a) de telemarketing','Professor(a)','Programador(a)','Psicólogo(a)','Vendedor(a)','Veterinário(a)'];
+(function(){
+ var inp=document.getElementById('prof'),list=document.getElementById('profList'),tmr=null,idx=-1,items=[];
+ function close(){list.style.display='none';inp.setAttribute('aria-expanded','false');idx=-1;}
+ function render(arr){items=arr;if(!arr.length){list.innerHTML='<div class="ac-empty">Nenhuma profissão encontrada</div>';}
+   else{list.innerHTML=arr.slice(0,10).map(function(p,i){return '<div class="ac-item" role="option" data-i="'+i+'">'+p+'</div>';}).join('');}
+   list.style.display='block';inp.setAttribute('aria-expanded','true');idx=-1;
+   Array.prototype.forEach.call(list.querySelectorAll('.ac-item'),function(el){el.onclick=function(){inp.value=el.textContent;close();};});}
+ function search(q){
+   fetch('/api/profissoes?q='+encodeURIComponent(q)).then(function(r){if(!r.ok)throw 0;return r.json();})
+     .then(function(d){var arr=(Array.isArray(d)?d:(d.items||d.data||[])).map(function(o){return typeof o==="string"?o:(o.titulo||"");}).filter(Boolean);render(arr);})
+     .catch(function(){render(LOCAL.filter(function(p){return p.toLowerCase().indexOf(q.toLowerCase())>=0;}));}); /* fallback protótipo */
+ }
+ inp.addEventListener('input',function(){var q=inp.value.trim();if(tmr)clearTimeout(tmr);if(q.length<3){close();return;}tmr=setTimeout(function(){search(q);},250);});
+ inp.addEventListener('keydown',function(e){var els=list.querySelectorAll('.ac-item');if(list.style.display=='none'||!els.length)return;
+   if(e.key=='ArrowDown'){e.preventDefault();idx=(idx+1)%els.length;}else if(e.key=='ArrowUp'){e.preventDefault();idx=(idx-1+els.length)%els.length;}
+   else if(e.key=='Enter'){if(idx>=0){e.preventDefault();inp.value=els[idx].textContent;close();}return;}else if(e.key=='Escape'){close();return;}else return;
+   els.forEach(function(el,i){el.setAttribute('aria-selected',i==idx);});els[idx].scrollIntoView({block:'nearest'});});
+ document.addEventListener('click',function(e){if(!e.target.closest('.ac'))close();});
+})();
+
+/* rascunho + submit */
+var F=document.getElementById('form');
+document.getElementById('draft').onclick=function(){alert('Rascunho salvo neste navegador.');};
+F.addEventListener('submit',function(e){e.preventDefault();var c=cpf.value.replace(/\D/g,'');
+ if(!document.getElementById('nome').value.trim())return alert('Informe o nome do cliente.');
+ if(c&&!cpfOk(c))return alert('O CPF informado é inválido.');
+ var m=document.getElementById('okMsg');m.style.display='flex';window.scrollTo({top:0,behavior:'smooth'});});
+
+novoEnd();novoTel();novoEml();
+</script>
+</body></html>

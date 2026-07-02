@@ -1,0 +1,121 @@
+/* =====================================================================
+   Clube Investvida — Design System (app.css)
+   Estático, sem build e sem CDN. Marca: Opção A. Hospedagem Business.
+   ===================================================================== */
+:root{
+  --amber:#F8A600; --orange:#E94D11; --blue:#005092;
+  --navy:#062A4A; --navy-2:#0E4C93; --ink:#1B1918; --surface:#EEF1F5;
+  --card:#FFFFFF; --line:#E2E8F0; --muted:#5B6675; --faint:#8792A3;
+  --ok:#1E7A3D; --ok-bg:#E3F2E8; --warn:#9A6700; --warn-bg:#FBF3DD;
+  --danger:#B3261E; --danger-bg:#FBE3E1; --info-bg:#E7F0FA;
+  --r-sm:6px; --r:8px; --r-lg:14px; --pill:999px;
+  --shadow:0 8px 24px rgba(6,42,74,.06);
+  --focus:0 0 0 3px rgba(0,80,146,.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Inter,system-ui,Arial,sans-serif;color:var(--ink);background:var(--surface);line-height:1.5}
+h1,h2,h3,.font-head{font-family:Manrope,system-ui,Arial,sans-serif}
+a{color:var(--blue);text-decoration:none}
+img,svg{vertical-align:middle}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+:focus-visible{outline:none;box-shadow:var(--focus);border-radius:var(--r-sm)}
+
+/* ---------- Layout ---------- */
+.app{display:flex;min-height:100vh}
+.sidebar{width:240px;flex-shrink:0;background:var(--navy);color:#fff;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;padding:18px 18px;border-bottom:1px solid rgba(255,255,255,.10)}
+.brand .bname{font-family:Manrope;font-weight:800;line-height:1;font-size:15px}
+.brand .btag{font-size:11px;color:#9FB4CC;margin-top:3px}
+.nav{padding:12px;display:flex;flex-direction:column;gap:2px;flex:1}
+.nav a{display:flex;gap:11px;align-items:center;padding:9px 12px;border-radius:var(--r);font-size:14px;color:#CBD5E1;font-weight:500}
+.nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav a[aria-current="page"],.nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 var(--orange)}
+.nav .ico{width:18px;text-align:center;opacity:.9}
+.sidebar .foot{padding:12px;border-top:1px solid rgba(255,255,255,.10);font-size:11px;color:#9FB4CC}
+.content{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{background:#fff;border-bottom:1px solid var(--line);padding:11px 20px;display:flex;align-items:center;gap:16px}
+.main{padding:20px;max-width:1200px;width:100%}
+.avatar{width:32px;height:32px;border-radius:var(--pill);background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+
+/* ---------- Tipografia utilitária ---------- */
+.h1{font-family:Manrope;font-weight:800;font-size:24px;color:var(--navy);margin:0}
+.h2{font-family:Manrope;font-weight:700;font-size:18px;color:var(--navy);margin:0}
+.lead{color:var(--muted);font-size:14px;margin:2px 0 0}
+.muted{color:var(--muted)} .faint{color:var(--faint)} .small{font-size:12px}
+
+/* ---------- Card ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px}
+.card+.card{margin-top:16px}
+
+/* ---------- Botões ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;
+  border-radius:var(--r);padding:10px 18px;font:600 14px Inter,sans-serif;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:#04203a}
+.btn-action{background:var(--orange);color:#fff}.btn-action:hover{background:#cf3f0c}
+.btn-ghost{background:#fff;border-color:var(--line);color:var(--ink)}.btn-ghost:hover{background:#f8fafc}
+.btn-block{width:100%}
+
+/* ---------- Formulários ---------- */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.label{font-size:12px;font-weight:600;color:var(--muted)}
+.input,.select{width:100%;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;font:400 14px Inter,sans-serif;background:#fff}
+.input:focus,.select:focus{outline:none;border-color:var(--blue);box-shadow:var(--focus)}
+.input.is-ok{border-color:var(--ok);box-shadow:0 0 0 3px rgba(30,122,61,.12)}
+.input.is-err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(179,38,30,.12)}
+.hint{font-size:12px;color:var(--faint)} .hint.ok{color:var(--ok)} .hint.err{color:var(--danger)}
+
+/* ---------- Chips / status ---------- */
+.chip{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 9px;border-radius:var(--pill)}
+.chip-ok{background:var(--ok-bg);color:var(--ok)} .chip-warn{background:var(--warn-bg);color:var(--warn)}
+.chip-danger{background:var(--danger-bg);color:var(--danger)} .chip-info{background:var(--info-bg);color:var(--navy-2)}
+.chip-neutral{background:#EEF1F5;color:var(--muted)}
+
+/* ---------- Tabela ---------- */
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--faint);font-weight:600;text-align:left;padding:10px 12px;background:#F7F9FB;border-bottom:1px solid var(--line)}
+.table td{padding:11px 12px;border-top:1px solid #EEF1F5}
+.table tbody tr:hover{background:#F5F8FB}
+.table-wrap{border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+
+/* ---------- KPIs / grid ---------- */
+.grid{display:grid;gap:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px}
+.kpi .v{font-family:Manrope;font-weight:800;font-size:22px;color:var(--navy)}
+.kpi .k{font-size:12px;color:var(--muted)}
+
+/* ---------- Estados ---------- */
+.skeleton{background:linear-gradient(90deg,#eef1f5 25%,#e4e9f0 37%,#eef1f5 63%);background-size:400% 100%;animation:sk 1.3s ease infinite;border-radius:var(--r)}
+@keyframes sk{0%{background-position:100% 0}100%{background-position:0 0}}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty .ico{font-size:32px;opacity:.5}
+.empty .t{font-family:Manrope;font-weight:700;color:var(--ink);margin-top:8px}
+.alert{border-radius:var(--r);padding:10px 14px;font-size:13px;display:flex;gap:8px;align-items:center}
+.alert-error{background:var(--danger-bg);color:var(--danger)}
+.alert-ok{background:var(--ok-bg);color:var(--ok)}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- Helpers ---------- */
+.row{display:flex;gap:12px}.between{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.wrap{flex-wrap:wrap}.center{align-items:center}.mla{margin-left:auto}.flex1{flex:1}
+.cols-2{grid-template-columns:repeat(2,1fr)}.cols-3{grid-template-columns:repeat(3,1fr)}.cols-4{grid-template-columns:repeat(4,1fr)}
+.mt8{margin-top:8px}.mt16{margin-top:16px}.mb16{margin-bottom:16px}.gap8{gap:8px}
+
+/* ---------- Autocomplete ---------- */
+.ac{position:relative}
+.ac-list{position:absolute;z-index:20;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--line);
+  border-radius:var(--r);box-shadow:var(--shadow);max-height:240px;overflow:auto}
+.ac-item{padding:9px 12px;font-size:14px;cursor:pointer}
+.ac-item:hover,.ac-item[aria-selected="true"]{background:var(--info-bg)}
+.ac-empty{padding:10px 12px;font-size:13px;color:var(--faint)}
+
+/* ---------- Responsivo ---------- */
+@media(max-width:900px){
+  .cols-4{grid-template-columns:repeat(2,1fr)}.cols-3{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .sidebar{display:none}
+  .cols-2,.cols-4{grid-template-columns:1fr}
+  .main{padding:14px}
+}

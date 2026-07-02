@@ -1,85 +1,67 @@
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
 <title>Dashboard — Clube Investvida</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{navy:"#003461",navy2:"#004B87",orange:"#FF6B00",ink:"#1A1C1E",line:"#E2E8F0",surface:"#F4F7F9"},fontFamily:{head:["Manrope"],body:["Inter"]}}}}</script>
-<style>
- body{font-family:"Inter",sans-serif;background:#F4F7F9;color:#1A1C1E}.font-head{font-family:"Manrope",sans-serif}
- .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
- .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
- .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
- .card{background:#fff;border:1px solid #E2E8F0;border-radius:.75rem}
- .chip{font-size:.66rem;font-weight:600;padding:.1rem .45rem;border-radius:999px}
- .inp{border:1px solid #E2E8F0;border-radius:.5rem;padding:.5rem .7rem;font-size:.9rem;background:#fff}
-</style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head><body>
-<div class="flex min-h-screen">
-  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
-    <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
-      <div class="w-9 h-9 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
-      <div><div class="font-head font-bold leading-none">Clube Investvida</div>
-      <div class="text-[11px] text-blue-200 mt-1">Seguros de Pessoas</div></div>
-    </div>
-    <nav class="nav p-3 space-y-1 flex-1">
-      <a href="dashboard.html" data-k="dash"><span>▦</span> Dashboard</a>
-      <a href="clientes.html" data-k="cli"><span>◉</span> Clientes</a>
-      <a href="apolice-pessoas.html" data-k="apo"><span>❤</span> Apólices</a>
-      <a href="leads.html" data-k="leads"><span>◔</span> Leads / CRM</a>
-      <a href="financeiro.html" data-k="fin"><span>$</span> Financeiro</a>
-      <a href="chamados.html" data-k="cham"><span>◷</span> Chamados</a>
-      <a href="cofre.html" data-k="cofre"><span>⛁</span> Cofre Digital</a>
-      <a href="configuracoes.html" data-k="cfg"><span>⚙</span> Configurações</a>
-    </nav>
-    <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
-  </aside>
-  <div class="flex-1 flex flex-col">
-    <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
-      <input class="inp flex-1 max-w-md" placeholder="Buscar cliente, apólice…">
-      <div class="ml-auto w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-semibold">AD</div>
+<h2 class="sr-only">Painel geral da corretora com indicadores, produção e renovações</h2>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">
+    <img src="assets/brand/logo-simbolo-claro.svg" width="34" height="34" alt="">
+    <div><div class="bname">Clube Investvida</div><div class="btag">Corretora de Seguros</div></div>
+  </div>
+  <nav class="nav">
+    <a href="dashboard.html" class="on" aria-current="page"><span class="ico">▦</span> Dashboard</a>
+    <a href="clientes.html"><span class="ico">◉</span> Clientes</a>
+    <a href="apolice-pessoas.html"><span class="ico">❤</span> Apólices</a>
+    <a href="leads.html"><span class="ico">◔</span> Leads / CRM</a>
+    <a href="chamados.html"><span class="ico">◷</span> Chamados</a>
+    <a href="financeiro.html"><span class="ico">$</span> Financeiro</a>
+    <a href="cofre.html"><span class="ico">⛁</span> Cofre Digital</a>
+    <a href="configuracoes.html"><span class="ico">⚙</span> Configurações</a>
+  </nav>
+  <div class="foot">v0 · protótipo</div>
+</aside>
+  <div class="content">
+    <header class="topbar">
+      <input class="input flex1" style="max-width:420px" placeholder="Buscar cliente, apólice…" aria-label="Buscar">
+      <div class="avatar mla" title="Administrador">AD</div>
     </header>
-    <main class="p-5">
-      <h1 class="text-2xl font-head font-bold text-navy mb-1">Dashboard</h1>
-      <p class="text-sm text-slate-500 mb-5">Visão geral da corretora — dados ilustrativos.</p>
+    <main class="main">
+      <div class="mb16"><h1 class="h1">Dashboard</h1><p class="lead">Visão geral — dados ilustrativos.</p></div>
 
-      <!-- KPIs -->
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-        <div class="card p-4"><div class="text-xs text-slate-500">Vidas ativas</div><div class="text-2xl font-head font-bold text-navy">312</div><div class="text-xs text-green-600 mt-1">▲ 4% no mês</div></div>
-        <div class="card p-4"><div class="text-xs text-slate-500">Apólices ativas</div><div class="text-2xl font-head font-bold text-navy">198</div><div class="text-xs text-green-600 mt-1">▲ 6 novas</div></div>
-        <div class="card p-4"><div class="text-xs text-slate-500">Comissão a receber</div><div class="text-2xl font-head font-bold text-navy">R$ 128k</div><div class="text-xs text-slate-400 mt-1">próx. 90 dias</div></div>
-        <div class="card p-4"><div class="text-xs text-slate-500">Renovações (30d)</div><div class="text-2xl font-head font-bold text-orange">17</div><div class="text-xs text-slate-400 mt-1">precisam de ação</div></div>
+      <div class="grid cols-4 mb16">
+        <div class="kpi"><div class="k">Vidas ativas</div><div class="v">312</div><div class="small" style="color:var(--ok)">▲ 4% no mês</div></div>
+        <div class="kpi"><div class="k">Apólices ativas</div><div class="v">198</div><div class="small" style="color:var(--ok)">▲ 6 novas</div></div>
+        <div class="kpi"><div class="k">Comissão a receber</div><div class="v">R$ 128k</div><div class="small faint">próx. 90 dias</div></div>
+        <div class="kpi"><div class="k">Renovações (30d)</div><div class="v" style="color:var(--orange)">17</div><div class="small faint">precisam de ação</div></div>
       </div>
 
-      <div class="grid lg:grid-cols-3 gap-4">
-        <div class="card p-5 lg:col-span-2"><h2 class="font-head font-semibold text-navy mb-3">Produção por mês (R$ mil)</h2><canvas id="cBar" height="120"></canvas></div>
-        <div class="card p-5"><h2 class="font-head font-semibold text-navy mb-3">Carteira por ramo</h2><canvas id="cPie" height="200"></canvas></div>
+      <div class="grid" style="grid-template-columns:2fr 1fr">
+        <div class="card"><h2 class="h2 mb16">Produção por mês (R$ mil)</h2><canvas id="cBar" height="120"></canvas></div>
+        <div class="card"><h2 class="h2 mb16">Carteira por ramo</h2><canvas id="cPie" height="200"></canvas></div>
       </div>
 
-      <div class="card p-5 mt-4">
-        <div class="flex items-center justify-between mb-3"><h2 class="font-head font-semibold text-navy">Renovações próximas</h2>
-          <a href="apolice-pessoas.html" class="text-sm text-orange font-semibold">Ver todas</a></div>
-        <table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase text-slate-500">
-          <th class="py-2">Cliente</th><th>Ramo</th><th>Seguradora</th><th>Vence em</th><th></th></tr></thead>
-          <tbody id="renov"></tbody></table>
+      <div class="card mt16">
+        <div class="between mb16"><h2 class="h2">Renovações próximas</h2><a href="apolice-pessoas.html" style="color:var(--orange);font-weight:600;font-size:14px">Ver todas</a></div>
+        <div class="table-wrap"><table class="table">
+          <thead><tr><th>Cliente</th><th>Ramo</th><th>Seguradora</th><th>Vence em</th><th></th></tr></thead>
+          <tbody id="renov"></tbody></table></div>
       </div>
     </main>
   </div>
 </div>
 <script>
-document.querySelectorAll('.nav a').forEach(a=>{if(a.dataset.k==='dash')a.classList.add('on')});
-const NAVY='#003461',OR='#FF6B00';
+var NAVY='#062A4A',OR='#E94D11',AMB='#F8A600',BL='#005092';
 new Chart(document.getElementById('cBar'),{type:'bar',
  data:{labels:['Jan','Fev','Mar','Abr','Mai','Jun'],datasets:[{label:'Produção',data:[210,260,240,300,330,360],backgroundColor:NAVY,borderRadius:6}]},
  options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:'#eef2f7'}},x:{grid:{display:false}}}}});
 new Chart(document.getElementById('cPie'),{type:'doughnut',
- data:{labels:['Vida','Previdência','Saúde','Viagem','Renda'],
- datasets:[{data:[94,111,40,14,27],backgroundColor:[NAVY,'#004B87','#3b82f6',OR,'#f59e0b']}]},
+ data:{labels:['Vida','Previdência','Saúde','Viagem','Renda'],datasets:[{data:[94,111,40,14,27],backgroundColor:[AMB,BL,'#3b82f6',OR,'#f59e0b']}]},
  options:{plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}}}});
-const r=[['Ana Beatriz Moraes','Vida','Bradesco','15/08/2026'],['Carlos E. Lima','Saúde','SulAmérica','02/09/2026'],
- ['Roberto Khern','Previdência','Icatu','28/07/2026'],['Patrícia Fenili','Vida','MetLife','10/10/2026']];
-document.getElementById('renov').innerHTML=r.map(x=>`<tr class="border-t border-line/70">
- <td class="py-2 font-medium">${x[0]}</td><td><span class="chip bg-blue-50 text-navy2">${x[1]}</span></td>
- <td class="text-slate-600">${x[2]}</td><td class="text-slate-600">${x[3]}</td>
- <td class="text-right"><button class="text-xs bg-orange text-white px-3 py-1 rounded-md font-semibold">Renovar</button></td></tr>`).join('');
+var r=[['Ana Beatriz Moraes','Vida','Bradesco','15/08/2026'],['Carlos E. Lima','Saúde','SulAmérica','02/09/2026'],['Roberto Khern','Previdência','Icatu','28/07/2026'],['Patrícia Fenili','Vida','MetLife','10/10/2026']];
+document.getElementById('renov').innerHTML=r.map(function(x){return '<tr><td style="font-weight:500">'+x[0]+'</td><td><span class="chip chip-info">'+x[1]+'</span></td><td class="muted">'+x[2]+'</td><td class="muted">'+x[3]+'</td><td style="text-align:right"><button class="btn btn-action" style="padding:5px 12px;font-size:12px">Renovar</button></td></tr>';}).join('');
 </script>
 </body></html>

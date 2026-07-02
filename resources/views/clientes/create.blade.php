@@ -4,17 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cadastro de Cliente — Clube Investvida</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="icon" href="{{ asset('assets/brand/favicon.svg') }}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script>
-tailwind.config = {
-  theme: { extend: {
-    colors: { navy:'#003461', navy2:'#004B87', orange:'#FF6B00', ink:'#1A1C1E', line:'#E2E8F0', surface:'#F4F7F9' },
-    fontFamily: { head:['Manrope','sans-serif'], body:['Inter','sans-serif'] }
-  } }
-}
-</script>
+<link rel="stylesheet" href="{{ asset('assets/css/laravel-utilities.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
 <style>
   body{font-family:'Inter',sans-serif;background:#F4F7F9;color:#1A1C1E}
   h1,h2,h3,.font-head{font-family:'Manrope',sans-serif}
@@ -39,7 +33,7 @@ tailwind.config = {
 <div class="flex min-h-screen">
   <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
     <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
-      <div class="w-9 h-9 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
+      <img src="{{ asset('assets/brand/logo-simbolo-claro.svg') }}" width="36" height="36" alt="">
       <div><div class="font-head font-bold leading-none">Clube Investvida</div>
       <div class="text-[11px] text-blue-200 mt-1">Seguros de Pessoas</div></div>
     </div>
@@ -140,7 +134,12 @@ tailwind.config = {
 
         <div>
           <label class="lbl" for="profissao">Profissão</label>
-          <input class="inp mt-1" id="profissao" name="profissao" maxlength="120" placeholder="Ex.: Professor" value="{{ old('profissao') }}">
+          <div class="ac mt-1">
+            <input class="inp" id="profissao" name="profissao" maxlength="120" placeholder="Digite ao menos 3 letras" value="{{ old('profissao') }}"
+                   aria-controls="profissaoList" aria-expanded="false">
+            <div id="profissaoList" class="ac-list" role="listbox" style="display:none"></div>
+          </div>
+          <p class="hint mt-1 text-slate-400">Sugestões da CBO; texto manual permitido.</p>
         </div>
 
         <div>
@@ -395,6 +394,14 @@ F.addEventListener('submit',e=>{
   if(!(pf?cpfValido(dig):cnpjValido(dig))){e.preventDefault();return alert(`O ${pf?'CPF':'CNPJ'} informado é inválido.`)}
   const button=document.getElementById('btnSubmit');button.disabled=true;button.textContent='Salvando…';
 });
+</script>
+<script src="{{ asset('assets/js/app.js') }}"></script>
+<script>
+CI.autocomplete(
+  document.getElementById('profissao'),
+  document.getElementById('profissaoList'),
+  {url: @json(route('api.profissoes.index')), field: 'titulo', min: 3}
+);
 </script>
   </div>
 </div>

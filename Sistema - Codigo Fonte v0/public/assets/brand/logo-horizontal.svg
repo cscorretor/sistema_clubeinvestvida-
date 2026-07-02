@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 150" role="img" aria-label="Clube Investvida - Corretora de Seguros">
+  <defs><linearGradient id="h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F8A600"/><stop offset="1" stop-color="#E94D11"/></linearGradient></defs>
+  <g transform="translate(6,11)">
+    <path d="M60 92 C51 74 44 58 38 40" fill="none" stroke="#F8A600" stroke-width="14" stroke-linecap="round"/>
+    <path d="M67 92 C76 74 83 58 90 42" fill="none" stroke="#E94D11" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="63" cy="28" r="14" fill="url(#h)"/>
+    <path d="M43 99 Q63 113 83 98" fill="none" stroke="#005092" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="156" y="80" font-family="Manrope, Arial, sans-serif" font-size="54" font-weight="800" fill="#005092" letter-spacing="-1">Clube Investvida</text>
+  <text x="159" y="114" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="600" letter-spacing="7" fill="#8792a3">CORRETORA DE SEGUROS</text>
+</svg>

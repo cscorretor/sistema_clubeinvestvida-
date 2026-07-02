@@ -1,0 +1,66 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css"><title>Campanhas — Clube Investvida</title>
+<style>.g{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:720px){.g{grid-template-columns:1fr}}</style></head><body>
+<h2 class="sr-only">Campanhas de marketing e comunicação</h2>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><img src="assets/brand/logo-simbolo-claro.svg" width="34" height="34" alt="">
+    <div><div class="bname">Clube Investvida</div><div class="btag">Corretora de Seguros</div></div></div>
+  <nav class="nav">
+    <a href="dashboard.html"><span class="ico">▦</span> Dashboard</a>
+    <a href="clientes.html"><span class="ico">◉</span> Clientes</a>
+    <a href="apolice-pessoas.html"><span class="ico">❤</span> Apólices</a>
+    <a href="leads.html" class="on" aria-current="page"><span class="ico">◔</span> Leads / CRM</a>
+    <a href="chamados.html"><span class="ico">◷</span> Chamados</a>
+    <a href="financeiro.html"><span class="ico">$</span> Financeiro</a>
+    <a href="cofre.html"><span class="ico">⛁</span> Cofre Digital</a>
+    <a href="configuracoes.html"><span class="ico">⚙</span> Configurações</a>
+  </nav>
+  <div class="foot">v0 · protótipo</div>
+</aside>
+  <div class="content">
+    <header class="topbar"><a href="leads.html" class="muted">‹ Leads / CRM</a><div class="avatar mla">AD</div></header>
+    <main class="main">
+      <div class="between wrap mb16"><div><h1 class="h1">Campanhas de Marketing</h1><p class="lead">Disparos segmentados por e-mail e WhatsApp — evolução da Comunicação do Segflex.</p></div>
+        <button class="btn btn-primary" id="nova">+ Nova campanha</button></div>
+
+      <div class="grid cols-4 mb16">
+        <div class="kpi"><div class="k">Enviadas (mês)</div><div class="v">1.240</div></div>
+        <div class="kpi"><div class="k">Taxa de abertura</div><div class="v">38%</div></div>
+        <div class="kpi"><div class="k">Agendadas</div><div class="v" style="color:var(--orange)">3</div></div>
+        <div class="kpi"><div class="k">Respostas</div><div class="v">92</div></div>
+      </div>
+
+      <!-- form nova campanha (oculto) -->
+      <section id="form" class="card mb16" style="display:none">
+        <h2 class="h2 mb16">Nova campanha</h2>
+        <div class="g">
+          <div class="field"><label class="label">Nome</label><input class="input" placeholder="Ex.: Aniversariantes de julho"></div>
+          <div class="field"><label class="label">Canal</label><select class="select"><option>E-mail</option><option>WhatsApp</option></select></div>
+          <div class="field"><label class="label">Gatilho</label><select class="select"><option>Aniversário</option><option>Vencimento de CNH</option><option>Renovação de apólice</option><option>Licenciamento (final de placa)</option><option>Vencimento de parcela</option><option>Manual / segmento</option></select></div>
+          <div class="field"><label class="label">Segmento</label><select class="select"><option>Todos os clientes</option><option>Por ramo</option><option>Por cidade</option><option>Leads quentes</option></select></div>
+          <div class="field" style="grid-column:1/-1"><label class="label">Mensagem (template)</label><textarea class="input" rows="4" placeholder="Olá {{nome}}, ...">Olá {{nome}}, tudo bem?</textarea></div>
+          <div class="field"><label class="label">Agendar para</label><input class="input" type="datetime-local"></div>
+        </div>
+        <div class="row gap8 mt16"><button class="btn btn-ghost" id="cancela" type="button">Cancelar</button><button class="btn btn-action" id="salva" type="button">Salvar campanha</button></div>
+      </section>
+
+      <div class="table-wrap"><table class="table">
+        <thead><tr><th>Campanha</th><th>Canal</th><th>Gatilho</th><th>Segmento</th><th>Status</th><th>Agendada</th></tr></thead>
+        <tbody id="tb"></tbody></table></div>
+    </main>
+  </div>
+</div>
+<script>
+var camp=[['Aniversariantes de julho','E-mail','Aniversário','Todos','Concluída','—'],
+['Renovações — vida (30 dias)','WhatsApp','Renovação','Por ramo: Vida','Agendada','05/07 09:00'],
+['Vencimento de CNH','E-mail','Venc. CNH','Todos','Rascunho','—'],
+['Boas-vindas — leads quentes','WhatsApp','Manual','Leads quentes','Enviando','—']];
+var st={'Concluída':'chip-ok','Agendada':'chip-info','Rascunho':'chip-neutral','Enviando':'chip-warn'};
+document.getElementById('tb').innerHTML=camp.map(function(c){return '<tr><td style="font-weight:500">'+c[0]+'</td><td class="muted">'+c[1]+'</td><td><span class="chip chip-info">'+c[2]+'</span></td><td class="muted">'+c[3]+'</td><td><span class="chip '+st[c[4]]+'">'+c[4]+'</span></td><td class="muted">'+c[5]+'</td></tr>';}).join('');
+document.getElementById('nova').onclick=function(){document.getElementById('form').style.display='block';window.scrollTo({top:0,behavior:'smooth'});};
+document.getElementById('cancela').onclick=function(){document.getElementById('form').style.display='none';};
+document.getElementById('salva').onclick=function(){alert('Campanha salva! (protótipo)');document.getElementById('form').style.display='none';};
+</script></body></html>

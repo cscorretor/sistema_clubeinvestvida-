@@ -1,195 +1,86 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nova Apólice — Seguro de Pessoas</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{navy:'#003461',navy2:'#004B87',orange:'#FF6B00',ink:'#1A1C1E',line:'#E2E8F0',surface:'#F4F7F9'},fontFamily:{head:['Manrope'],body:['Inter']}}}}</script>
-<style>
- body{font-family:'Inter',sans-serif;background:#F4F7F9;color:#1A1C1E}.font-head{font-family:'Manrope',sans-serif}
- .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
- .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
- .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
- .lbl{font-size:.72rem;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:#475569}
- .inp{width:100%;border:1px solid #E2E8F0;border-radius:.375rem;padding:.55rem .7rem;font-size:.9rem;background:#fff}
- .inp:focus{outline:none;border-color:#003461;box-shadow:0 0 0 3px rgba(0,75,135,.12)}
- .card{background:#fff;border:1px solid #E2E8F0;border-radius:.75rem}
- .step-n{width:1.6rem;height:1.6rem;border-radius:999px;background:#003461;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
- .cob{display:flex;gap:.5rem;align-items:center;padding:.5rem .7rem;border:1px solid #E2E8F0;border-radius:.5rem;font-size:.85rem;cursor:pointer}
- .cob input{accent-color:#003461}
-</style>
-</head>
-<body>
-<div class="flex min-h-screen">
-  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
-    <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
-      <div class="w-9 h-9 rounded-md bg-orange flex items-center justify-center font-head font-bold">CI</div>
-      <div><div class="font-head font-bold leading-none">Clube Investvida</div>
-      <div class="text-[11px] text-blue-200 mt-1">Seguros de Pessoas</div></div>
-    </div>
-    <nav class="nav p-3 space-y-1 flex-1">
-      <a href="dashboard.html"><span>▦</span> Dashboard</a>
-      <a href="clientes.html"><span>◉</span> Clientes</a>
-      <a href="apolice-pessoas.html" class="on"><span>❤</span> Apólices</a>
-      <a href="leads.html"><span>◔</span> Leads / CRM</a>
-      <a href="financeiro.html"><span>$</span> Financeiro</a>
-      <a href="chamados.html" data-k="cham"><span>◷</span> Chamados</a>
-      <a href="cofre.html"><span>⛁</span> Cofre Digital</a>
-      <a href="configuracoes.html"><span>⚙</span> Configurações</a>
-    </nav>
-    <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
-  </aside>
-
-  <div class="flex-1 flex flex-col">
-    <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
-      <a href="clientes.html" class="text-sm text-slate-500 hover:text-navy">‹ Voltar</a>
-      <div class="ml-auto w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-semibold">AD</div>
-    </header>
-
-    <main class="p-5 max-w-5xl w-full mx-auto">
-      <h1 class="text-2xl font-head font-bold text-navy mb-1">Nova Apólice — Seguro de Pessoas</h1>
-      <p class="text-sm text-slate-500 mb-5">Vida, Previdência, Saúde, Viagem e Renda.</p>
-
-      <form id="form" class="space-y-5">
-        <!-- 1. Dados da apólice -->
-        <section class="card p-5">
-          <div class="flex items-center gap-2 mb-4"><span class="step-n">1</span><h2 class="font-head font-semibold text-navy">Dados da Apólice</h2></div>
-          <div class="grid md:grid-cols-3 gap-4">
-            <div class="md:col-span-2"><label class="lbl">Cliente (titular)</label><input class="inp mt-1" placeholder="Buscar cliente…" value="Ana Beatriz Moraes"></div>
-            <div><label class="lbl">Ramo</label>
-              <select class="inp mt-1" id="ramo">
-                <option>Vida</option><option>Previdência</option><option>Saúde</option><option>Viagem</option><option>Renda</option>
-              </select></div>
-            <div><label class="lbl">Seguradora</label>
-              <select class="inp mt-1"><option>Selecione…</option><option>Bradesco</option><option>Porto Seguro</option><option>SulAmérica</option><option>MetLife</option><option>Icatu</option><option>Prudential</option></select></div>
-            <div><label class="lbl">Nº proposta</label><input class="inp mt-1"></div>
-            <div><label class="lbl">Nº apólice</label><input class="inp mt-1"></div>
-            <div><label class="lbl">Início vigência</label><input type="date" class="inp mt-1"></div>
-            <div><label class="lbl">Fim vigência</label><input type="date" class="inp mt-1"></div>
-            <div><label class="lbl">Capital segurado (R$)</label><input class="inp mt-1" inputmode="numeric" placeholder="0,00"></div>
-            <div><label class="lbl">Status</label>
-              <select class="inp mt-1"><option>Ativo</option><option>Prospecção</option><option>Em emissão</option><option>Renovação</option></select></div>
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+<title>Nova Apólice — Clube Investvida</title>
+<style>.stepn{width:26px;height:26px;border-radius:var(--pill);background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:8px}
+.g{display:grid;gap:12px}.g3{grid-template-columns:1fr 1fr 1fr}.cob{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.cobo{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;font-size:14px}
+@media(max-width:720px){.g3,.cob{grid-template-columns:1fr}}</style></head><body>
+<h2 class="sr-only">Cadastro de apólice de seguro de pessoas</h2>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><img src="assets/brand/logo-simbolo-claro.svg" width="34" height="34" alt="">
+    <div><div class="bname">Clube Investvida</div><div class="btag">Corretora de Seguros</div></div></div>
+  <nav class="nav">
+    <a href="dashboard.html"><span class="ico">▦</span> Dashboard</a>
+    <a href="clientes.html"><span class="ico">◉</span> Clientes</a>
+    <a href="apolice-pessoas.html" class="on" aria-current="page"><span class="ico">❤</span> Apólices</a>
+    <a href="leads.html"><span class="ico">◔</span> Leads / CRM</a>
+    <a href="chamados.html"><span class="ico">◷</span> Chamados</a>
+    <a href="financeiro.html"><span class="ico">$</span> Financeiro</a>
+    <a href="cofre.html"><span class="ico">⛁</span> Cofre Digital</a>
+    <a href="configuracoes.html"><span class="ico">⚙</span> Configurações</a>
+  </nav>
+  <div class="foot">v0 · protótipo</div>
+</aside>
+  <div class="content">
+    <header class="topbar"><a href="clientes.html" class="muted">‹ Voltar</a><div class="avatar mla">AD</div></header>
+    <main class="main">
+      <div class="mb16"><h1 class="h1">Nova Apólice — Seguro de Pessoas</h1><p class="lead">Vida, Previdência, Saúde, Viagem e Renda.</p></div>
+      <form id="form">
+        <section class="card mb16"><h2 class="h2 mb16"><span class="stepn">1</span>Dados da Apólice</h2>
+          <div class="g g3">
+            <div class="field" style="grid-column:span 2"><label class="label">Cliente (titular)</label><input class="input" value="Ana Beatriz Moraes"></div>
+            <div class="field"><label class="label">Ramo</label><select class="select" id="ramo"><option>Vida</option><option>Previdência</option><option>Saúde</option><option>Viagem</option><option>Renda</option></select></div>
+            <div class="field"><label class="label">Seguradora</label><select class="select"><option>Selecione…</option><option>Bradesco</option><option>Icatu</option><option>SulAmérica</option><option>MetLife</option><option>Prudential</option></select></div>
+            <div class="field"><label class="label">Nº proposta</label><input class="input"></div>
+            <div class="field"><label class="label">Nº apólice</label><input class="input"></div>
+            <div class="field"><label class="label">Início vigência</label><input class="input" type="date"></div>
+            <div class="field"><label class="label">Fim vigência</label><input class="input" type="date"></div>
+            <div class="field"><label class="label">Capital segurado (R$)</label><input class="input" inputmode="numeric" placeholder="0,00"></div>
+            <div class="field"><label class="label">Status</label><select class="select"><option>Ativo</option><option>Prospecção</option><option>Em emissão</option><option>Renovação</option></select></div>
           </div>
         </section>
-
-        <!-- 2. Vidas seguradas -->
-        <section class="card p-5">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2"><span class="step-n">2</span><h2 class="font-head font-semibold text-navy">Vidas Seguradas</h2></div>
-            <button type="button" id="addVida" class="text-sm font-semibold text-orange hover:underline">+ Adicionar vida</button>
-          </div>
-          <p class="text-xs text-slate-400 mb-3">Titular e dependentes cobertos pela apólice.</p>
-          <div id="vidas" class="space-y-2"></div>
-        </section>
-
-        <!-- 3. Beneficiários -->
-        <section class="card p-5">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2"><span class="step-n">3</span><h2 class="font-head font-semibold text-navy">Beneficiários</h2></div>
-            <button type="button" id="addBenef" class="text-sm font-semibold text-orange hover:underline">+ Adicionar beneficiário</button>
-          </div>
-          <p class="text-xs text-slate-400 mb-3">A soma dos percentuais deve fechar em 100%.</p>
-          <div id="benefs" class="space-y-2"></div>
-          <div class="mt-3 flex items-center gap-3">
-            <span class="text-sm text-slate-600">Total:</span>
-            <span id="somaBenef" class="text-sm font-bold">0%</span>
-            <span id="benefMsg" class="text-xs"></span>
-          </div>
-        </section>
-
-        <!-- 4. Coberturas (variam por ramo) -->
-        <section class="card p-5">
-          <div class="flex items-center gap-2 mb-4"><span class="step-n">4</span><h2 class="font-head font-semibold text-navy">Coberturas</h2></div>
-          <div id="coberturas" class="grid sm:grid-cols-2 md:grid-cols-3 gap-2"></div>
-        </section>
-
-        <!-- 5. Plano financeiro -->
-        <section class="card p-5">
-          <div class="flex items-center gap-2 mb-4"><span class="step-n">5</span><h2 class="font-head font-semibold text-navy">Plano Financeiro</h2></div>
-          <p class="text-xs text-slate-400 mb-3">Seguros de pessoas costumam usar <b>fatura mensal</b> (não prêmio líquido único).</p>
-          <div class="grid md:grid-cols-4 gap-4">
-            <div><label class="lbl">Forma</label>
-              <select class="inp mt-1"><option>Fatura mensal</option><option>Parcelado</option><option>Anual</option></select></div>
-            <div><label class="lbl">Valor mensal (R$)</label><input class="inp mt-1" inputmode="numeric" placeholder="0,00"></div>
-            <div><label class="lbl">Dia de vencimento</label><input class="inp mt-1" inputmode="numeric" placeholder="Ex.: 10"></div>
-            <div><label class="lbl">% Comissão</label><input class="inp mt-1" inputmode="numeric" placeholder="Ex.: 20"></div>
-          </div>
-        </section>
-
-        <div class="flex items-center justify-end gap-3 pb-10">
-          <button type="button" class="bg-white border border-line px-5 py-2.5 rounded-md text-sm font-semibold">Salvar rascunho</button>
-          <button type="submit" class="bg-navy text-white px-6 py-2.5 rounded-md text-sm font-semibold hover:bg-[#00284c]">Salvar apólice →</button>
-        </div>
+        <section class="card mb16"><div class="between mb16"><h2 class="h2"><span class="stepn">2</span>Vidas Seguradas</h2><button type="button" id="addV" class="btn btn-ghost" style="color:var(--orange);padding:6px 12px">+ Adicionar vida</button></div><div id="vidas"></div></section>
+        <section class="card mb16"><div class="between"><h2 class="h2"><span class="stepn">3</span>Beneficiários</h2><button type="button" id="addB" class="btn btn-ghost" style="color:var(--orange);padding:6px 12px">+ Adicionar</button></div>
+          <p class="small faint mb16">A soma dos percentuais deve fechar em 100%.</p><div id="benef"></div>
+          <div class="row center gap8 mt16"><span class="small muted">Total:</span><strong id="soma">0%</strong><span id="somaMsg" class="small"></span></div></section>
+        <section class="card mb16"><h2 class="h2 mb16"><span class="stepn">4</span>Coberturas</h2><div id="cob" class="cob"></div></section>
+        <section class="card mb16"><h2 class="h2 mb16"><span class="stepn">5</span>Plano Financeiro</h2>
+          <p class="small faint mb16">Seguros de pessoas usam <b>fatura mensal</b>.</p>
+          <div class="g g3"><div class="field"><label class="label">Forma</label><select class="select"><option>Fatura mensal</option><option>Parcelado</option><option>Anual</option></select></div>
+          <div class="field"><label class="label">Valor mensal (R$)</label><input class="input" inputmode="numeric"></div>
+          <div class="field"><label class="label">Dia de vencimento</label><input class="input" inputmode="numeric" placeholder="10"></div></div></section>
+        <div class="between" style="padding-bottom:40px"><span></span><div class="row gap8"><button type="button" class="btn btn-ghost">Salvar rascunho</button><button type="submit" class="btn btn-primary">Salvar apólice →</button></div></div>
       </form>
     </main>
   </div>
 </div>
-
 <script>
-// Vidas
-const elV=document.getElementById('vidas');
-function novaVida(titular=false){
-  const i=document.createElement('div'); i.className='grid md:grid-cols-12 gap-2 items-end';
-  i.innerHTML=`
-   <div class="md:col-span-4"><label class="lbl">${titular?'Titular':'Nome'}</label><input class="inp mt-1" ${titular?'value="Ana Beatriz Moraes"':''}></div>
-   <div class="md:col-span-3"><label class="lbl">Parentesco</label>
-     <select class="inp mt-1">${titular?'<option>Titular</option>':'<option>Cônjuge</option><option>Filho(a)</option><option>Pai/Mãe</option><option>Outro</option>'}</select></div>
-   <div class="md:col-span-2"><label class="lbl">Nascimento</label><input type="date" class="inp mt-1"></div>
-   <div class="md:col-span-2"><label class="lbl">Capital (R$)</label><input class="inp mt-1" inputmode="numeric"></div>
-   <div class="md:col-span-1">${titular?'':'<button type="button" class="rm text-red-600 px-2 py-2">✕</button>'}</div>`;
-  if(!titular) i.querySelector('.rm').onclick=()=>i.remove();
-  elV.appendChild(i);
-}
-
-// Beneficiários + soma 100%
-const elB=document.getElementById('benefs');
-function recalcBenef(){
-  let s=0; elB.querySelectorAll('.pct').forEach(p=>s+=parseFloat(p.value||0));
-  const o=document.getElementById('somaBenef'), m=document.getElementById('benefMsg');
-  o.textContent=s.toFixed(0)+'%';
-  if(s===100){o.className='text-sm font-bold text-green-700';m.textContent='✓ ok';m.className='text-xs text-green-700 font-medium';}
-  else{o.className='text-sm font-bold text-red-700';m.textContent=s<100?`faltam ${(100-s).toFixed(0)}%`:`excede ${(s-100).toFixed(0)}%`;m.className='text-xs text-red-700 font-medium';}
-}
-function novoBenef(){
-  const i=document.createElement('div'); i.className='grid md:grid-cols-12 gap-2 items-end';
-  i.innerHTML=`
-   <div class="md:col-span-5"><label class="lbl">Nome</label><input class="inp mt-1"></div>
-   <div class="md:col-span-4"><label class="lbl">Parentesco</label>
-     <select class="inp mt-1"><option>Cônjuge</option><option>Filho(a)</option><option>Pai/Mãe</option><option>Irmão(ã)</option><option>Outro</option></select></div>
-   <div class="md:col-span-2"><label class="lbl">%</label><input class="inp mt-1 pct" inputmode="numeric" placeholder="0"></div>
-   <div class="md:col-span-1"><button type="button" class="rm text-red-600 px-2 py-2">✕</button></div>`;
-  i.querySelector('.pct').addEventListener('input',recalcBenef);
-  i.querySelector('.rm').onclick=()=>{i.remove();recalcBenef();};
-  elB.appendChild(i);
-}
-
-// Coberturas por ramo
-const COB={
- 'Vida':['Morte','Morte acidental','Invalidez permanente (IPA)','Doenças graves','Assistência funeral','Diária de internação'],
- 'Previdência':['PGBL','VGBL','Renda mensal','Pecúlio','Portabilidade'],
- 'Saúde':['Ambulatorial','Hospitalar','Obstetrícia','Odontológico','Reembolso','Cobertura nacional'],
- 'Viagem':['Despesas médicas','Bagagem','Cancelamento','Regresso sanitário','COVID'],
- 'Renda':['Renda por incapacidade','Diária de internação','Perda de renda','Cláusula vitalícia'],
-};
-function pintaCob(){
-  const r=document.getElementById('ramo').value;
-  document.getElementById('coberturas').innerHTML=(COB[r]||[]).map(c=>
-   `<label class="cob"><input type="checkbox"> ${c}</label>`).join('');
-}
+var elV=document.getElementById('vidas');
+function novaVida(t){var d=document.createElement('div');d.className='g mb16';d.style.gridTemplateColumns='2fr 1.4fr 1.2fr 1.2fr auto';d.style.alignItems='end';
+ d.innerHTML='<div class="field" style="margin:0"><label class="label">'+(t?'Titular':'Nome')+'</label><input class="input" '+(t?'value="Ana Beatriz Moraes"':'')+'></div>'+
+ '<div class="field" style="margin:0"><label class="label">Parentesco</label><select class="select">'+(t?'<option>Titular</option>':'<option>Cônjuge</option><option>Filho(a)</option><option>Pai/Mãe</option><option>Outro</option>')+'</select></div>'+
+ '<div class="field" style="margin:0"><label class="label">Nascimento</label><input class="input" type="date"></div>'+
+ '<div class="field" style="margin:0"><label class="label">Capital (R$)</label><input class="input" inputmode="numeric"></div>'+
+ (t?'<span></span>':'<button type="button" class="btn btn-ghost rm" style="color:var(--danger);padding:8px 10px">✕</button>');
+ if(!t)d.querySelector('.rm').onclick=function(){d.remove();};elV.appendChild(d);}
+var elB=document.getElementById('benef');
+function recalc(){var s=0;Array.prototype.forEach.call(elB.querySelectorAll('.pct'),function(p){s+=parseFloat(p.value||0);});
+ var o=document.getElementById('soma'),m=document.getElementById('somaMsg');o.textContent=s.toFixed(0)+'%';
+ if(s==100){o.style.color='var(--ok)';m.className='small hint ok';m.textContent='✓ ok';}else{o.style.color='var(--danger)';m.className='small hint err';m.textContent=s<100?'faltam '+(100-s).toFixed(0)+'%':'excede '+(s-100).toFixed(0)+'%';}}
+function novoB(){var d=document.createElement('div');d.className='g mb16';d.style.gridTemplateColumns='2fr 1.5fr .8fr auto';d.style.alignItems='end';
+ d.innerHTML='<div class="field" style="margin:0"><label class="label">Nome</label><input class="input"></div>'+
+ '<div class="field" style="margin:0"><label class="label">Parentesco</label><select class="select"><option>Cônjuge</option><option>Filho(a)</option><option>Pai/Mãe</option><option>Outro</option></select></div>'+
+ '<div class="field" style="margin:0"><label class="label">%</label><input class="input pct" inputmode="numeric" placeholder="0"></div>'+
+ '<button type="button" class="btn btn-ghost rm" style="color:var(--danger);padding:8px 10px">✕</button>';
+ d.querySelector('.pct').addEventListener('input',recalc);d.querySelector('.rm').onclick=function(){d.remove();recalc();};elB.appendChild(d);}
+var COB={'Vida':['Morte','Morte acidental','Invalidez (IPA)','Doenças graves','Assistência funeral','Diária de internação'],'Previdência':['PGBL','VGBL','Renda mensal','Pecúlio','Portabilidade'],'Saúde':['Ambulatorial','Hospitalar','Obstetrícia','Odontológico','Reembolso','Cobertura nacional'],'Viagem':['Despesas médicas','Bagagem','Cancelamento','Regresso sanitário'],'Renda':['Renda por incapacidade','Diária de internação','Perda de renda']};
+function pintaCob(){var r=document.getElementById('ramo').value;document.getElementById('cob').innerHTML=(COB[r]||[]).map(function(c){return '<label class="cobo"><input type="checkbox"> '+c+'</label>';}).join('');}
 document.getElementById('ramo').addEventListener('change',pintaCob);
-
-document.getElementById('addVida').onclick=()=>novaVida(false);
-document.getElementById('addBenef').onclick=novoBenef;
-document.getElementById('form').addEventListener('submit',e=>{
-  e.preventDefault();
-  let s=0; elB.querySelectorAll('.pct').forEach(p=>s+=parseFloat(p.value||0));
-  if(elB.children.length && s!==100) return alert('Os beneficiários precisam somar 100%. Atual: '+s+'%');
-  alert('✓ Apólice válida!\n\nProtótipo — a gravação no banco entra com o backend Laravel.');
-});
-
-// inicial
-novaVida(true); novoBenef(); pintaCob();
-</script>
-</body>
-</html>
+document.getElementById('addV').onclick=function(){novaVida(false);};document.getElementById('addB').onclick=novoB;
+document.getElementById('form').addEventListener('submit',function(e){e.preventDefault();var s=0;Array.prototype.forEach.call(elB.querySelectorAll('.pct'),function(p){s+=parseFloat(p.value||0);});
+ if(elB.children.length&&s!=100)return alert('Os beneficiários precisam somar 100%. Atual: '+s+'%');alert('✓ Apólice válida! (protótipo)');});
+novaVida(true);novoB();pintaCob();
+</script></body></html>

@@ -4,72 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entrar — Clube Investvida</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {theme: {extend: {colors: {navy: "#003461", navy2: "#004B87", orange: "#FF6B00", ink: "#1A1C1E", line: "#E2E8F0", surface: "#F4F7F9"}, fontFamily: {head: ["Manrope"], body: ["Inter"]}}}};
-    </script>
+    <link rel="icon" href="{{ asset('assets/brand/favicon.svg') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ asset('assets/brand/apple-touch-icon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
     <style>
-        body{font-family:"Inter",sans-serif;background:#F4F7F9;color:#1A1C1E}.font-head{font-family:"Manrope",sans-serif}
-        .inp{border:1px solid #E2E8F0;border-radius:.5rem;padding:.5rem .7rem;font-size:.9rem;background:#fff}
-        .inp:focus{outline:none;border-color:#003461;box-shadow:0 0 0 3px rgba(0,75,135,.12)}
-        .bgn{background:linear-gradient(135deg,#003461,#00284c)}
+        .auth{display:grid;grid-template-columns:1.05fr .95fr;min-height:100vh}
+        .brandcol{background:linear-gradient(160deg,#062A4A,#031B33);color:#fff;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
+        .formcol{display:flex;align-items:center;justify-content:center;padding:28px}
+        .auth-title{font-family:Manrope,system-ui,sans-serif;font-weight:800;font-size:30px;line-height:1.15;margin:0}
+        .auth-box{width:100%;max-width:360px}
+        .remember{display:flex;align-items:center;gap:6px}
+        @media(max-width:760px){.auth{grid-template-columns:1fr}.brandcol{display:none}}
     </style>
 </head>
 <body>
-<div class="min-h-screen grid md:grid-cols-2">
-    <div class="bgn text-white hidden md:flex flex-col justify-between p-10">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-orange flex items-center justify-center font-head font-bold text-lg">CI</div>
-            <div class="font-head font-bold text-lg">Clube Investvida</div>
+<h1 class="sr-only">Login do sistema Clube Investvida</h1>
+<div class="auth">
+    <aside class="brandcol">
+        <div class="row center gap8">
+            <img src="{{ asset('assets/brand/logo-simbolo-claro.svg') }}" width="40" height="40" alt="">
+            <strong style="font-family:Manrope;font-size:17px">Clube Investvida</strong>
         </div>
         <div>
-            <h1 class="font-head font-bold text-3xl leading-tight">Proteção e patrimônio,<br>com gestão inteligente.</h1>
-            <p class="text-blue-200 mt-3 text-sm max-w-sm">Sistema de gestão de seguros de pessoas — Vida, Previdência, Saúde, Viagem e Renda.</p>
+            <p class="auth-title">Proteção e patrimônio,<br>com gestão inteligente.</p>
+            <p style="color:#9FB4CC;margin-top:12px;max-width:22rem">Sistema de gestão para seguros de pessoas — Vida, Previdência, Saúde, Viagem e Renda.</p>
         </div>
-        <div class="text-blue-300 text-xs">© 2026 Clube Investvida Corretora de Seguros</div>
-    </div>
+        <div class="small" style="color:#7E93AC">© {{ date('Y') }} Clube Investvida Corretora de Seguros</div>
+    </aside>
 
-    <main class="flex items-center justify-center p-6">
-        <div class="w-full max-w-sm">
-            <div class="md:hidden flex items-center gap-2 mb-6">
-                <div class="w-9 h-9 rounded-md bg-navy text-white flex items-center justify-center font-head font-bold">CI</div>
-                <span class="font-head font-bold text-navy">Clube Investvida</span>
-            </div>
-
-            <h2 class="font-head font-bold text-2xl text-navy">Entrar</h2>
-            <p class="text-sm text-slate-500 mb-6">Acesse o painel da corretora.</p>
+    <main class="formcol">
+        <div class="auth-box">
+            <img src="{{ asset('assets/brand/logo-horizontal.svg') }}" alt="Clube Investvida — Corretora de Seguros" style="height:44px;margin-bottom:24px;max-width:100%">
+            <h2 class="h1" style="font-size:22px">Entrar</h2>
+            <p class="lead" style="margin-bottom:18px">Acesse o painel da corretora.</p>
 
             @if ($errors->any())
-                <div role="alert" class="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                    E-mail ou senha inválidos. Verifique os dados e tente novamente.
-                </div>
+                <div role="alert" class="alert alert-error mb16">E-mail ou senha inválidos. Verifique os dados e tente novamente.</div>
             @endif
 
-            <form method="POST" action="{{ url('/login') }}" class="space-y-4">
+            <form method="POST" action="{{ url('/login') }}">
                 @csrf
-                <div>
-                    <label for="email" class="text-xs font-semibold text-slate-600">E-mail</label>
-                    <input id="email" name="email" type="email" autocomplete="username" required autofocus
-                           class="inp w-full mt-1" placeholder="voce@clubeinvestvida.com" value="{{ old('email') }}">
+                <div class="field">
+                    <label class="label" for="email">E-mail</label>
+                    <input class="input" id="email" name="email" type="email" autocomplete="username" required autofocus
+                           placeholder="voce@clubeinvestvida.com" value="{{ old('email') }}">
                 </div>
-                <div>
-                    <label for="password" class="text-xs font-semibold text-slate-600">Senha</label>
-                    <input id="password" name="password" type="password" autocomplete="current-password" required
-                           class="inp w-full mt-1" placeholder="••••••••">
+                <div class="field">
+                    <label class="label" for="password">Senha</label>
+                    <input class="input" id="password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••">
                 </div>
-                <div class="flex items-center justify-between text-sm">
-                    <label class="flex items-center gap-2 text-slate-600">
-                        <input name="remember" type="checkbox" value="1" class="accent-navy"> Lembrar
-                    </label>
-                    <span class="text-slate-400 text-xs">Recuperação pelo administrador</span>
+                <div class="between small mb16">
+                    <label class="remember muted"><input name="remember" type="checkbox" value="1"> Lembrar</label>
+                    <span class="faint">Recuperação pelo administrador</span>
                 </div>
-                <button type="submit" class="w-full bg-navy text-white py-2.5 rounded-md font-semibold hover:bg-[#00284c]">
-                    Entrar
-                </button>
+                <button class="btn btn-primary btn-block" type="submit">Entrar</button>
             </form>
 
-            <p class="text-xs text-slate-400 mt-6 text-center">Protegido por verificação em duas etapas (2FA).</p>
+            <p class="small faint mt16" style="text-align:center">Protegido por verificação em duas etapas (2FA).</p>
         </div>
     </main>
 </div>

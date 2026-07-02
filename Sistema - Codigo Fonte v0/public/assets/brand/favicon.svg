@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Clube Investvida">
+  <rect width="128" height="128" rx="28" fill="#062A4A"/>
+  <g transform="translate(4,2) scale(0.94)">
+    <path d="M60 92 C51 74 44 58 38 40" fill="none" stroke="#F8A600" stroke-width="14" stroke-linecap="round"/>
+    <path d="M67 92 C76 74 83 58 90 42" fill="none" stroke="#E94D11" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="63" cy="28" r="14" fill="#FBB03B"/>
+    <path d="M43 99 Q63 113 83 98" fill="none" stroke="#3E8FD0" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

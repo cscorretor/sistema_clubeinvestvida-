@@ -100,4 +100,21 @@ class AuthenticationTest extends TestCase
     {
         $this->get('/dashboard')->assertRedirect('/login');
     }
+
+    public function test_login_e_dashboard_usam_a_nova_marca_sem_tailwind_cdn(): void
+    {
+        $this->get('/login')
+            ->assertOk()
+            ->assertSee('assets/brand/logo-horizontal.svg', false)
+            ->assertDontSee('cdn.tailwindcss.com', false);
+
+        $admin = Usuario::factory()->admin()->create();
+
+        $this->actingAs($admin)
+            ->get('/dashboard')
+            ->assertOk()
+            ->assertSee('assets/brand/logo-horizontal.svg', false)
+            ->assertSee('Autenticação concluída')
+            ->assertDontSee('cdn.tailwindcss.com', false);
+    }
 }

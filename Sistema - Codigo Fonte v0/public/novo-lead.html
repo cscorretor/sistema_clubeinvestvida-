@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css"><title>Novo Lead — Clube Investvida</title>
+<style>.g{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:720px){.g{grid-template-columns:1fr}}</style></head><body>
+<h2 class="sr-only">Cadastro de novo lead</h2>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><img src="assets/brand/logo-simbolo-claro.svg" width="34" height="34" alt="">
+    <div><div class="bname">Clube Investvida</div><div class="btag">Corretora de Seguros</div></div></div>
+  <nav class="nav">
+    <a href="dashboard.html"><span class="ico">▦</span> Dashboard</a>
+    <a href="clientes.html"><span class="ico">◉</span> Clientes</a>
+    <a href="apolice-pessoas.html"><span class="ico">❤</span> Apólices</a>
+    <a href="leads.html" class="on" aria-current="page"><span class="ico">◔</span> Leads / CRM</a>
+    <a href="chamados.html"><span class="ico">◷</span> Chamados</a>
+    <a href="financeiro.html"><span class="ico">$</span> Financeiro</a>
+    <a href="cofre.html"><span class="ico">⛁</span> Cofre Digital</a>
+    <a href="configuracoes.html"><span class="ico">⚙</span> Configurações</a>
+  </nav>
+  <div class="foot">v0 · protótipo</div>
+</aside>
+  <div class="content">
+    <header class="topbar"><a href="leads.html" class="muted">‹ Leads</a><div class="avatar mla">AD</div></header>
+    <main class="main" style="max-width:820px">
+      <div class="mb16"><h1 class="h1">Novo Lead</h1><p class="lead">Capte e qualifique um contato. Campos alinhados à tabela <code>leads</code>.</p></div>
+      <div id="ok" class="alert alert-ok mb16" style="display:none" role="status">✓ Lead válido! (protótipo — gravação entra com o backend)</div>
+      <form id="f"><section class="card">
+        <div class="g">
+          <div class="field"><label class="label" for="nome">Nome *</label><input class="input" id="nome"></div>
+          <div class="field"><label class="label" for="tel">Telefone / WhatsApp</label><input class="input" id="tel" inputmode="numeric" placeholder="(00) 00000-0000"></div>
+          <div class="field"><label class="label" for="email">E-mail</label><input class="input" id="email" type="email"></div>
+          <div class="field"><label class="label" for="cpf">CPF</label><input class="input" id="cpf" inputmode="numeric" placeholder="000.000.000-00"><span class="hint" id="cpfm"></span></div>
+          <div class="field"><label class="label" for="origem">Origem</label><select class="select" id="origem"><option>Indicação</option><option>Landing Page</option><option>Instagram</option><option>Orgânico</option><option>Google Contatos</option><option>Lista fria</option></select></div>
+          <div class="field"><label class="label" for="ramo">Ramo de interesse</label><select class="select" id="ramo"><option>Vida</option><option>Previdência</option><option>Saúde</option><option>Viagem</option><option>Renda</option></select></div>
+          <div class="field"><label class="label" for="etapa">Etapa</label><select class="select" id="etapa"><option>Novo</option><option>Qualificado</option><option>Proposta</option></select></div>
+          <div class="field"><label class="label" for="score">Classificação (ICP)</label><select class="select" id="score"><option>Quente</option><option>Morno</option><option>Frio</option><option>Descartar</option></select></div>
+          <div class="field"><label class="label" for="prod">Produtor responsável</label><input class="input" id="prod"></div>
+          <div class="field"><label class="label" for="prox">Próximo contato</label><input class="input" id="prox" type="date"></div>
+          <div class="field" style="grid-column:1/-1"><label class="label" for="obs">Observações</label><textarea class="input" id="obs" rows="3"></textarea></div>
+        </div>
+      </section>
+      <div class="between mt16" style="padding-bottom:40px"><span class="small faint">* Campo obrigatório</span>
+        <div class="row gap8"><a href="leads.html" class="btn btn-ghost">Cancelar</a><button class="btn btn-primary" type="submit">Salvar lead →</button></div></div>
+      </form>
+    </main>
+  </div>
+</div>
+<script src="assets/js/app.js"></script>
+<script>
+var cpf=document.getElementById('cpf'),cpfm=document.getElementById('cpfm');
+cpf.addEventListener('input',function(){cpf.value=CI.mCPF(cpf.value);var d=cpf.value.replace(/\D/g,'');cpf.classList.remove('is-ok','is-err');cpfm.className='hint';if(d.length==11){if(CI.cpfValido(d)){cpf.classList.add('is-ok');cpfm.className='hint ok';cpfm.textContent='✓ válido';}else{cpf.classList.add('is-err');cpfm.className='hint err';cpfm.textContent='✗ inválido';}}else cpfm.textContent='';});
+document.getElementById('tel').addEventListener('input',function(e){e.target.value=CI.mFone(e.target.value);});
+document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();if(!document.getElementById('nome').value.trim())return alert('Informe o nome do lead.');var d=cpf.value.replace(/\D/g,'');if(d&&!CI.cpfValido(d))return alert('CPF inválido.');var m=document.getElementById('ok');m.style.display='flex';window.scrollTo({top:0,behavior:'smooth'});});
+</script></body></html>
