@@ -113,6 +113,7 @@ class ClienteController extends Controller
                 'enderecos' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
                 'telefones' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
                 'emails' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
+                'contatos' => fn ($query) => $query->orderByDesc('principal')->orderBy('id'),
                 'apolices' => fn ($query) => $query->orderByDesc('created_at'),
                 'apolices.ramo',
                 'apolices.seguradora',
@@ -165,6 +166,9 @@ class ClienteController extends Controller
                 'nascimento' => $dados['nascimento'] ?? null,
                 'sexo' => $dados['sexo'] ?? null,
                 'faixa_renda' => $dados['faixa_renda'] ?? null,
+                'nome_fantasia' => $dados['nome_fantasia'] ?? null,
+                'inscricao_est' => $dados['inscricao_est'] ?? null,
+                'data_abertura' => $dados['data_abertura'] ?? null,
                 'celular_padrao' => $firstPhoneKey !== null ? $telefones[$firstPhoneKey]['numero'] : null,
                 'email_padrao' => $firstEmailKey !== null ? $emails[$firstEmailKey]['email'] : null,
                 'data_cadastro' => now()->toDateString(),
@@ -228,8 +232,20 @@ class ClienteController extends Controller
                 ]);
             }
 
+            if ($dados['pessoa'] === 'PJ') {
+                foreach ($dados['contatos'] ?? [] as $index => $contato) {
+                    $cliente->contatos()->create([
+                        'principal' => $index === array_key_first($dados['contatos']),
+                        'nome' => $contato['nome'],
+                        'cargo' => $contato['cargo'] ?? null,
+                        'email' => $contato['email'] ?? null,
+                        'telefone' => $contato['telefone'] ?? null,
+                    ]);
+                }
+            }
+
             $after = $cliente->fresh()
-                ->load(['conjuge', 'cnh', 'enderecos', 'telefones', 'emails'])
+                ->load(['conjuge', 'cnh', 'enderecos', 'telefones', 'emails', 'contatos'])
                 ->toArray();
 
             $auditLogger->record(
@@ -273,7 +289,7 @@ class ClienteController extends Controller
         abort_unless($usuario instanceof Usuario, 403);
 
         DB::transaction(function () use ($cliente, $dados, $usuario, $request, $auditLogger): void {
-            $cliente->load(['conjuge', 'cnh', 'enderecos', 'telefones', 'emails']);
+            $cliente->load(['conjuge', 'cnh', 'enderecos', 'telefones', 'emails', 'contatos']);
             $before = $cliente->toArray();
 
             $enderecos = $this->filledRows(
@@ -296,6 +312,9 @@ class ClienteController extends Controller
                 'nascimento' => $dados['nascimento'] ?? null,
                 'sexo' => $dados['sexo'] ?? null,
                 'faixa_renda' => $dados['faixa_renda'] ?? null,
+                'nome_fantasia' => $dados['nome_fantasia'] ?? null,
+                'inscricao_est' => $dados['inscricao_est'] ?? null,
+                'data_abertura' => $dados['data_abertura'] ?? null,
                 'celular_padrao' => $firstPhoneKey !== null ? $telefones[$firstPhoneKey]['numero'] : null,
                 'email_padrao' => $firstEmailKey !== null ? $emails[$firstEmailKey]['email'] : null,
             ]);
@@ -331,6 +350,7 @@ class ClienteController extends Controller
             $cliente->enderecos()->delete();
             $cliente->telefones()->delete();
             $cliente->emails()->delete();
+            $cliente->contatos()->delete();
 
             $selectedAddress = (int) ($dados['endereco_padrao'] ?? array_key_first($enderecos) ?? 0);
             $hasSelectedAddress = array_key_exists($selectedAddress, $enderecos);
@@ -364,8 +384,20 @@ class ClienteController extends Controller
                 ]);
             }
 
+            if ($dados['pessoa'] === 'PJ') {
+                foreach ($dados['contatos'] ?? [] as $index => $contato) {
+                    $cliente->contatos()->create([
+                        'principal' => $index === array_key_first($dados['contatos']),
+                        'nome' => $contato['nome'],
+                        'cargo' => $contato['cargo'] ?? null,
+                        'email' => $contato['email'] ?? null,
+                        'telefone' => $contato['telefone'] ?? null,
+                    ]);
+                }
+            }
+
             $after = $cliente->fresh()
-                ->load(['conjuge', 'cnh', 'enderecos', 'telefones', 'emails'])
+                ->load(['conjuge', 'cnh', 'enderecos', 'telefones', 'emails', 'contatos'])
                 ->toArray();
 
             $auditLogger->record(
@@ -398,6 +430,7 @@ class ClienteController extends Controller
                 'enderecos' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
                 'telefones' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
                 'emails' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
+                'contatos' => fn ($query) => $query->orderByDesc('principal')->orderBy('id'),
             ])
             ->findOrFail($cliente);
     }
@@ -419,6 +452,9 @@ class ClienteController extends Controller
             'sexo' => $cliente->sexo,
             'profissao' => $cliente->profissao,
             'faixa_renda' => $cliente->faixa_renda,
+            'nome_fantasia' => $cliente->nome_fantasia,
+            'inscricao_est' => $cliente->inscricao_est,
+            'data_abertura' => $cliente->data_abertura?->toDateString(),
             'tipo_cliente' => $cliente->tipo_cliente,
             'intermedio' => in_array($cliente->intermedio, Cliente::ORIGENS, true)
                 ? $cliente->intermedio
@@ -452,6 +488,12 @@ class ClienteController extends Controller
             ])->all(),
             'emails' => $cliente->emails->values()->map(fn ($email): array => [
                 'email' => $email->email,
+            ])->all(),
+            'contatos' => $cliente->contatos->values()->map(fn ($contato): array => [
+                'nome' => $contato->nome,
+                'cargo' => $contato->cargo,
+                'email' => $contato->email,
+                'telefone' => $contato->telefone,
             ])->all(),
         ];
     }

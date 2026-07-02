@@ -35,14 +35,22 @@
   .nav .nav-disabled{color:#718198;cursor:not-allowed}.nav .nav-disabled small{margin-left:auto;font-size:.6rem}
   .contact-row{display:grid;grid-template-columns:9rem minmax(12rem,1fr) 2.5rem;gap:.5rem;align-items:center}
   .email-row{display:grid;grid-template-columns:minmax(12rem,1fr) 2.5rem;gap:.5rem;align-items:center}
+  .business-contact-row{display:grid;grid-template-columns:minmax(12rem,2fr) minmax(8rem,1fr) minmax(12rem,1.4fr) minmax(10rem,1fr) 2.5rem;gap:.6rem;align-items:end}
   .phone-type,.phone-number{min-width:0}
   .remove-contact{display:flex;align-items:center;justify-content:center;min-height:42px}
+  @media(max-width:900px){
+    .business-contact-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .business-contact-row .remove-contact{grid-column:2;justify-self:end}
+  }
   @media(max-width:520px){
     .contact-row{grid-template-columns:minmax(0,1fr) 2.25rem}
     .contact-row .phone-type{grid-column:1;grid-row:1}
     .contact-row .phone-number{grid-column:1;grid-row:2}
     .contact-row .remove-contact{grid-column:2;grid-row:1 / span 2}
     .email-row{grid-template-columns:minmax(0,1fr) 2.25rem}
+    .business-contact-row{grid-template-columns:minmax(0,1fr) 2.25rem}
+    .business-contact-row>div{grid-column:1}
+    .business-contact-row .remove-contact{grid-column:2;grid-row:1 / span 4}
   }
 </style>
 </head>
@@ -125,12 +133,12 @@
           <p class="hint mt-1 text-slate-400" id="cpfMsg">Validação automática ao digitar.</p>
         </div>
 
-        <div id="wrapNasc">
+        <div id="wrapNasc" class="pf-only">
           <label class="lbl" for="nascimento">Data de nascimento</label>
           <input type="date" class="inp mt-1" id="nascimento" name="nascimento" value="{{ $field('nascimento') }}">
         </div>
 
-        <div>
+        <div class="pf-only">
           <label class="lbl" for="estado_civil">Estado civil</label>
           <select class="inp mt-1" id="estado_civil" name="estado_civil">
             <option value="">Selecione…</option>
@@ -142,7 +150,7 @@
           </select>
         </div>
 
-        <div>
+        <div class="pf-only">
           <label class="lbl" for="sexo">Sexo</label>
           <select class="inp mt-1" id="sexo" name="sexo">
             <option value="">Selecione…</option>
@@ -152,7 +160,7 @@
           </select>
         </div>
 
-        <div>
+        <div class="pf-only">
           <label class="lbl" for="profissao">Profissão</label>
           <div class="ac mt-1">
             <input class="inp" id="profissao" name="profissao" maxlength="120" placeholder="Digite ao menos 3 letras" value="{{ $field('profissao') }}"
@@ -162,7 +170,7 @@
           <p class="hint mt-1 text-slate-400">Sugestões da CBO; texto manual permitido.</p>
         </div>
 
-        <div>
+        <div class="pf-only">
           <label class="lbl" for="faixa_renda">Faixa de renda</label>
           <select class="inp mt-1" id="faixa_renda" name="faixa_renda">
             <option value="">Selecione…</option>
@@ -170,6 +178,21 @@
               <option value="{{ $faixa }}" @selected($field('faixa_renda') === $faixa)>{{ $faixa }}</option>
             @endforeach
           </select>
+        </div>
+
+        <div class="pj-only hidden">
+          <label class="lbl" for="nome_fantasia">Nome fantasia</label>
+          <input class="inp mt-1" id="nome_fantasia" name="nome_fantasia" maxlength="150" placeholder="Nome comercial da empresa" value="{{ $field('nome_fantasia') }}">
+        </div>
+
+        <div class="pj-only hidden">
+          <label class="lbl" for="inscricao_est">Inscrição estadual</label>
+          <input class="inp mt-1" id="inscricao_est" name="inscricao_est" maxlength="30" placeholder="Se aplicável" value="{{ $field('inscricao_est') }}">
+        </div>
+
+        <div class="pj-only hidden">
+          <label class="lbl" for="data_abertura">Data de abertura</label>
+          <input type="date" class="inp mt-1" id="data_abertura" name="data_abertura" value="{{ $field('data_abertura') }}">
         </div>
 
         <div>
@@ -193,7 +216,7 @@
         </div>
       </div>
 
-      <div id="conjugeBox" class="mt-4 hidden">
+      <div id="conjugeBox" class="pf-only mt-4 hidden" data-pf-conditional>
         <div class="rounded-lg bg-blue-50/60 border border-blue-100 p-4">
           <div class="flex items-center gap-2 mb-3">
             <span class="chip bg-navy text-white">Casado</span>
@@ -207,7 +230,7 @@
         </div>
       </div>
 
-      <div class="mt-4">
+      <div class="pf-only mt-4">
         <label class="inline-flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
           <input type="checkbox" name="tem_cnh" value="1" id="temCnh" class="accent-navy w-4 h-4" @checked($field('tem_cnh'))> Possui CNH
         </label>
@@ -220,16 +243,25 @@
       </div>
     </section>
 
+    <section id="pjContactsSection" class="card p-5 pj-only hidden">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2"><span class="step-n">2</span><h2 class="font-head font-semibold text-navy">Pessoas de contato</h2></div>
+        <button type="button" id="addContato" class="text-sm font-semibold text-orange hover:underline">+ Adicionar contato</button>
+      </div>
+      <p class="text-sm text-slate-500 mb-4">Cadastre quem atende pela empresa. Cada contato precisa ter ao menos telefone ou e-mail.</p>
+      <div id="contatos" class="space-y-3"></div>
+    </section>
+
     <section class="card p-5">
       <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-2"><span class="step-n">2</span><h2 class="font-head font-semibold text-navy">Endereços</h2></div>
+        <div class="flex items-center gap-2"><span class="step-n">3</span><h2 class="font-head font-semibold text-navy">Endereços</h2></div>
         <button type="button" id="addEnd" class="text-sm font-semibold text-orange hover:underline">+ Adicionar endereço</button>
       </div>
       <div id="enderecos" class="space-y-3"></div>
     </section>
 
     <section class="card p-5">
-      <div class="flex items-center gap-2 mb-4"><span class="step-n">3</span><h2 class="font-head font-semibold text-navy">Telefones e E-mails</h2></div>
+      <div class="flex items-center gap-2 mb-4"><span class="step-n">4</span><h2 id="contactSectionTitle" class="font-head font-semibold text-navy">Telefones e E-mails do titular</h2></div>
       <div class="grid md:grid-cols-2 gap-5">
         <div>
           <div class="flex items-center justify-between mb-2"><span class="lbl">Telefones</span>
@@ -311,16 +343,28 @@ function setPessoa(pf){
   document.getElementById('lblNome').textContent=pf?'Nome completo':'Razão social';
   document.getElementById('lblDoc').textContent=pf?'CPF':'CNPJ';
   docInput.placeholder=pf?'000.000.000-00':'00.000.000/0000-00';
-  document.getElementById('wrapNasc').style.display=pf?'':'none';
+  document.querySelectorAll('.pf-only').forEach(section=>{
+    if(!section.hasAttribute('data-pf-conditional'))section.classList.toggle('hidden',!pf);
+    section.querySelectorAll('input,select,textarea,button').forEach(control=>control.disabled=!pf);
+  });
+  document.querySelectorAll('.pj-only').forEach(section=>{
+    section.classList.toggle('hidden',pf);
+    section.querySelectorAll('input,select,textarea,button').forEach(control=>control.disabled=pf);
+  });
+  if(!pf&&elContatos.children.length===0)novoContato();
+  document.getElementById('contactSectionTitle').textContent=pf?'Telefones e E-mails do titular':'Telefones e E-mails da empresa';
+  document.getElementById('estado_civil').dispatchEvent(new Event('change'));
+  document.getElementById('temCnh').dispatchEvent(new Event('change'));
   atualizaDocumento();
 }
 btnPF.onclick=()=>setPessoa(true); btnPJ.onclick=()=>setPessoa(false);
 
 document.getElementById('estado_civil').addEventListener('change',e=>{
-  document.getElementById('conjugeBox').classList.toggle('hidden',!['CASADO','UNIAO_ESTAVEL'].includes(e.target.value));
+  const show=pessoaInput.value==='PF'&&['CASADO','UNIAO_ESTAVEL'].includes(e.target.value);
+  document.getElementById('conjugeBox').classList.toggle('hidden',!show);
 });
 document.getElementById('temCnh').addEventListener('change',e=>{
-  document.getElementById('cnhBox').classList.toggle('hidden',!e.target.checked);
+  document.getElementById('cnhBox').classList.toggle('hidden',pessoaInput.value!=='PF'||!e.target.checked);
 });
 
 const elEnd=document.getElementById('enderecos'); let endSeq=0;
@@ -391,6 +435,29 @@ function novoEml(data={},forcedIndex=null){
 document.getElementById('addTel').onclick=()=>novoTel();
 document.getElementById('addEml').onclick=()=>novoEml();
 
+const elContatos=document.getElementById('contatos');let contatoSeq=0;
+function novoContato(data={},forcedIndex=null){
+  const index=forcedIndex===null?contatoSeq++:forcedIndex;contatoSeq=Math.max(contatoSeq,index+1);
+  const i=document.createElement('div');i.className='business-contact-row rounded-lg border border-line p-3 bg-surface/40';
+  i.innerHTML=`
+    <div><label class="lbl">Nome</label><input name="contatos[${index}][nome]" class="inp mt-1 contato-nome" maxlength="150" autocomplete="name" placeholder="Nome da pessoa"></div>
+    <div><label class="lbl">Cargo / função</label><input name="contatos[${index}][cargo]" class="inp mt-1 contato-cargo" maxlength="100" placeholder="Ex.: Sócio, RH"></div>
+    <div><label class="lbl">E-mail</label><input type="email" name="contatos[${index}][email]" class="inp mt-1 contato-email" maxlength="150" autocomplete="email" placeholder="contato@empresa.com.br"></div>
+    <div><label class="lbl">Telefone</label><input name="contatos[${index}][telefone]" class="inp mt-1 contato-telefone" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000"></div>
+    <button type="button" class="rmContato remove-contact text-red-600" aria-label="Remover pessoa de contato">✕</button>`;
+  i.querySelector('.contato-nome').value=data.nome||'';
+  i.querySelector('.contato-cargo').value=data.cargo||'';
+  i.querySelector('.contato-email').value=data.email||'';
+  const telefone=i.querySelector('.contato-telefone');telefone.value=maskFone(data.telefone||'');
+  telefone.addEventListener('input',()=>telefone.value=maskFone(telefone.value));
+  i.querySelector('.rmContato').onclick=()=>{
+    if(elContatos.children.length===1)return alert('A empresa precisa ter ao menos uma pessoa de contato.');
+    i.remove();
+  };
+  elContatos.appendChild(i);
+}
+document.getElementById('addContato').onclick=()=>novoContato();
+
 const draftKey=@json($isEditing ? 'cliente-edit-'.$cliente->getKey() : 'cliente-create');
 const hasServerOldInput=@json(session()->hasOldInput());
 let draftData=null;
@@ -401,9 +468,11 @@ window.initialAddressDefault=draftData?.enderecoPadrao??@json($field('endereco_p
 const initialEnderecos=draftData?.enderecos??@json($field('enderecos', [[]]));
 const initialTelefones=draftData?.telefones??@json($field('telefones', [[]]));
 const initialEmails=draftData?.emails??@json($field('emails', [[]]));
+const initialContatos=draftData?.contatos??@json($field('contatos', [[]]));
 Object.entries(initialEnderecos).forEach(([index,data])=>novoEndereco(data,Number(index)));
 Object.entries(initialTelefones).forEach(([index,data])=>novoTel(data,Number(index)));
 Object.entries(initialEmails).forEach(([index,data])=>novoEml(data,Number(index)));
+Object.entries(initialContatos).forEach(([index,data])=>novoContato(data,Number(index)));
 
 const F=document.getElementById('form');
 function salvarRascunho(){
@@ -418,7 +487,11 @@ function salvarRascunho(){
   }));
   const telefones=[...elTel.children].map(row=>({tipo:row.querySelector('.tipo').value,numero:row.querySelector('.fone').value}));
   const emails=[...elEml.children].map(row=>({email:row.querySelector('.email').value}));
-  localStorage.setItem(draftKey,JSON.stringify({fields,enderecoPadrao,enderecos,telefones,emails}));
+  const contatos=[...elContatos.children].map(row=>({
+    nome:row.querySelector('.contato-nome').value,cargo:row.querySelector('.contato-cargo').value,
+    email:row.querySelector('.contato-email').value,telefone:row.querySelector('.contato-telefone').value
+  }));
+  localStorage.setItem(draftKey,JSON.stringify({fields,enderecoPadrao,enderecos,telefones,emails,contatos}));
 }
 F.addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(salvarRascunho,800)});
 document.getElementById('btnDraft').onclick=()=>{salvarRascunho();alert('Rascunho salvo neste navegador.')};
@@ -439,6 +512,12 @@ F.addEventListener('submit',e=>{
   const dig=docInput.value.replace(/\D/g,''),pf=pessoaInput.value==='PF';
   if(!document.getElementById('nome').value.trim()){e.preventDefault();return alert('Informe o nome do cliente.')}
   if(!(pf?cpfValido(dig):cnpjValido(dig))){e.preventDefault();return alert(`O ${pf?'CPF':'CNPJ'} informado é inválido.`)}
+  if(!pf){
+    const contatos=[...elContatos.children];
+    const incompleto=contatos.find(row=>!row.querySelector('.contato-nome').value.trim()||
+      (!row.querySelector('.contato-email').value.trim()&&!row.querySelector('.contato-telefone').value.trim()));
+    if(incompleto){e.preventDefault();return alert('Informe o nome e ao menos o telefone ou o e-mail de cada pessoa de contato.')}
+  }
   const button=document.getElementById('btnSubmit');button.disabled=true;button.textContent='Salvando…';
 });
 </script>

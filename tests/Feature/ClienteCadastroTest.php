@@ -34,6 +34,113 @@ class ClienteCadastroTest extends TestCase
             ->assertDontSee('cdn.tailwindcss.com', false);
     }
 
+    public function test_formulario_alterna_campos_especificos_de_pf_e_pj(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+
+        $this->actingAs($admin)
+            ->get('/clientes/novo')
+            ->assertOk()
+            ->assertSee('Pessoa Jurídica')
+            ->assertSee('Nome fantasia')
+            ->assertSee('Inscrição estadual')
+            ->assertSee('Data de abertura')
+            ->assertSee('Pessoas de contato')
+            ->assertSee('Cargo / função')
+            ->assertSee("document.querySelectorAll('.pf-only')", false)
+            ->assertSee("document.querySelectorAll('.pj-only')", false)
+            ->assertSee('Telefones e E-mails da empresa', false);
+    }
+
+    public function test_cadastra_pessoa_juridica_com_dados_empresariais_e_contato(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+
+        $response = $this->actingAs($admin)->post('/clientes', $this->validPjPayload());
+
+        $response->assertRedirect('/clientes/1');
+        $this->assertDatabaseHas('clientes', [
+            'id' => 1,
+            'pessoa' => 'PJ',
+            'nome' => 'Investvida Serviços Ltda',
+            'cpf_cnpj' => '11222333000181',
+            'nome_fantasia' => 'Investvida Benefícios',
+            'inscricao_est' => 'ISENTO',
+            'nascimento' => null,
+            'estado_civil' => null,
+            'sexo' => null,
+            'profissao' => null,
+            'faixa_renda' => null,
+        ]);
+        $this->assertSame('2018-06-20', Cliente::findOrFail(1)->data_abertura?->toDateString());
+        $this->assertDatabaseHas('cliente_contatos', [
+            'cliente_id' => 1,
+            'principal' => true,
+            'nome' => 'Ana Souza',
+            'cargo' => 'Recursos Humanos',
+            'email' => 'ana@empresa.com.br',
+            'telefone' => '(11) 98888-7777',
+        ]);
+        $this->assertDatabaseCount('cliente_conjuge', 0);
+        $this->assertDatabaseCount('cliente_cnh', 0);
+
+        $auditJson = (string) DB::table('audit_log')->value('dados_depois');
+        $this->assertStringNotContainsString('ana@empresa.com.br', $auditJson);
+        $this->assertStringNotContainsString('(11) 98888-7777', $auditJson);
+
+        $this->actingAs($admin)
+            ->get('/clientes/1')
+            ->assertOk()
+            ->assertSee('Dados da empresa')
+            ->assertSee('Pessoas de contato')
+            ->assertSee('Ana Souza')
+            ->assertSee('Recursos Humanos');
+    }
+
+    public function test_rejeita_pj_sem_meio_de_contato_da_pessoa_responsavel(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+        $payload = $this->validPjPayload();
+        $payload['contatos'][0]['email'] = '';
+        $payload['contatos'][0]['telefone'] = '';
+
+        $this->actingAs($admin)
+            ->from('/clientes/novo')
+            ->post('/clientes', $payload)
+            ->assertRedirect('/clientes/novo')
+            ->assertSessionHasErrors('contatos.0.telefone');
+
+        $this->assertDatabaseCount('clientes', 0);
+        $this->assertDatabaseCount('cliente_contatos', 0);
+    }
+
+    public function test_alteracao_de_pf_para_pj_remove_dados_pessoais_e_grava_contato(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+        $this->actingAs($admin)->post('/clientes', $this->validPayload());
+        $cliente = Cliente::firstOrFail();
+
+        $payload = $this->validPjPayload();
+        $payload['contatos'][0]['nome'] = 'Bruno Contabilidade';
+
+        $this->actingAs($admin)
+            ->put("/clientes/{$cliente->id}", $payload)
+            ->assertRedirect("/clientes/{$cliente->id}");
+
+        $cliente->refresh();
+        $this->assertSame('PJ', $cliente->pessoa);
+        $this->assertNull($cliente->nascimento);
+        $this->assertNull($cliente->estado_civil);
+        $this->assertNull($cliente->sexo);
+        $this->assertNull($cliente->profissao);
+        $this->assertDatabaseMissing('cliente_conjuge', ['cliente_id' => $cliente->id]);
+        $this->assertDatabaseMissing('cliente_cnh', ['cliente_id' => $cliente->id]);
+        $this->assertDatabaseHas('cliente_contatos', [
+            'cliente_id' => $cliente->id,
+            'nome' => 'Bruno Contabilidade',
+        ]);
+    }
+
     public function test_cadastra_cliente_com_relacionamentos_e_auditoria_sem_cpf_em_texto_puro(): void
     {
         $admin = Usuario::factory()->admin()->create();
@@ -284,6 +391,46 @@ class ClienteCadastroTest extends TestCase
             ]],
             'emails' => [[
                 'email' => 'MARIA@EXAMPLE.COM',
+            ]],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validPjPayload(): array
+    {
+        return [
+            'pessoa' => 'PJ',
+            'nome' => 'Investvida Serviços Ltda',
+            'cpf_cnpj' => '11.222.333/0001-81',
+            'nome_fantasia' => 'Investvida Benefícios',
+            'inscricao_est' => 'ISENTO',
+            'data_abertura' => '2018-06-20',
+            'tipo_cliente' => 'PROSPECT',
+            'intermedio' => 'Google Ads',
+            'contatos' => [[
+                'nome' => 'Ana Souza',
+                'cargo' => 'Recursos Humanos',
+                'email' => 'ANA@EMPRESA.COM.BR',
+                'telefone' => '(11) 98888-7777',
+            ]],
+            'endereco_padrao' => 0,
+            'enderecos' => [[
+                'tipo' => 'COMERCIAL',
+                'cep' => '01310-930',
+                'logradouro' => 'Avenida Paulista',
+                'numero' => '1000',
+                'bairro' => 'Bela Vista',
+                'cidade' => 'São Paulo',
+                'uf' => 'SP',
+            ]],
+            'telefones' => [[
+                'tipo' => 'COMERCIAL',
+                'numero' => '(11) 3333-4444',
+            ]],
+            'emails' => [[
+                'email' => 'CONTATO@EMPRESA.COM.BR',
             ]],
         ];
     }

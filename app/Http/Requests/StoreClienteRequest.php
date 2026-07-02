@@ -7,6 +7,7 @@ use App\Rules\Cnpj;
 use App\Rules\Cpf;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class StoreClienteRequest extends FormRequest
 {
@@ -52,13 +53,32 @@ class StoreClienteRequest extends FormRequest
                 return $email;
             })->all();
 
+        $contatosInput = is_array($this->input('contatos')) ? $this->input('contatos') : [];
+        $contatos = collect($contatosInput)
+            ->map(function (mixed $contato): mixed {
+                if (! is_array($contato)) {
+                    return $contato;
+                }
+
+                $email = mb_strtolower(trim((string) ($contato['email'] ?? '')));
+                $contato['nome'] = trim((string) ($contato['nome'] ?? ''));
+                $contato['cargo'] = trim((string) ($contato['cargo'] ?? ''));
+                $contato['email'] = $email !== '' ? $email : null;
+                $contato['telefone'] = trim((string) ($contato['telefone'] ?? ''));
+
+                return $contato;
+            })->all();
+
         $this->merge([
             'pessoa' => mb_strtoupper((string) $this->input('pessoa', 'PF')),
             'nome' => trim((string) $this->input('nome')),
             'cpf_cnpj' => $digitsOrNull($this->input('cpf_cnpj')),
+            'nome_fantasia' => trim((string) $this->input('nome_fantasia')),
+            'inscricao_est' => trim((string) $this->input('inscricao_est')),
             'conjuge' => $conjuge,
             'enderecos' => $enderecos,
             'emails' => $emails,
+            'contatos' => $contatos,
         ]);
     }
 
@@ -82,21 +102,24 @@ class StoreClienteRequest extends FormRequest
             'pessoa' => ['required', Rule::in(['PF', 'PJ'])],
             'nome' => ['required', 'string', 'max:150'],
             'cpf_cnpj' => $documentRules,
-            'nascimento' => ['nullable', 'date', 'before_or_equal:today'],
-            'estado_civil' => ['nullable', Rule::in(['SOLTEIRO', 'CASADO', 'DIVORCIADO', 'VIUVO', 'UNIAO_ESTAVEL'])],
-            'sexo' => ['nullable', Rule::in(['M', 'F', 'OUTRO'])],
-            'profissao' => ['nullable', 'string', 'max:120'],
-            'faixa_renda' => ['nullable', 'string', 'max:40'],
+            'nascimento' => ['exclude_if:pessoa,PJ', 'nullable', 'date', 'before_or_equal:today'],
+            'estado_civil' => ['exclude_if:pessoa,PJ', 'nullable', Rule::in(['SOLTEIRO', 'CASADO', 'DIVORCIADO', 'VIUVO', 'UNIAO_ESTAVEL'])],
+            'sexo' => ['exclude_if:pessoa,PJ', 'nullable', Rule::in(['M', 'F', 'OUTRO'])],
+            'profissao' => ['exclude_if:pessoa,PJ', 'nullable', 'string', 'max:120'],
+            'faixa_renda' => ['exclude_if:pessoa,PJ', 'nullable', 'string', 'max:40'],
+            'nome_fantasia' => ['exclude_if:pessoa,PF', 'nullable', 'string', 'max:150'],
+            'inscricao_est' => ['exclude_if:pessoa,PF', 'nullable', 'string', 'max:30'],
+            'data_abertura' => ['exclude_if:pessoa,PF', 'nullable', 'date', 'before_or_equal:today'],
             'tipo_cliente' => ['required', Rule::in(['EFETIVO', 'PROSPECT', 'RELACIONAMENTO', 'CONDUTOR', 'LOCADOR'])],
             'intermedio' => ['nullable', Rule::in(Cliente::ORIGENS)],
 
-            'conjuge' => ['nullable', 'array'],
+            'conjuge' => ['exclude_if:pessoa,PJ', 'nullable', 'array'],
             'conjuge.nome' => ['nullable', 'string', 'max:150'],
             'conjuge.cpf' => ['nullable', 'string', 'max:11', new Cpf],
             'conjuge.nascimento' => ['nullable', 'date', 'before_or_equal:today'],
 
-            'tem_cnh' => ['nullable', 'boolean'],
-            'cnh' => ['nullable', 'array'],
+            'tem_cnh' => ['exclude_if:pessoa,PJ', 'nullable', 'boolean'],
+            'cnh' => ['exclude_if:pessoa,PJ', 'nullable', 'array'],
             'cnh.numero_registro' => ['nullable', 'string', 'max:20'],
             'cnh.categoria' => ['nullable', 'string', 'max:5'],
             'cnh.validade' => ['nullable', 'date'],
@@ -118,6 +141,36 @@ class StoreClienteRequest extends FormRequest
             'telefones.*.numero' => ['nullable', 'string', 'max:20'],
             'emails' => ['nullable', 'array', 'max:10'],
             'emails.*.email' => ['nullable', 'email:rfc', 'max:150'],
+
+            'contatos' => ['exclude_if:pessoa,PF', 'required', 'array', 'min:1', 'max:10'],
+            'contatos.*.nome' => ['required', 'string', 'max:150'],
+            'contatos.*.cargo' => ['nullable', 'string', 'max:100'],
+            'contatos.*.email' => ['nullable', 'email:rfc', 'max:150'],
+            'contatos.*.telefone' => ['nullable', 'string', 'max:20'],
+        ];
+    }
+
+    public function after(): array
+    {
+        return [
+            function (Validator $validator): void {
+                if ($this->input('pessoa') !== 'PJ') {
+                    return;
+                }
+
+                foreach ((array) $this->input('contatos') as $index => $contato) {
+                    if (! is_array($contato)) {
+                        continue;
+                    }
+
+                    if (blank($contato['email'] ?? null) && blank($contato['telefone'] ?? null)) {
+                        $validator->errors()->add(
+                            "contatos.{$index}.telefone",
+                            'Informe ao menos o telefone ou o e-mail da pessoa de contato.',
+                        );
+                    }
+                }
+            },
         ];
     }
 
@@ -130,6 +183,9 @@ class StoreClienteRequest extends FormRequest
             'conjuge.cpf' => 'CPF do cônjuge',
             'emails.*.email' => 'e-mail',
             'enderecos.*.cep' => 'CEP',
+            'contatos.*.nome' => 'nome da pessoa de contato',
+            'contatos.*.email' => 'e-mail da pessoa de contato',
+            'contatos.*.telefone' => 'telefone da pessoa de contato',
         ];
     }
 

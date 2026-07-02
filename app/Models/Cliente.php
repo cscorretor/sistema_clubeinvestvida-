@@ -98,6 +98,11 @@ class Cliente extends Model
         return $this->hasMany(ClienteEmail::class);
     }
 
+    public function contatos(): HasMany
+    {
+        return $this->hasMany(ClienteContato::class);
+    }
+
     public function apolices(): HasMany
     {
         return $this->hasMany(Apolice::class);

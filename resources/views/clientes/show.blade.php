@@ -186,40 +186,80 @@
 
       <section data-p="dados" class="hidden">
         <div class="space-y-4">
-          <div class="card p-5">
-            <h2 class="font-head font-semibold text-navy mb-4">Dados do titular</h2>
-            <div class="grid md:grid-cols-3 gap-4 text-sm">
-              <div><div class="text-xs text-slate-500">{{ $cliente->pessoa === 'PJ' ? 'CNPJ do titular' : 'CPF do titular' }}</div>{{ $cliente->documentoMascarado() }}</div>
-              <div><div class="text-xs text-slate-500">Nascimento do titular</div>{{ $cliente->nascimento?->format('d/m/Y') ?? 'Não informado' }}@if($cliente->nascimento) ({{ $cliente->nascimento->age }} anos) @endif</div>
-              <div><div class="text-xs text-slate-500">Estado civil do titular</div>{{ $estadoCivilLabels[$cliente->estado_civil] ?? 'Não informado' }}</div>
-              <div><div class="text-xs text-slate-500">Profissão do titular</div>{{ $cliente->profissao ?: 'Não informada' }}</div>
-              <div><div class="text-xs text-slate-500">Faixa de renda do titular</div>{{ $cliente->faixa_renda ?: 'Não informada' }}</div>
-              <div><div class="text-xs text-slate-500">Produtor responsável</div>{{ $cliente->produtor?->nome ?? 'Não atribuído' }}</div>
-              <div><div class="text-xs text-slate-500">Endereço principal do titular</div>
-                @if ($endereco)
-                  {{ $endereco->logradouro }}{{ $endereco->numero ? ', '.$endereco->numero : '' }}{{ $endereco->bairro ? ' — '.$endereco->bairro : '' }}{{ $endereco->cidade ? ', '.$endereco->cidade.'/'.$endereco->uf : '' }}
-                @else
-                  Não informado
+          @if ($cliente->pessoa === 'PJ')
+            <div class="card p-5">
+              <h2 class="font-head font-semibold text-navy mb-4">Dados da empresa</h2>
+              <div class="grid md:grid-cols-3 gap-4 text-sm">
+                <div><div class="text-xs text-slate-500">Razão social</div>{{ $cliente->nome }}</div>
+                <div><div class="text-xs text-slate-500">CNPJ</div>{{ $cliente->documentoMascarado() }}</div>
+                <div><div class="text-xs text-slate-500">Nome fantasia</div>{{ $cliente->nome_fantasia ?: 'Não informado' }}</div>
+                <div><div class="text-xs text-slate-500">Inscrição estadual</div>{{ $cliente->inscricao_est ?: 'Não informada' }}</div>
+                <div><div class="text-xs text-slate-500">Data de abertura</div>{{ $cliente->data_abertura?->format('d/m/Y') ?? 'Não informada' }}</div>
+                <div><div class="text-xs text-slate-500">Produtor responsável</div>{{ $cliente->produtor?->nome ?? 'Não atribuído' }}</div>
+                <div><div class="text-xs text-slate-500">Endereço principal da empresa</div>
+                  @if ($endereco)
+                    {{ $endereco->logradouro }}{{ $endereco->numero ? ', '.$endereco->numero : '' }}{{ $endereco->bairro ? ' — '.$endereco->bairro : '' }}{{ $endereco->cidade ? ', '.$endereco->cidade.'/'.$endereco->uf : '' }}
+                  @else
+                    Não informado
+                  @endif
+                </div>
+                <div><div class="text-xs text-slate-500">Telefones da empresa</div>{{ $cliente->telefones->pluck('numero')->join(', ') ?: 'Não informado' }}</div>
+                <div><div class="text-xs text-slate-500">E-mails da empresa</div>{{ $cliente->emails->pluck('email')->join(', ') ?: 'Não informado' }}</div>
+                <div><div class="text-xs text-slate-500">Canal de origem</div>{{ $cliente->intermedio ?: 'Não informado' }}</div>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <h2 class="font-head font-semibold text-navy mb-4">Pessoas de contato</h2>
+              <div class="space-y-3">
+                @forelse ($cliente->contatos as $contato)
+                  <div class="grid md:grid-cols-4 gap-3 rounded-lg border border-line p-4 text-sm">
+                    <div><div class="text-xs text-slate-500">Nome</div>{{ $contato->nome }}</div>
+                    <div><div class="text-xs text-slate-500">Cargo / função</div>{{ $contato->cargo ?: 'Não informado' }}</div>
+                    <div><div class="text-xs text-slate-500">E-mail</div>{{ $contato->email ?: 'Não informado' }}</div>
+                    <div><div class="text-xs text-slate-500">Telefone</div>{{ $contato->telefone ?: 'Não informado' }}</div>
+                  </div>
+                @empty
+                  <p class="text-sm text-slate-500">Nenhuma pessoa de contato cadastrada.</p>
+                @endforelse
+              </div>
+            </div>
+          @else
+            <div class="card p-5">
+              <h2 class="font-head font-semibold text-navy mb-4">Dados do titular</h2>
+              <div class="grid md:grid-cols-3 gap-4 text-sm">
+                <div><div class="text-xs text-slate-500">CPF do titular</div>{{ $cliente->documentoMascarado() }}</div>
+                <div><div class="text-xs text-slate-500">Nascimento do titular</div>{{ $cliente->nascimento?->format('d/m/Y') ?? 'Não informado' }}@if($cliente->nascimento) ({{ $cliente->nascimento->age }} anos) @endif</div>
+                <div><div class="text-xs text-slate-500">Estado civil do titular</div>{{ $estadoCivilLabels[$cliente->estado_civil] ?? 'Não informado' }}</div>
+                <div><div class="text-xs text-slate-500">Profissão do titular</div>{{ $cliente->profissao ?: 'Não informada' }}</div>
+                <div><div class="text-xs text-slate-500">Faixa de renda do titular</div>{{ $cliente->faixa_renda ?: 'Não informada' }}</div>
+                <div><div class="text-xs text-slate-500">Produtor responsável</div>{{ $cliente->produtor?->nome ?? 'Não atribuído' }}</div>
+                <div><div class="text-xs text-slate-500">Endereço principal do titular</div>
+                  @if ($endereco)
+                    {{ $endereco->logradouro }}{{ $endereco->numero ? ', '.$endereco->numero : '' }}{{ $endereco->bairro ? ' — '.$endereco->bairro : '' }}{{ $endereco->cidade ? ', '.$endereco->cidade.'/'.$endereco->uf : '' }}
+                  @else
+                    Não informado
+                  @endif
+                </div>
+                <div><div class="text-xs text-slate-500">Telefones do titular</div>{{ $cliente->telefones->pluck('numero')->join(', ') ?: 'Não informado' }}</div>
+                <div><div class="text-xs text-slate-500">E-mails do titular</div>{{ $cliente->emails->pluck('email')->join(', ') ?: 'Não informado' }}</div>
+                <div><div class="text-xs text-slate-500">Canal de origem</div>{{ $cliente->intermedio ?: 'Não informado' }}</div>
+                @if ($cliente->cnh)
+                  <div><div class="text-xs text-slate-500">CNH do titular</div>{{ $cliente->cnh->numero_registro ?: 'Número não informado' }} · {{ $cliente->cnh->categoria ?: 'Categoria não informada' }}</div>
                 @endif
               </div>
-              <div><div class="text-xs text-slate-500">Telefones do titular</div>{{ $cliente->telefones->pluck('numero')->join(', ') ?: 'Não informado' }}</div>
-              <div><div class="text-xs text-slate-500">E-mails do titular</div>{{ $cliente->emails->pluck('email')->join(', ') ?: 'Não informado' }}</div>
-              <div><div class="text-xs text-slate-500">Canal de origem</div>{{ $cliente->intermedio ?: 'Não informado' }}</div>
-              @if ($cliente->cnh)
-                <div><div class="text-xs text-slate-500">CNH do titular</div>{{ $cliente->cnh->numero_registro ?: 'Número não informado' }} · {{ $cliente->cnh->categoria ?: 'Categoria não informada' }}</div>
-              @endif
             </div>
-          </div>
 
-          @if ($cliente->conjuge)
-            <div class="card p-5 border-blue-100 bg-blue-50/30">
-              <h2 class="font-head font-semibold text-navy mb-4">Dados do cônjuge</h2>
-              <div class="grid md:grid-cols-3 gap-4 text-sm">
-                <div><div class="text-xs text-slate-500">Nome do cônjuge</div>{{ $cliente->conjuge->nome ?: 'Não informado' }}</div>
-                <div><div class="text-xs text-slate-500">CPF do cônjuge</div>{{ $cliente->conjuge->documentoMascarado() }}</div>
-                <div><div class="text-xs text-slate-500">Nascimento do cônjuge</div>{{ $cliente->conjuge->nascimento?->format('d/m/Y') ?? 'Não informado' }}</div>
+            @if ($cliente->conjuge)
+              <div class="card p-5 border-blue-100 bg-blue-50/30">
+                <h2 class="font-head font-semibold text-navy mb-4">Dados do cônjuge</h2>
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                  <div><div class="text-xs text-slate-500">Nome do cônjuge</div>{{ $cliente->conjuge->nome ?: 'Não informado' }}</div>
+                  <div><div class="text-xs text-slate-500">CPF do cônjuge</div>{{ $cliente->conjuge->documentoMascarado() }}</div>
+                  <div><div class="text-xs text-slate-500">Nascimento do cônjuge</div>{{ $cliente->conjuge->nascimento?->format('d/m/Y') ?? 'Não informado' }}</div>
+                </div>
               </div>
-            </div>
+            @endif
           @endif
         </div>
       </section>
