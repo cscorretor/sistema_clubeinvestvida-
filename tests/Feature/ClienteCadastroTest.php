@@ -47,6 +47,9 @@ class ClienteCadastroTest extends TestCase
             ->assertSee('Data de abertura')
             ->assertSee('Pessoas de contato')
             ->assertSee('Cargo / função')
+            ->assertSee('Idade')
+            ->assertSee('idadeCalculada', false)
+            ->assertSee('atualizaIdade', false)
             ->assertSee("document.querySelectorAll('.pf-only')", false)
             ->assertSee("document.querySelectorAll('.pj-only')", false)
             ->assertSee('Telefones e E-mails da empresa', false);

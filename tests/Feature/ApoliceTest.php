@@ -174,6 +174,64 @@ class ApoliceTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_busca_e_filtros_retornam_apolices_correspondentes(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+        [$ramos, $seguradora] = $this->catalogo();
+        $carlos = $this->cliente();
+        $carlos->update(['nome' => 'Carlos da Carteira']);
+        $mariana = Cliente::create([
+            'codigo' => 'CLI-MARIANA',
+            'pessoa' => 'PF',
+            'tipo_cliente' => 'EFETIVO',
+            'status' => 'ATIVO',
+            'nome' => 'Mariana Saúde',
+            'cpf_cnpj' => '11144477735',
+        ]);
+        Apolice::create([
+            'cliente_id' => $carlos->id,
+            'ramo_id' => $ramos['Vida']->id,
+            'seguradora_id' => $seguradora->id,
+            'num_proposta' => 'PROP-CAR-001',
+            'status' => 'ATIVO',
+        ]);
+        Apolice::create([
+            'cliente_id' => $mariana->id,
+            'ramo_id' => $ramos['Saúde']->id,
+            'seguradora_id' => $seguradora->id,
+            'num_proposta' => 'PROP-MAR-001',
+            'status' => 'EM_EMISSAO',
+        ]);
+
+        $this->actingAs($admin)
+            ->get('/apolices?busca=CAR')
+            ->assertOk()
+            ->assertSee('Carlos da Carteira')
+            ->assertDontSee('Mariana Saúde');
+
+        $this->actingAs($admin)
+            ->get("/apolices?ramo={$ramos['Saúde']->id}&status=EM_EMISSAO")
+            ->assertOk()
+            ->assertSee('Mariana Saúde')
+            ->assertDontSee('Carlos da Carteira');
+    }
+
+    public function test_busca_cliente_sem_apolice_oferece_criar_proposta(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+        $cliente = $this->cliente();
+        $cliente->update(['nome' => 'Carlos Sem Apólice']);
+        $this->catalogo();
+
+        $this->actingAs($admin)
+            ->get('/apolices?busca=CAR')
+            ->assertOk()
+            ->assertSee('Clientes encontrados')
+            ->assertSee('Carlos Sem Apólice')
+            ->assertSee('Criar proposta')
+            ->assertSee(route('apolices.create', $cliente), false);
+    }
+
     /**
      * @return array{array<string, Ramo>, Seguradora}
      */

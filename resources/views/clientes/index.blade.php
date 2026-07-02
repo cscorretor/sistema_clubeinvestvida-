@@ -23,6 +23,9 @@
 </style>
 </head>
 <body>
+@php
+  $selectingForPolicy = ($filters['acao'] ?? null) === 'nova_apolice';
+@endphp
 <div class="flex min-h-screen">
   <aside id="appSidebar" class="sidebar w-60 bg-navy text-white flex-col">
     <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
@@ -49,7 +52,7 @@
       <button type="button" class="mobile-nav-toggle" aria-controls="appSidebar" aria-expanded="false" aria-label="Abrir menu">☰</button>
       <form method="GET" action="{{ route('clientes.index') }}" class="flex flex-1 max-w-md">
         <input class="inp w-full rounded-r-none" name="busca" value="{{ $filters['busca'] ?? '' }}" placeholder="Buscar por nome, CPF, telefone…" aria-label="Buscar clientes">
-        @foreach (['tipo', 'status', 'ramo', 'cidade'] as $filter)
+        @foreach (['tipo', 'status', 'ramo', 'cidade', 'acao'] as $filter)
           @if (isset($filters[$filter]))
             <input type="hidden" name="{{ $filter }}" value="{{ $filters[$filter] }}">
           @endif
@@ -65,6 +68,11 @@
     </header>
 
     <main class="p-5">
+      @if($selectingForPolicy)
+        <div class="mb-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-navy">
+          <strong>Nova proposta:</strong> localize o cliente e clique em “Criar proposta”. Se ele ainda não existir, cadastre-o primeiro.
+        </div>
+      @endif
       <div class="flex items-end justify-between flex-wrap gap-3 mb-4">
         <div><h1 class="text-2xl font-head font-bold text-navy">Clientes</h1>
           <p class="text-sm text-slate-500">Sua carteira em um só lugar — busca e filtros rápidos.</p></div>
@@ -75,6 +83,7 @@
 
       <form method="GET" action="{{ route('clientes.index') }}" class="bg-white border border-line rounded-xl p-3 mb-4 flex flex-wrap gap-3 items-end">
         <input type="hidden" name="busca" value="{{ $filters['busca'] ?? '' }}">
+        @if($selectingForPolicy)<input type="hidden" name="acao" value="nova_apolice">@endif
         <div><label class="text-xs text-slate-500" for="tipo">Tipo</label><br>
           <select class="inp mt-1" id="tipo" name="tipo">
             @foreach (['TODOS' => 'Todos', 'EFETIVO' => 'Efetivo', 'PROSPECT' => 'Prospect', 'RELACIONAMENTO' => 'Relacionamento', 'CONDUTOR' => 'Condutor', 'LOCADOR' => 'Locador'] as $value => $label)
@@ -124,7 +133,7 @@
                 $tipoLabel = str($cliente->tipo_cliente)->replace('_', ' ')->title();
                 $statusClass = $cliente->status === 'ATIVO' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500';
               @endphp
-              <tr class="border-b border-line/70 cursor-pointer" onclick="location.href='{{ route('clientes.show', $cliente) }}'">
+              <tr class="border-b border-line/70 cursor-pointer" onclick="location.href='{{ $selectingForPolicy ? route('apolices.create', $cliente) : route('clientes.show', $cliente) }}'">
                 <td><div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-full bg-navy/10 text-navy flex items-center justify-center text-xs font-semibold">{{ $cliente->iniciais() }}</div>
                   <div><a href="{{ route('clientes.show', $cliente) }}" class="font-medium text-ink hover:text-navy">{{ $cliente->nome }}</a>
@@ -141,7 +150,13 @@
                 <td class="text-slate-600">{{ $cidadeCliente ?: '—' }}</td>
                 <td class="text-slate-600">{{ $cliente->proxima_renovacao ? \Illuminate\Support\Carbon::parse($cliente->proxima_renovacao)->format('d/m/Y') : '—' }}</td>
                 <td><span class="chip {{ $statusClass }}">{{ str($cliente->status)->title() }}</span></td>
-                <td class="text-right"><a href="{{ route('clientes.show', $cliente) }}" class="text-slate-400" aria-label="Abrir {{ $cliente->nome }}">›</a></td>
+                <td class="text-right">
+                  @if($selectingForPolicy)
+                    <a href="{{ route('apolices.create', $cliente) }}" class="text-orange font-semibold" aria-label="Criar proposta para {{ $cliente->nome }}">Criar proposta</a>
+                  @else
+                    <a href="{{ route('clientes.show', $cliente) }}" class="text-slate-400" aria-label="Abrir {{ $cliente->nome }}">›</a>
+                  @endif
+                </td>
               </tr>
             @empty
               <tr><td colspan="7" class="py-10 text-center text-slate-500">Nenhum cliente encontrado com esses filtros.</td></tr>

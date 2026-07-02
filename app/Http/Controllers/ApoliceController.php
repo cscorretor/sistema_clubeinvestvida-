@@ -35,9 +35,13 @@ class ApoliceController extends Controller
         $busca = trim((string) ($filters['busca'] ?? ''));
         $status = $filters['status'] ?? 'TODOS';
 
-        $apolices = Apolice::query()
+        $baseQuery = Apolice::query()
             ->with(['cliente', 'ramo', 'seguradora'])
-            ->whereHas('cliente', fn ($query) => $query->visivelPara($usuario))
+            ->whereHas('cliente', fn ($query) => $query->visivelPara($usuario));
+
+        $totalCarteira = (clone $baseQuery)->count();
+
+        $apolices = (clone $baseQuery)
             ->when($busca !== '', function ($query) use ($busca): void {
                 $query->where(function ($query) use ($busca): void {
                     $query->where('num_proposta', 'like', "%{$busca}%")
@@ -51,10 +55,31 @@ class ApoliceController extends Controller
             ->paginate(15)
             ->withQueryString();
 
+        $clientesCorrespondentes = collect();
+        if ($busca !== '' && $apolices->total() === 0) {
+            $digits = preg_replace('/\D/', '', $busca);
+            $clientesCorrespondentes = Cliente::query()
+                ->visivelPara($usuario)
+                ->where('status', 'ATIVO')
+                ->where(function ($query) use ($busca, $digits): void {
+                    $query->where('nome', 'like', "%{$busca}%")
+                        ->orWhere('codigo', 'like', "%{$busca}%");
+
+                    if ($digits !== '') {
+                        $query->orWhere('cpf_cnpj', 'like', "%{$digits}%");
+                    }
+                })
+                ->orderBy('nome')
+                ->limit(5)
+                ->get();
+        }
+
         return view('apolices.index', [
             'apolices' => $apolices,
             'ramos' => $this->ramos(),
             'filters' => [...$filters, 'status' => $status],
+            'totalCarteira' => $totalCarteira,
+            'clientesCorrespondentes' => $clientesCorrespondentes,
         ]);
     }
 

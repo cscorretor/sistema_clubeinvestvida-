@@ -27,6 +27,7 @@ class ClienteController extends Controller
             'status' => ['nullable', Rule::in(['TODOS', 'ATIVO', 'INATIVO'])],
             'ramo' => ['nullable', 'integer', 'exists:ramos,id'],
             'cidade' => ['nullable', 'string', 'max:80'],
+            'acao' => ['nullable', Rule::in(['nova_apolice'])],
         ]);
 
         $usuario = $request->user();

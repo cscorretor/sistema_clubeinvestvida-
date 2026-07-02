@@ -36,6 +36,7 @@
   .contact-row{display:grid;grid-template-columns:9rem minmax(12rem,1fr) 2.5rem;gap:.5rem;align-items:center}
   .email-row{display:grid;grid-template-columns:minmax(12rem,1fr) 2.5rem;gap:.5rem;align-items:center}
   .business-contact-row{display:grid;grid-template-columns:minmax(12rem,2fr) minmax(8rem,1fr) minmax(12rem,1.4fr) minmax(10rem,1fr) 2.5rem;gap:.6rem;align-items:end}
+  .birth-grid{display:grid;grid-template-columns:minmax(0,1fr) 6.5rem;gap:.6rem}
   .phone-type,.phone-number{min-width:0}
   .remove-contact{display:flex;align-items:center;justify-content:center;min-height:42px}
   @media(max-width:900px){
@@ -134,8 +135,16 @@
         </div>
 
         <div id="wrapNasc" class="pf-only">
-          <label class="lbl" for="nascimento">Data de nascimento</label>
-          <input type="date" class="inp mt-1" id="nascimento" name="nascimento" value="{{ $field('nascimento') }}">
+          <div class="birth-grid">
+            <div>
+              <label class="lbl" for="nascimento">Data de nascimento</label>
+              <input type="date" class="inp mt-1" id="nascimento" name="nascimento" value="{{ $field('nascimento') }}">
+            </div>
+            <div>
+              <label class="lbl" for="idadeCalculada">Idade</label>
+              <input class="inp mt-1 bg-slate-50" id="idadeCalculada" readonly tabindex="-1" aria-live="polite" placeholder="—">
+            </div>
+          </div>
         </div>
 
         <div class="pf-only">
@@ -324,6 +333,17 @@ ligaCPF(document.getElementById('conjCpf'), null);
 
 const btnPF=document.getElementById('btnPF'), btnPJ=document.getElementById('btnPJ');
 const docInput=document.getElementById('cpf_cnpj'), docMsg=document.getElementById('cpfMsg'), pessoaInput=document.getElementById('pessoa');
+const nascimentoInput=document.getElementById('nascimento'), idadeInput=document.getElementById('idadeCalculada');
+function atualizaIdade(){
+  if(!nascimentoInput.value){idadeInput.value='';return}
+  const partes=nascimentoInput.value.split('-').map(Number);
+  const hoje=new Date(), nascimento=new Date(partes[0],partes[1]-1,partes[2]);
+  if(Number.isNaN(nascimento.getTime())||nascimento>hoje){idadeInput.value='';return}
+  let idade=hoje.getFullYear()-partes[0];
+  if((hoje.getMonth()+1)<partes[1]||((hoje.getMonth()+1)===partes[1]&&hoje.getDate()<partes[2]))idade--;
+  idadeInput.value=idade+' anos';
+}
+nascimentoInput.addEventListener('input',atualizaIdade);
 function atualizaDocumento(){
   const pf=pessoaInput.value==='PF', dig=docInput.value.replace(/\D/g,'');
   docInput.value=pf?maskCPF(dig):maskCNPJ(dig);
@@ -503,6 +523,7 @@ if(draftData?.fields){
 }
 
 setPessoa(pessoaInput.value!=='PJ');
+atualizaIdade();
 document.getElementById('estado_civil').dispatchEvent(new Event('change'));
 document.getElementById('temCnh').dispatchEvent(new Event('change'));
 if(docInput.value)atualizaDocumento();

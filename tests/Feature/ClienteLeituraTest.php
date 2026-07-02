@@ -192,6 +192,20 @@ class ClienteLeituraTest extends TestCase
         $this->actingAs($usuario)->get("/clientes/{$clienteAlheio->id}")->assertNotFound();
     }
 
+    public function test_fluxo_de_nova_proposta_permite_escolher_cliente(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+        $cliente = $this->createCliente('Cliente para Proposta');
+
+        $this->actingAs($admin)
+            ->get('/clientes?acao=nova_apolice')
+            ->assertOk()
+            ->assertSee('Nova proposta:')
+            ->assertSee('Cliente para Proposta')
+            ->assertSee('Criar proposta')
+            ->assertSee(route('apolices.create', $cliente), false);
+    }
+
     private function createCliente(
         string $nome,
         string $cpf = '52998224725',
