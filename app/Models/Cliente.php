@@ -11,6 +11,23 @@ use Illuminate\Support\Str;
 
 class Cliente extends Model
 {
+    public const ORIGENS = [
+        'Indicação de cliente',
+        'Indicação de parceiro',
+        'Google (orgânico)',
+        'Google Ads',
+        'Instagram',
+        'Facebook',
+        'WhatsApp',
+        'E-mail marketing',
+        'Campanha',
+        'Site',
+        'Evento',
+        'Prospecção ativa',
+        'Cliente existente / renovação',
+        'Outro',
+    ];
+
     protected $fillable = [
         'codigo',
         'pessoa',

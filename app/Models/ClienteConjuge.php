@@ -26,4 +26,15 @@ class ClienteConjuge extends Model
     {
         return $this->belongsTo(Cliente::class);
     }
+
+    public function documentoMascarado(): string
+    {
+        $digits = preg_replace('/\D/', '', (string) $this->cpf);
+
+        if (strlen($digits) === 11) {
+            return substr($digits, 0, 3).'.***.***-'.substr($digits, -2);
+        }
+
+        return 'Não informado';
+    }
 }

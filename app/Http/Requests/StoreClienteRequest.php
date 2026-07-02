@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Cliente;
 use App\Rules\Cnpj;
 use App\Rules\Cpf;
 use Illuminate\Foundation\Http\FormRequest;
@@ -64,18 +65,30 @@ class StoreClienteRequest extends FormRequest
     public function rules(): array
     {
         $documentRule = $this->input('pessoa') === 'PJ' ? new Cnpj : new Cpf;
+        $routeCliente = $this->route('cliente');
+        $clienteId = $routeCliente instanceof Cliente
+            ? $routeCliente->getKey()
+            : (is_numeric($routeCliente) ? (int) $routeCliente : null);
+        $documentRules = ['required', 'string', 'max:14', $documentRule];
+        $documentoAtual = $clienteId
+            ? Cliente::query()->whereKey($clienteId)->value('cpf_cnpj')
+            : null;
+
+        if (! $clienteId || $documentoAtual !== $this->input('cpf_cnpj')) {
+            $documentRules[] = Rule::unique('clientes', 'cpf_cnpj')->ignore($clienteId);
+        }
 
         return [
             'pessoa' => ['required', Rule::in(['PF', 'PJ'])],
             'nome' => ['required', 'string', 'max:150'],
-            'cpf_cnpj' => ['required', 'string', 'max:14', $documentRule],
+            'cpf_cnpj' => $documentRules,
             'nascimento' => ['nullable', 'date', 'before_or_equal:today'],
             'estado_civil' => ['nullable', Rule::in(['SOLTEIRO', 'CASADO', 'DIVORCIADO', 'VIUVO', 'UNIAO_ESTAVEL'])],
             'sexo' => ['nullable', Rule::in(['M', 'F', 'OUTRO'])],
             'profissao' => ['nullable', 'string', 'max:120'],
             'faixa_renda' => ['nullable', 'string', 'max:40'],
             'tipo_cliente' => ['required', Rule::in(['EFETIVO', 'PROSPECT', 'RELACIONAMENTO', 'CONDUTOR', 'LOCADOR'])],
-            'intermedio' => ['nullable', 'string', 'max:80'],
+            'intermedio' => ['nullable', Rule::in(Cliente::ORIGENS)],
 
             'conjuge' => ['nullable', 'array'],
             'conjuge.nome' => ['nullable', 'string', 'max:150'],
@@ -117,6 +130,14 @@ class StoreClienteRequest extends FormRequest
             'conjuge.cpf' => 'CPF do cônjuge',
             'emails.*.email' => 'e-mail',
             'enderecos.*.cep' => 'CEP',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'cpf_cnpj.unique' => 'Este CPF/CNPJ já está cadastrado. Localize o cliente existente antes de continuar.',
+            'intermedio.in' => 'Selecione uma origem válida para o cliente.',
         ];
     }
 }

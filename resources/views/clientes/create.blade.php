@@ -1,9 +1,14 @@
+@php
+  $isEditing = $cliente !== null;
+  $formValues = array_replace_recursive($clienteForm, session()->getOldInput());
+  $field = static fn (string $key, mixed $default = null): mixed => data_get($formValues, $key, $default);
+@endphp
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cadastro de Cliente — Clube Investvida</title>
+<title>{{ $isEditing ? 'Editar cliente' : 'Cadastro de Cliente' }} — Clube Investvida</title>
 <link rel="icon" href="{{ asset('assets/brand/favicon.svg') }}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -24,14 +29,15 @@
   .btn-ghost{background:#fff;border:1px solid #E2E8F0}.btn-ghost:hover{background:#f8fafc}
   .step-n{width:1.6rem;height:1.6rem;border-radius:999px;background:#003461;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
   .hint{font-size:.72rem}
-  .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
+  .nav a,.nav .nav-disabled{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
   .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
   .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
+  .nav .nav-disabled{color:#718198;cursor:not-allowed}.nav .nav-disabled small{margin-left:auto;font-size:.6rem}
 </style>
 </head>
 <body>
 <div class="flex min-h-screen">
-  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
+  <aside id="appSidebar" class="sidebar w-60 bg-navy text-white flex-col">
     <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
       <img src="{{ asset('assets/brand/logo-simbolo-claro.svg') }}" width="36" height="36" alt="">
       <div><div class="font-head font-bold leading-none">Clube Investvida</div>
@@ -40,17 +46,19 @@
     <nav class="nav p-3 space-y-1 flex-1">
       <a href="{{ route('dashboard') }}"><span>▦</span> Dashboard</a>
       <a href="{{ route('clientes.index') }}" class="on"><span>◉</span> Clientes</a>
-      <a href="#" aria-disabled="true"><span>❤</span> Apólices</a>
-      <a href="#" aria-disabled="true"><span>◔</span> Leads / CRM</a>
-      <a href="#" aria-disabled="true"><span>◷</span> Chamados</a>
-      <a href="#" aria-disabled="true"><span>$</span> Financeiro</a>
-      <a href="#" aria-disabled="true"><span>⛁</span> Cofre Digital</a>
-      <a href="#" aria-disabled="true"><span>⚙</span> Configurações</a>
+      <span class="nav-disabled"><span>❤</span> Apólices <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>◔</span> Leads / CRM <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>◷</span> Chamados <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>$</span> Financeiro <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>⛁</span> Cofre Digital <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>⚙</span> Configurações <small>EM BREVE</small></span>
     </nav>
     <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
   </aside>
+  <div class="sidebar-backdrop" data-sidebar-close></div>
   <div class="flex-1 flex flex-col min-w-0">
     <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
+      <button type="button" class="mobile-nav-toggle" aria-controls="appSidebar" aria-expanded="false" aria-label="Abrir menu">☰</button>
       <a href="{{ route('clientes.index') }}" class="text-sm text-slate-500 hover:text-navy">‹ Clientes</a>
       <div class="ml-auto w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-semibold">
         {{ mb_strtoupper(mb_substr(auth()->user()->nome, 0, 2)) }}
@@ -60,8 +68,8 @@
 <main class="w-full max-w-5xl mx-auto px-5 py-6">
   <div class="flex items-end justify-between mb-5 flex-wrap gap-3">
     <div>
-      <h1 class="text-2xl font-bold text-navy">Cadastro de Cliente</h1>
-      <p class="text-sm text-slate-500">Preenchimento inteligente: CEP e validações automáticas para você digitar menos.</p>
+      <h1 class="text-2xl font-bold text-navy">{{ $isEditing ? 'Editar cliente' : 'Cadastro de Cliente' }}</h1>
+      <p class="text-sm text-slate-500">{{ $isEditing ? 'Atualize os dados identificados abaixo; toda alteração será registrada.' : 'Preenchimento inteligente: CEP e validações automáticas para você digitar menos.' }}</p>
     </div>
     <div class="inline-flex bg-white border border-line rounded-lg p-1">
       <button type="button" id="btnPF" class="px-4 py-1.5 rounded-md text-sm font-semibold bg-navy text-white">Pessoa Física</button>
@@ -86,9 +94,10 @@
     </div>
   @endif
 
-  <form id="form" method="POST" action="{{ route('clientes.store') }}" class="space-y-5">
+  <form id="form" method="POST" action="{{ $isEditing ? route('clientes.update', $cliente) : route('clientes.store') }}" class="space-y-5">
     @csrf
-    <input type="hidden" id="pessoa" name="pessoa" value="{{ old('pessoa', 'PF') }}">
+    @if ($isEditing) @method('PUT') @endif
+    <input type="hidden" id="pessoa" name="pessoa" value="{{ $field('pessoa', 'PF') }}">
 
     <section class="card p-5">
       <div class="flex items-center gap-2 mb-4"><span class="step-n">1</span><h2 class="font-head font-semibold text-navy">Dados Básicos</h2></div>
@@ -96,29 +105,29 @@
       <div class="grid md:grid-cols-2 gap-4">
         <div class="md:col-span-2">
           <label class="lbl" id="lblNome" for="nome">Nome completo</label>
-          <input class="inp mt-1" id="nome" name="nome" required maxlength="150" placeholder="Nome do cliente" value="{{ old('nome') }}">
+          <input class="inp mt-1" id="nome" name="nome" required maxlength="150" placeholder="Nome do cliente" value="{{ $field('nome') }}">
         </div>
 
         <div>
           <label class="lbl" id="lblDoc" for="cpf_cnpj">CPF</label>
-          <input class="inp mt-1" id="cpf_cnpj" name="cpf_cnpj" required inputmode="numeric" placeholder="000.000.000-00" value="{{ old('cpf_cnpj') }}">
+          <input class="inp mt-1" id="cpf_cnpj" name="cpf_cnpj" required inputmode="numeric" placeholder="000.000.000-00" value="{{ $field('cpf_cnpj') }}">
           <p class="hint mt-1 text-slate-400" id="cpfMsg">Validação automática ao digitar.</p>
         </div>
 
         <div id="wrapNasc">
           <label class="lbl" for="nascimento">Data de nascimento</label>
-          <input type="date" class="inp mt-1" id="nascimento" name="nascimento" value="{{ old('nascimento') }}">
+          <input type="date" class="inp mt-1" id="nascimento" name="nascimento" value="{{ $field('nascimento') }}">
         </div>
 
         <div>
           <label class="lbl" for="estado_civil">Estado civil</label>
           <select class="inp mt-1" id="estado_civil" name="estado_civil">
             <option value="">Selecione…</option>
-            <option value="SOLTEIRO" @selected(old('estado_civil') === 'SOLTEIRO')>Solteiro</option>
-            <option value="CASADO" @selected(old('estado_civil') === 'CASADO')>Casado</option>
-            <option value="DIVORCIADO" @selected(old('estado_civil') === 'DIVORCIADO')>Divorciado</option>
-            <option value="VIUVO" @selected(old('estado_civil') === 'VIUVO')>Viúvo</option>
-            <option value="UNIAO_ESTAVEL" @selected(old('estado_civil') === 'UNIAO_ESTAVEL')>União Estável</option>
+            <option value="SOLTEIRO" @selected($field('estado_civil') === 'SOLTEIRO')>Solteiro</option>
+            <option value="CASADO" @selected($field('estado_civil') === 'CASADO')>Casado</option>
+            <option value="DIVORCIADO" @selected($field('estado_civil') === 'DIVORCIADO')>Divorciado</option>
+            <option value="VIUVO" @selected($field('estado_civil') === 'VIUVO')>Viúvo</option>
+            <option value="UNIAO_ESTAVEL" @selected($field('estado_civil') === 'UNIAO_ESTAVEL')>União Estável</option>
           </select>
         </div>
 
@@ -126,16 +135,16 @@
           <label class="lbl" for="sexo">Sexo</label>
           <select class="inp mt-1" id="sexo" name="sexo">
             <option value="">Selecione…</option>
-            <option value="F" @selected(old('sexo') === 'F')>Feminino</option>
-            <option value="M" @selected(old('sexo') === 'M')>Masculino</option>
-            <option value="OUTRO" @selected(old('sexo') === 'OUTRO')>Outro</option>
+            <option value="F" @selected($field('sexo') === 'F')>Feminino</option>
+            <option value="M" @selected($field('sexo') === 'M')>Masculino</option>
+            <option value="OUTRO" @selected($field('sexo') === 'OUTRO')>Outro</option>
           </select>
         </div>
 
         <div>
           <label class="lbl" for="profissao">Profissão</label>
           <div class="ac mt-1">
-            <input class="inp" id="profissao" name="profissao" maxlength="120" placeholder="Digite ao menos 3 letras" value="{{ old('profissao') }}"
+            <input class="inp" id="profissao" name="profissao" maxlength="120" placeholder="Digite ao menos 3 letras" value="{{ $field('profissao') }}"
                    aria-controls="profissaoList" aria-expanded="false">
             <div id="profissaoList" class="ac-list" role="listbox" style="display:none"></div>
           </div>
@@ -147,7 +156,7 @@
           <select class="inp mt-1" id="faixa_renda" name="faixa_renda">
             <option value="">Selecione…</option>
             @foreach (['Até R$ 2.500', 'De R$ 2.500,01 a R$ 5.000', 'De R$ 5.000,01 a R$ 10.000', 'Acima de R$ 10.000'] as $faixa)
-              <option value="{{ $faixa }}" @selected(old('faixa_renda') === $faixa)>{{ $faixa }}</option>
+              <option value="{{ $faixa }}" @selected($field('faixa_renda') === $faixa)>{{ $faixa }}</option>
             @endforeach
           </select>
         </div>
@@ -155,14 +164,21 @@
         <div>
           <label class="lbl" for="tipo_cliente">Tipo de cliente</label>
           <select class="inp mt-1" id="tipo_cliente" name="tipo_cliente">
-            <option value="PROSPECT" @selected(old('tipo_cliente', 'PROSPECT') === 'PROSPECT')>Prospect</option>
-            <option value="EFETIVO" @selected(old('tipo_cliente') === 'EFETIVO')>Efetivo</option>
-            <option value="RELACIONAMENTO" @selected(old('tipo_cliente') === 'RELACIONAMENTO')>Relacionamento</option>
+            <option value="PROSPECT" @selected($field('tipo_cliente', 'PROSPECT') === 'PROSPECT')>Prospect</option>
+            <option value="EFETIVO" @selected($field('tipo_cliente') === 'EFETIVO')>Efetivo</option>
+            <option value="RELACIONAMENTO" @selected($field('tipo_cliente') === 'RELACIONAMENTO')>Relacionamento</option>
+            <option value="CONDUTOR" @selected($field('tipo_cliente') === 'CONDUTOR')>Condutor</option>
+            <option value="LOCADOR" @selected($field('tipo_cliente') === 'LOCADOR')>Locador</option>
           </select>
         </div>
         <div>
-          <label class="lbl" for="intermedio">Origem / indicação</label>
-          <input class="inp mt-1" id="intermedio" name="intermedio" maxlength="80" placeholder="Ex.: Google, indicação de cliente" value="{{ old('intermedio') }}">
+          <label class="lbl" for="intermedio">Canal de origem do cliente</label>
+          <select class="inp mt-1" id="intermedio" name="intermedio">
+            <option value="">Selecione…</option>
+            @foreach (\App\Models\Cliente::ORIGENS as $origem)
+              <option value="{{ $origem }}" @selected($field('intermedio') === $origem)>{{ $origem }}</option>
+            @endforeach
+          </select>
         </div>
       </div>
 
@@ -173,22 +189,22 @@
             <h3 class="font-head font-semibold text-navy text-sm">Dados do Cônjuge</h3>
           </div>
           <div class="grid md:grid-cols-3 gap-4">
-            <div><label class="lbl" for="conjNome">Nome do cônjuge</label><input class="inp mt-1" id="conjNome" name="conjuge[nome]" maxlength="150" value="{{ old('conjuge.nome') }}"></div>
-            <div><label class="lbl" for="conjCpf">CPF do cônjuge</label><input class="inp mt-1" id="conjCpf" name="conjuge[cpf]" inputmode="numeric" placeholder="000.000.000-00" value="{{ old('conjuge.cpf') }}"></div>
-            <div><label class="lbl" for="conjNasc">Nascimento</label><input type="date" class="inp mt-1" id="conjNasc" name="conjuge[nascimento]" value="{{ old('conjuge.nascimento') }}"></div>
+            <div><label class="lbl" for="conjNome">Nome do cônjuge</label><input class="inp mt-1" id="conjNome" name="conjuge[nome]" maxlength="150" value="{{ $field('conjuge.nome') }}"></div>
+            <div><label class="lbl" for="conjCpf">CPF do cônjuge</label><input class="inp mt-1" id="conjCpf" name="conjuge[cpf]" inputmode="numeric" placeholder="000.000.000-00" value="{{ $field('conjuge.cpf') }}"></div>
+            <div><label class="lbl" for="conjNasc">Nascimento do cônjuge</label><input type="date" class="inp mt-1" id="conjNasc" name="conjuge[nascimento]" value="{{ $field('conjuge.nascimento') }}"></div>
           </div>
         </div>
       </div>
 
       <div class="mt-4">
         <label class="inline-flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
-          <input type="checkbox" name="tem_cnh" value="1" id="temCnh" class="accent-navy w-4 h-4" @checked(old('tem_cnh'))> Possui CNH
+          <input type="checkbox" name="tem_cnh" value="1" id="temCnh" class="accent-navy w-4 h-4" @checked($field('tem_cnh'))> Possui CNH
         </label>
         <div id="cnhBox" class="hidden mt-3 grid md:grid-cols-4 gap-4">
-          <div><label class="lbl" for="cnhNumero">Nº registro</label><input class="inp mt-1" id="cnhNumero" name="cnh[numero_registro]" maxlength="20" value="{{ old('cnh.numero_registro') }}"></div>
-          <div><label class="lbl" for="cnhCat">Categoria</label><input class="inp mt-1" id="cnhCat" name="cnh[categoria]" maxlength="5" placeholder="Ex.: B" value="{{ old('cnh.categoria') }}"></div>
-          <div><label class="lbl" for="cnhValidade">Validade</label><input type="date" class="inp mt-1" id="cnhValidade" name="cnh[validade]" value="{{ old('cnh.validade') }}"></div>
-          <div><label class="lbl" for="cnhPrimeira">1ª habilitação</label><input type="date" class="inp mt-1" id="cnhPrimeira" name="cnh[primeira_habilitacao]" value="{{ old('cnh.primeira_habilitacao') }}"></div>
+          <div><label class="lbl" for="cnhNumero">Nº registro da CNH do titular</label><input class="inp mt-1" id="cnhNumero" name="cnh[numero_registro]" maxlength="20" value="{{ $field('cnh.numero_registro') }}"></div>
+          <div><label class="lbl" for="cnhCat">Categoria</label><input class="inp mt-1" id="cnhCat" name="cnh[categoria]" maxlength="5" placeholder="Ex.: B" value="{{ $field('cnh.categoria') }}"></div>
+          <div><label class="lbl" for="cnhValidade">Validade</label><input type="date" class="inp mt-1" id="cnhValidade" name="cnh[validade]" value="{{ $field('cnh.validade') }}"></div>
+          <div><label class="lbl" for="cnhPrimeira">1ª habilitação</label><input type="date" class="inp mt-1" id="cnhPrimeira" name="cnh[primeira_habilitacao]" value="{{ $field('cnh.primeira_habilitacao') }}"></div>
         </div>
       </div>
     </section>
@@ -221,7 +237,7 @@
       <p class="hint text-slate-400">Os dados são validados antes de salvar. Rascunho é guardado automaticamente neste navegador.</p>
       <div class="flex gap-3">
         <button type="button" id="btnDraft" class="btn-ghost px-5 py-2.5 rounded-md text-sm font-semibold">Salvar rascunho</button>
-        <button type="submit" id="btnSubmit" class="btn-primary px-6 py-2.5 rounded-md text-sm font-semibold">Finalizar cadastro →</button>
+        <button type="submit" id="btnSubmit" class="btn-primary px-6 py-2.5 rounded-md text-sm font-semibold">{{ $isEditing ? 'Salvar alterações' : 'Finalizar cadastro →' }}</button>
       </div>
     </div>
   </form>
@@ -290,7 +306,7 @@ function setPessoa(pf){
 btnPF.onclick=()=>setPessoa(true); btnPJ.onclick=()=>setPessoa(false);
 
 document.getElementById('estado_civil').addEventListener('change',e=>{
-  document.getElementById('conjugeBox').classList.toggle('hidden',e.target.value!=='CASADO');
+  document.getElementById('conjugeBox').classList.toggle('hidden',!['CASADO','UNIAO_ESTAVEL'].includes(e.target.value));
 });
 document.getElementById('temCnh').addEventListener('change',e=>{
   document.getElementById('cnhBox').classList.toggle('hidden',!e.target.checked);
@@ -364,22 +380,42 @@ function novoEml(data={},forcedIndex=null){
 document.getElementById('addTel').onclick=()=>novoTel();
 document.getElementById('addEml').onclick=()=>novoEml();
 
-window.initialAddressDefault=@json(old('endereco_padrao'));
-const initialEnderecos=@json(old('enderecos', [[]]));
-const initialTelefones=@json(old('telefones', [[]]));
-const initialEmails=@json(old('emails', [[]]));
+const draftKey=@json($isEditing ? 'cliente-edit-'.$cliente->getKey() : 'cliente-create');
+const hasServerOldInput=@json(session()->hasOldInput());
+let draftData=null;
+if(!hasServerOldInput){
+  try{draftData=JSON.parse(localStorage.getItem(draftKey)||'null')}catch(e){draftData=null}
+}
+window.initialAddressDefault=draftData?.enderecoPadrao??@json($field('endereco_padrao'));
+const initialEnderecos=draftData?.enderecos??@json($field('enderecos', [[]]));
+const initialTelefones=draftData?.telefones??@json($field('telefones', [[]]));
+const initialEmails=draftData?.emails??@json($field('emails', [[]]));
 Object.entries(initialEnderecos).forEach(([index,data])=>novoEndereco(data,Number(index)));
 Object.entries(initialTelefones).forEach(([index,data])=>novoTel(data,Number(index)));
 Object.entries(initialEmails).forEach(([index,data])=>novoEml(data,Number(index)));
 
 const F=document.getElementById('form');
-function salvarRascunho(){const d={};F.querySelectorAll('input,select').forEach(el=>{if(el.id)d[el.id]=el.type==='checkbox'?el.checked:el.value});localStorage.setItem('rascunhoCliente',JSON.stringify(d))}
+function salvarRascunho(){
+  const fields={};
+  F.querySelectorAll('input[id],select[id]').forEach(el=>fields[el.id]=el.type==='checkbox'?el.checked:el.value);
+  const enderecoPadrao=[...elEnd.children].findIndex(row=>row.querySelector('input[name="endereco_padrao"]')?.checked);
+  const enderecos=[...elEnd.children].map(row=>({
+    tipo:row.querySelector('.tipo').value,cep:row.querySelector('.cep').value,
+    logradouro:row.querySelector('.logradouro').value,numero:row.querySelector('.numero').value,
+    bairro:row.querySelector('.bairro').value,cidade:row.querySelector('.cidade').value,
+    uf:row.querySelector('.uf').value,complemento:row.querySelector('.compl').value
+  }));
+  const telefones=[...elTel.children].map(row=>({tipo:row.querySelector('.tipo').value,numero:row.querySelector('.fone').value}));
+  const emails=[...elEml.children].map(row=>({email:row.querySelector('.email').value}));
+  localStorage.setItem(draftKey,JSON.stringify({fields,enderecoPadrao,enderecos,telefones,emails}));
+}
 F.addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(salvarRascunho,800)});
 document.getElementById('btnDraft').onclick=()=>{salvarRascunho();alert('Rascunho salvo neste navegador.')};
-const cadastroConcluido=@json(session()->has('status'));
-if(cadastroConcluido)localStorage.removeItem('rascunhoCliente');
-if(!cadastroConcluido&&!@json(session()->hasOldInput())){
-  try{const r=localStorage.getItem('rascunhoCliente');if(r){const d=JSON.parse(r);Object.entries(d).forEach(([k,v])=>{const el=document.getElementById(k);if(!el)return;if(el.type==='checkbox')el.checked=v;else el.value=v})}}catch(e){}
+if(draftData?.fields){
+  Object.entries(draftData.fields).forEach(([k,v])=>{
+    const el=document.getElementById(k);if(!el)return;
+    if(el.type==='checkbox')el.checked=Boolean(v);else el.value=v??'';
+  });
 }
 
 setPessoa(pessoaInput.value!=='PJ');

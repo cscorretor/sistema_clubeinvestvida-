@@ -32,5 +32,21 @@ window.CI=(function(){
     document.addEventListener('click',function(e){if(!e.target.closest('.ac')&&e.target!==input)close();});
   }
   function toast(msg){alert(msg);} /* placeholder — backend trocará por toast real */
-  return {mCPF:mCPF,mCNPJ:mCNPJ,mCEP:mCEP,mFone:mFone,cpfValido:cpfValido,viaCEP:viaCEP,autocomplete:autocomplete,toast:toast};
+  function mobileNavigation(){
+    var sidebar=document.getElementById('appSidebar'),toggle=document.querySelector('.mobile-nav-toggle');
+    if(!sidebar||!toggle)return;
+    function setOpen(open){
+      sidebar.classList.toggle('is-open',open);
+      document.body.classList.toggle('nav-open',open);
+      toggle.setAttribute('aria-expanded',open?'true':'false');
+      toggle.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+    }
+    toggle.addEventListener('click',function(){setOpen(!sidebar.classList.contains('is-open'));});
+    Array.prototype.forEach.call(document.querySelectorAll('[data-sidebar-close],#appSidebar a'),function(el){
+      el.addEventListener('click',function(){setOpen(false);});
+    });
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false);});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mobileNavigation);else mobileNavigation();
+  return {mCPF:mCPF,mCNPJ:mCNPJ,mCEP:mCEP,mFone:mFone,cpfValido:cpfValido,viaCEP:viaCEP,autocomplete:autocomplete,toast:toast,mobileNavigation:mobileNavigation};
 })();

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Cliente;
 use App\Models\Produtor;
 use App\Models\Usuario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,6 +22,10 @@ class ClienteCadastroTest extends TestCase
             ->assertOk()
             ->assertSee('Cadastro de Cliente')
             ->assertSee('Finalizar cadastro')
+            ->assertSee('Canal de origem do cliente')
+            ->assertSee('Google Ads')
+            ->assertSee('mobile-nav-toggle', false)
+            ->assertDontSee('href="#"', false)
             ->assertSee('profissaoList', false)
             ->assertSee('assets/css/laravel-utilities.css', false)
             ->assertDontSee('cdn.tailwindcss.com', false);
@@ -32,7 +37,7 @@ class ClienteCadastroTest extends TestCase
 
         $response = $this->actingAs($admin)->post('/clientes', $this->validPayload());
 
-        $response->assertRedirect('/clientes/novo');
+        $response->assertRedirect('/clientes/1');
         $response->assertSessionHas('status');
 
         $this->assertDatabaseHas('clientes', [
@@ -117,12 +122,118 @@ class ClienteCadastroTest extends TestCase
         $payload = $this->validPayload();
         $payload['nome'] = 'Cliente do produtor';
 
-        $this->actingAs($usuario)->post('/clientes', $payload)->assertRedirect('/clientes/novo');
+        $this->actingAs($usuario)->post('/clientes', $payload)->assertRedirect('/clientes/1');
 
         $this->assertDatabaseHas('clientes', [
             'nome' => 'Cliente do produtor',
             'produtor_id' => $produtor->id,
         ]);
+    }
+
+    public function test_rejeita_cpf_duplicado_e_mantem_apenas_um_cliente(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+
+        $this->actingAs($admin)->post('/clientes', $this->validPayload())->assertRedirect('/clientes/1');
+
+        $duplicado = $this->validPayload();
+        $duplicado['nome'] = 'Outra pessoa com o mesmo CPF';
+
+        $this->actingAs($admin)
+            ->from('/clientes/novo')
+            ->post('/clientes', $duplicado)
+            ->assertRedirect('/clientes/novo')
+            ->assertSessionHasErrors('cpf_cnpj');
+
+        $this->assertDatabaseCount('clientes', 1);
+        $this->assertDatabaseCount('audit_log', 1);
+    }
+
+    public function test_edita_cliente_e_relacionamentos_com_auditoria(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+        $this->actingAs($admin)->post('/clientes', $this->validPayload());
+        $cliente = Cliente::firstOrFail();
+
+        $this->actingAs($admin)
+            ->get("/clientes/{$cliente->id}/editar")
+            ->assertOk()
+            ->assertSee('Editar cliente')
+            ->assertSee('Maria da Silva')
+            ->assertSee('João da Silva')
+            ->assertSee('Salvar alterações');
+
+        $alterado = $this->validPayload();
+        $alterado['nome'] = 'Maria da Silva Atualizada';
+        $alterado['intermedio'] = 'Instagram';
+        $alterado['conjuge']['nome'] = 'João Atualizado';
+        $alterado['telefones'][0]['numero'] = '(11) 98888-7777';
+        $alterado['emails'][0]['email'] = 'nova@example.com';
+
+        $this->actingAs($admin)
+            ->put("/clientes/{$cliente->id}", $alterado)
+            ->assertRedirect("/clientes/{$cliente->id}")
+            ->assertSessionHas('status');
+
+        $this->assertDatabaseHas('clientes', [
+            'id' => $cliente->id,
+            'nome' => 'Maria da Silva Atualizada',
+            'cpf_cnpj' => '52998224725',
+            'intermedio' => 'Instagram',
+            'celular_padrao' => '(11) 98888-7777',
+            'email_padrao' => 'nova@example.com',
+        ]);
+        $this->assertDatabaseHas('cliente_conjuge', [
+            'cliente_id' => $cliente->id,
+            'nome' => 'João Atualizado',
+        ]);
+        $this->assertDatabaseHas('audit_log', [
+            'entidade' => 'clientes',
+            'entidade_id' => $cliente->id,
+            'acao' => 'ALTERAR',
+        ]);
+        $this->assertDatabaseCount('audit_log', 2);
+
+        $auditJson = (string) DB::table('audit_log')
+            ->where('acao', 'ALTERAR')
+            ->value('dados_depois');
+        $this->assertStringNotContainsString('52998224725', $auditJson);
+        $this->assertStringNotContainsString('nova@example.com', $auditJson);
+    }
+
+    public function test_permite_corrigir_registro_legado_que_ja_possui_cpf_duplicado(): void
+    {
+        $admin = Usuario::factory()->admin()->create();
+        $primeiro = Cliente::create([
+            'codigo' => 'CLI-LEGADO-1',
+            'pessoa' => 'PF',
+            'tipo_cliente' => 'PROSPECT',
+            'status' => 'ATIVO',
+            'nome' => 'Cliente legado um',
+            'cpf_cnpj' => '52998224725',
+        ]);
+        Cliente::create([
+            'codigo' => 'CLI-LEGADO-2',
+            'pessoa' => 'PF',
+            'tipo_cliente' => 'PROSPECT',
+            'status' => 'ATIVO',
+            'nome' => 'Cliente legado dois',
+            'cpf_cnpj' => '52998224725',
+        ]);
+
+        $payload = $this->validPayload();
+        $payload['nome'] = 'Cliente legado corrigido';
+
+        $this->actingAs($admin)
+            ->put("/clientes/{$primeiro->id}", $payload)
+            ->assertRedirect("/clientes/{$primeiro->id}");
+
+        $this->assertDatabaseHas('clientes', [
+            'id' => $primeiro->id,
+            'nome' => 'Cliente legado corrigido',
+            'cpf_cnpj' => '52998224725',
+        ]);
+        $this->assertDatabaseCount('clientes', 2);
     }
 
     /**
@@ -140,7 +251,7 @@ class ClienteCadastroTest extends TestCase
             'profissao' => 'Professora',
             'faixa_renda' => 'De R$ 5.000,01 a R$ 10.000',
             'tipo_cliente' => 'PROSPECT',
-            'intermedio' => 'Indicação',
+            'intermedio' => 'Indicação de cliente',
             'conjuge' => [
                 'nome' => 'João da Silva',
                 'cpf' => '111.444.777-35',

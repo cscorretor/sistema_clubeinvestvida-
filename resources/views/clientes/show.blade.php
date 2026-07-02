@@ -9,9 +9,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
  body{font-family:"Inter",sans-serif;background:#F4F7F9;color:#1A1C1E}.font-head{font-family:"Manrope",sans-serif}
- .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
+ .nav a,.nav .nav-disabled{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
  .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
  .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
+ .nav .nav-disabled{color:#718198;cursor:not-allowed}.nav .nav-disabled small{margin-left:auto;font-size:.6rem}
  .card{background:#fff;border:1px solid #E2E8F0;border-radius:.75rem}
  .chip{font-size:.66rem;font-weight:600;padding:.1rem .45rem;border-radius:999px}
  th{font-size:.68rem;text-transform:uppercase;letter-spacing:.03em;color:#64748b;font-weight:600;text-align:left}td,th{padding:.55rem .7rem}
@@ -31,7 +32,7 @@
   $estadoCivilLabels = ['SOLTEIRO' => 'Solteiro', 'CASADO' => 'Casado', 'DIVORCIADO' => 'Divorciado', 'VIUVO' => 'Viúvo', 'UNIAO_ESTAVEL' => 'União Estável'];
 @endphp
 <div class="flex min-h-screen">
-  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
+  <aside id="appSidebar" class="sidebar w-60 bg-navy text-white flex-col">
     <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
       <img src="{{ asset('assets/brand/logo-simbolo-claro.svg') }}" width="36" height="36" alt="">
       <div><div class="font-head font-bold leading-none">Clube Investvida</div>
@@ -40,23 +41,30 @@
     <nav class="nav p-3 space-y-1 flex-1">
       <a href="{{ route('dashboard') }}"><span>▦</span> Dashboard</a>
       <a href="{{ route('clientes.index') }}" class="on"><span>◉</span> Clientes</a>
-      <a href="#" aria-disabled="true"><span>❤</span> Apólices</a>
-      <a href="#" aria-disabled="true"><span>◔</span> Leads / CRM</a>
-      <a href="#" aria-disabled="true"><span>◷</span> Chamados</a>
-      <a href="#" aria-disabled="true"><span>$</span> Financeiro</a>
-      <a href="#" aria-disabled="true"><span>⛁</span> Cofre Digital</a>
-      <a href="#" aria-disabled="true"><span>⚙</span> Configurações</a>
+      <span class="nav-disabled"><span>❤</span> Apólices <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>◔</span> Leads / CRM <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>◷</span> Chamados <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>$</span> Financeiro <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>⛁</span> Cofre Digital <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>⚙</span> Configurações <small>EM BREVE</small></span>
     </nav>
     <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
   </aside>
+  <div class="sidebar-backdrop" data-sidebar-close></div>
   <div class="flex-1 flex flex-col min-w-0">
     <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
+      <button type="button" class="mobile-nav-toggle" aria-controls="appSidebar" aria-expanded="false" aria-label="Abrir menu">☰</button>
       <a href="{{ route('clientes.index') }}" class="text-sm text-slate-500 hover:text-navy">‹ Clientes</a>
       <div class="ml-auto w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-semibold">
         {{ mb_strtoupper(mb_substr(auth()->user()->nome, 0, 2)) }}
       </div>
     </header>
     <main class="p-5">
+      @if (session('status'))
+        <div role="status" class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-800">
+          ✓ {{ session('status') }}
+        </div>
+      @endif
       <div class="card p-5 mb-4 flex items-start justify-between flex-wrap gap-4">
         <div class="flex items-center gap-4 min-w-0">
           <div class="w-14 h-14 shrink-0 rounded-full bg-navy/10 text-navy flex items-center justify-center text-lg font-head font-bold">{{ $cliente->iniciais() }}</div>
@@ -78,7 +86,9 @@
           </div>
         </div>
         <div class="flex gap-2 flex-wrap">
-          <span class="bg-white border border-line px-3 py-2 rounded-md text-sm font-semibold text-slate-400" title="Edição será ligada na próxima etapa">Editar</span>
+          @can('update', $cliente)
+            <a href="{{ route('clientes.edit', $cliente) }}" class="bg-white border border-line px-3 py-2 rounded-md text-sm font-semibold text-navy hover:bg-slate-50">Editar</a>
+          @endcan
           <span class="bg-navy/60 text-white px-3 py-2 rounded-md text-sm font-semibold" title="Cadastro de apólice ainda não ligado">+ Nova apólice</span>
           @if ($whatsapp)
             <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="bg-green-600 text-white px-3 py-2 rounded-md text-sm font-semibold">WhatsApp</a>
@@ -172,34 +182,53 @@
       </section>
 
       <section data-p="dados" class="hidden">
-        <div class="card p-5 grid md:grid-cols-3 gap-4 text-sm">
-          <div><div class="text-xs text-slate-500">Nascimento</div>{{ $cliente->nascimento?->format('d/m/Y') ?? 'Não informado' }}@if($cliente->nascimento) ({{ $cliente->nascimento->age }} anos) @endif</div>
-          <div><div class="text-xs text-slate-500">Estado civil</div>{{ $estadoCivilLabels[$cliente->estado_civil] ?? 'Não informado' }}</div>
-          <div><div class="text-xs text-slate-500">Profissão</div>{{ $cliente->profissao ?: 'Não informada' }}</div>
-          <div><div class="text-xs text-slate-500">Faixa de renda</div>{{ $cliente->faixa_renda ?: 'Não informada' }}</div>
-          <div><div class="text-xs text-slate-500">Produtor</div>{{ $cliente->produtor?->nome ?? 'Não atribuído' }}</div>
-          <div><div class="text-xs text-slate-500">Endereço principal</div>
-            @if ($endereco)
-              {{ $endereco->logradouro }}{{ $endereco->numero ? ', '.$endereco->numero : '' }}{{ $endereco->bairro ? ' — '.$endereco->bairro : '' }}{{ $endereco->cidade ? ', '.$endereco->cidade.'/'.$endereco->uf : '' }}
-            @else
-              Não informado
-            @endif
+        <div class="space-y-4">
+          <div class="card p-5">
+            <h2 class="font-head font-semibold text-navy mb-4">Dados do titular</h2>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+              <div><div class="text-xs text-slate-500">{{ $cliente->pessoa === 'PJ' ? 'CNPJ do titular' : 'CPF do titular' }}</div>{{ $cliente->documentoMascarado() }}</div>
+              <div><div class="text-xs text-slate-500">Nascimento do titular</div>{{ $cliente->nascimento?->format('d/m/Y') ?? 'Não informado' }}@if($cliente->nascimento) ({{ $cliente->nascimento->age }} anos) @endif</div>
+              <div><div class="text-xs text-slate-500">Estado civil do titular</div>{{ $estadoCivilLabels[$cliente->estado_civil] ?? 'Não informado' }}</div>
+              <div><div class="text-xs text-slate-500">Profissão do titular</div>{{ $cliente->profissao ?: 'Não informada' }}</div>
+              <div><div class="text-xs text-slate-500">Faixa de renda do titular</div>{{ $cliente->faixa_renda ?: 'Não informada' }}</div>
+              <div><div class="text-xs text-slate-500">Produtor responsável</div>{{ $cliente->produtor?->nome ?? 'Não atribuído' }}</div>
+              <div><div class="text-xs text-slate-500">Endereço principal do titular</div>
+                @if ($endereco)
+                  {{ $endereco->logradouro }}{{ $endereco->numero ? ', '.$endereco->numero : '' }}{{ $endereco->bairro ? ' — '.$endereco->bairro : '' }}{{ $endereco->cidade ? ', '.$endereco->cidade.'/'.$endereco->uf : '' }}
+                @else
+                  Não informado
+                @endif
+              </div>
+              <div><div class="text-xs text-slate-500">Telefones do titular</div>{{ $cliente->telefones->pluck('numero')->join(', ') ?: 'Não informado' }}</div>
+              <div><div class="text-xs text-slate-500">E-mails do titular</div>{{ $cliente->emails->pluck('email')->join(', ') ?: 'Não informado' }}</div>
+              <div><div class="text-xs text-slate-500">Canal de origem</div>{{ $cliente->intermedio ?: 'Não informado' }}</div>
+              @if ($cliente->cnh)
+                <div><div class="text-xs text-slate-500">CNH do titular</div>{{ $cliente->cnh->numero_registro ?: 'Número não informado' }} · {{ $cliente->cnh->categoria ?: 'Categoria não informada' }}</div>
+              @endif
+            </div>
           </div>
-          <div><div class="text-xs text-slate-500">Telefones</div>{{ $cliente->telefones->pluck('numero')->join(', ') ?: 'Não informado' }}</div>
-          <div><div class="text-xs text-slate-500">E-mails</div>{{ $cliente->emails->pluck('email')->join(', ') ?: 'Não informado' }}</div>
-          <div><div class="text-xs text-slate-500">Origem / indicação</div>{{ $cliente->intermedio ?: 'Não informada' }}</div>
+
           @if ($cliente->conjuge)
-            <div><div class="text-xs text-slate-500">Cônjuge</div>{{ $cliente->conjuge->nome ?: 'Nome não informado' }}</div>
-          @endif
-          @if ($cliente->cnh)
-            <div><div class="text-xs text-slate-500">CNH</div>{{ $cliente->cnh->numero_registro ?: 'Número não informado' }} · {{ $cliente->cnh->categoria ?: 'Categoria não informada' }}</div>
+            <div class="card p-5 border-blue-100 bg-blue-50/30">
+              <h2 class="font-head font-semibold text-navy mb-4">Dados do cônjuge</h2>
+              <div class="grid md:grid-cols-3 gap-4 text-sm">
+                <div><div class="text-xs text-slate-500">Nome do cônjuge</div>{{ $cliente->conjuge->nome ?: 'Não informado' }}</div>
+                <div><div class="text-xs text-slate-500">CPF do cônjuge</div>{{ $cliente->conjuge->documentoMascarado() }}</div>
+                <div><div class="text-xs text-slate-500">Nascimento do cônjuge</div>{{ $cliente->conjuge->nascimento?->format('d/m/Y') ?? 'Não informado' }}</div>
+              </div>
+            </div>
           @endif
         </div>
       </section>
     </main>
   </div>
 </div>
+<script src="{{ asset('assets/js/app.js') }}"></script>
 <script>
+@if (session('status'))
+localStorage.removeItem('cliente-create');
+localStorage.removeItem(@json('cliente-edit-'.$cliente->getKey()));
+@endif
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.className='tab shrink-0 whitespace-nowrap pb-2 text-slate-500');
   b.className='tab shrink-0 whitespace-nowrap pb-2 border-b-2 border-orange text-navy font-semibold';

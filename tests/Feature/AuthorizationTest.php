@@ -60,4 +60,37 @@ class AuthorizationTest extends TestCase
         $this->assertTrue($usuario->can('view', $clienteVisivel));
         $this->assertFalse($usuario->can('view', $clienteDeOutroProdutor));
     }
+
+    public function test_edicao_respeita_permissao_e_carteira_do_produtor(): void
+    {
+        $produtor = Produtor::create(['nome' => 'Produtor A', 'ativo' => true]);
+        $outroProdutor = Produtor::create(['nome' => 'Produtor B', 'ativo' => true]);
+        $produtorUsuario = Usuario::factory()->produtor($produtor->id)->create();
+        $comum = Usuario::factory()->create();
+        $clienteProprio = Cliente::create([
+            'nome' => 'Cliente próprio',
+            'produtor_id' => $produtor->id,
+        ]);
+        $clienteAlheio = Cliente::create([
+            'nome' => 'Cliente alheio',
+            'produtor_id' => $outroProdutor->id,
+        ]);
+
+        Permissao::create([
+            'usuario_id' => $comum->id,
+            'modulo' => 'clientes',
+            'pode_ver' => true,
+            'pode_editar' => false,
+        ]);
+
+        $this->actingAs($produtorUsuario)
+            ->get("/clientes/{$clienteProprio->id}/editar")
+            ->assertOk();
+        $this->actingAs($produtorUsuario)
+            ->get("/clientes/{$clienteAlheio->id}/editar")
+            ->assertNotFound();
+        $this->actingAs($comum)
+            ->get("/clientes/{$clienteProprio->id}/editar")
+            ->assertForbidden();
+    }
 }

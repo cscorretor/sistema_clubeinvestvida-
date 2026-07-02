@@ -126,6 +126,11 @@ class ClienteLeituraTest extends TestCase
             'cidade' => 'Blumenau',
             'uf' => 'SC',
         ]);
+        $cliente->conjuge()->create([
+            'nome' => 'João da Silva',
+            'cpf' => '11144477735',
+            'nascimento' => '1987-03-10',
+        ]);
         $apolice = Apolice::create([
             'cliente_id' => $cliente->id,
             'ramo_id' => $ramo->id,
@@ -159,7 +164,14 @@ class ClienteLeituraTest extends TestCase
             ->assertSee('AP-12345')
             ->assertSee('Seguradora Teste')
             ->assertSee('Atualizar beneficiários')
-            ->assertSee('Rua das Flores');
+            ->assertSee('Rua das Flores')
+            ->assertSee('Dados do titular')
+            ->assertSee('CPF do titular')
+            ->assertSee('Dados do cônjuge')
+            ->assertSee('CPF do cônjuge')
+            ->assertSee('111.***.***-35')
+            ->assertDontSee('11144477735')
+            ->assertSee('Editar');
     }
 
     public function test_produtor_so_lista_e_abre_clientes_da_propria_carteira(): void

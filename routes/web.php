@@ -32,6 +32,14 @@ Route::middleware('auth')->group(function (): void {
         ->can('create', Cliente::class)
         ->name('clientes.store');
 
+    Route::get('/clientes/{cliente}/editar', [ClienteController::class, 'edit'])
+        ->whereNumber('cliente')
+        ->name('clientes.edit');
+
+    Route::put('/clientes/{cliente}', [ClienteController::class, 'update'])
+        ->whereNumber('cliente')
+        ->name('clientes.update');
+
     Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])
         ->whereNumber('cliente')
         ->name('clientes.show');

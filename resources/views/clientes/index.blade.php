@@ -10,9 +10,10 @@
 <style>
  body{font-family:'Inter',sans-serif;background:#F4F7F9;color:#1A1C1E}
  .font-head{font-family:'Manrope',sans-serif}
- .nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
+ .nav a,.nav .nav-disabled{display:flex;gap:.6rem;align-items:center;padding:.55rem .75rem;border-radius:.5rem;font-size:.9rem;color:#cbd5e1}
  .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
  .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
+ .nav .nav-disabled{color:#718198;cursor:not-allowed}.nav .nav-disabled small{margin-left:auto;font-size:.6rem}
  .inp{border:1px solid #E2E8F0;border-radius:.5rem;padding:.55rem .75rem;font-size:.9rem;background:#fff}
  .inp:focus{outline:none;border-color:#003461;box-shadow:0 0 0 3px rgba(0,75,135,.12)}
  .chip{font-size:.68rem;font-weight:600;padding:.12rem .5rem;border-radius:999px}
@@ -23,7 +24,7 @@
 </head>
 <body>
 <div class="flex min-h-screen">
-  <aside class="w-60 bg-navy text-white flex-col hidden md:flex">
+  <aside id="appSidebar" class="sidebar w-60 bg-navy text-white flex-col">
     <div class="px-5 py-4 flex items-center gap-3 border-b border-white/10">
       <img src="{{ asset('assets/brand/logo-simbolo-claro.svg') }}" width="36" height="36" alt="">
       <div><div class="font-head font-bold leading-none">Clube Investvida</div>
@@ -32,18 +33,20 @@
     <nav class="nav p-3 space-y-1 flex-1">
       <a href="{{ route('dashboard') }}"><span>▦</span> Dashboard</a>
       <a href="{{ route('clientes.index') }}" class="on"><span>◉</span> Clientes</a>
-      <a href="#" aria-disabled="true"><span>❤</span> Apólices</a>
-      <a href="#" aria-disabled="true"><span>◔</span> Leads / CRM</a>
-      <a href="#" aria-disabled="true"><span>◷</span> Chamados</a>
-      <a href="#" aria-disabled="true"><span>$</span> Financeiro</a>
-      <a href="#" aria-disabled="true"><span>⛁</span> Cofre Digital</a>
-      <a href="#" aria-disabled="true"><span>⚙</span> Configurações</a>
+      <span class="nav-disabled"><span>❤</span> Apólices <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>◔</span> Leads / CRM <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>◷</span> Chamados <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>$</span> Financeiro <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>⛁</span> Cofre Digital <small>EM BREVE</small></span>
+      <span class="nav-disabled"><span>⚙</span> Configurações <small>EM BREVE</small></span>
     </nav>
     <div class="p-3 border-t border-white/10 text-[11px] text-blue-200">v0 · protótipo</div>
   </aside>
 
+  <div class="sidebar-backdrop" data-sidebar-close></div>
   <div class="flex-1 flex flex-col min-w-0">
     <header class="bg-white border-b border-line px-5 py-3 flex items-center gap-4">
+      <button type="button" class="mobile-nav-toggle" aria-controls="appSidebar" aria-expanded="false" aria-label="Abrir menu">☰</button>
       <form method="GET" action="{{ route('clientes.index') }}" class="flex flex-1 max-w-md">
         <input class="inp w-full rounded-r-none" name="busca" value="{{ $filters['busca'] ?? '' }}" placeholder="Buscar por nome, CPF, telefone…" aria-label="Buscar clientes">
         @foreach (['tipo', 'status', 'ramo', 'cidade'] as $filter)
@@ -160,5 +163,6 @@
     </main>
   </div>
 </div>
+<script src="{{ asset('assets/js/app.js') }}"></script>
 </body>
 </html>

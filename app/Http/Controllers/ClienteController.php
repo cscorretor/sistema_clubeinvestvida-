@@ -129,7 +129,10 @@ class ClienteController extends Controller
 
     public function create(): View
     {
-        return view('clientes.create');
+        return view('clientes.create', [
+            'cliente' => null,
+            'clienteForm' => [],
+        ]);
     }
 
     public function store(StoreClienteRequest $request, AuditLogger $auditLogger): RedirectResponse
@@ -170,7 +173,12 @@ class ClienteController extends Controller
             $cliente->forceFill(['codigo' => sprintf('CLI-%06d', $cliente->getKey())])->saveQuietly();
 
             $conjuge = $dados['conjuge'] ?? [];
-            if ($this->hasAnyValue($conjuge, ['nome', 'cpf', 'nascimento'])) {
+            $estadoComConjuge = in_array(
+                $dados['estado_civil'] ?? null,
+                ['CASADO', 'UNIAO_ESTAVEL'],
+                true,
+            );
+            if ($estadoComConjuge && $this->hasAnyValue($conjuge, ['nome', 'cpf', 'nascimento'])) {
                 $cliente->conjuge()->create([
                     'nome' => $conjuge['nome'] ?? null,
                     'cpf' => $conjuge['cpf'] ?? null,
@@ -237,8 +245,215 @@ class ClienteController extends Controller
             return $cliente;
         });
 
-        return to_route('clientes.create')
+        return to_route('clientes.show', $cliente)
             ->with('status', "Cliente {$cliente->codigo} cadastrado com sucesso.");
+    }
+
+    public function edit(Request $request, int $cliente): View
+    {
+        $cliente = $this->findVisibleCliente($request, $cliente);
+        Gate::authorize('update', $cliente);
+
+        return view('clientes.create', [
+            'cliente' => $cliente,
+            'clienteForm' => $this->formData($cliente),
+        ]);
+    }
+
+    public function update(
+        StoreClienteRequest $request,
+        int $cliente,
+        AuditLogger $auditLogger,
+    ): RedirectResponse {
+        $cliente = $this->findVisibleCliente($request, $cliente);
+        Gate::authorize('update', $cliente);
+
+        $dados = $request->validated();
+        $usuario = $request->user();
+        abort_unless($usuario instanceof Usuario, 403);
+
+        DB::transaction(function () use ($cliente, $dados, $usuario, $request, $auditLogger): void {
+            $cliente->load(['conjuge', 'cnh', 'enderecos', 'telefones', 'emails']);
+            $before = $cliente->toArray();
+
+            $enderecos = $this->filledRows(
+                $dados['enderecos'] ?? [],
+                ['cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf'],
+            );
+            $telefones = $this->filledRows($dados['telefones'] ?? [], ['numero']);
+            $emails = $this->filledRows($dados['emails'] ?? [], ['email']);
+            $firstPhoneKey = array_key_first($telefones);
+            $firstEmailKey = array_key_first($emails);
+
+            $cliente->update([
+                'pessoa' => $dados['pessoa'],
+                'tipo_cliente' => $dados['tipo_cliente'],
+                'intermedio' => $dados['intermedio'] ?? null,
+                'nome' => $dados['nome'],
+                'cpf_cnpj' => $dados['cpf_cnpj'],
+                'profissao' => $dados['profissao'] ?? null,
+                'estado_civil' => $dados['estado_civil'] ?? null,
+                'nascimento' => $dados['nascimento'] ?? null,
+                'sexo' => $dados['sexo'] ?? null,
+                'faixa_renda' => $dados['faixa_renda'] ?? null,
+                'celular_padrao' => $firstPhoneKey !== null ? $telefones[$firstPhoneKey]['numero'] : null,
+                'email_padrao' => $firstEmailKey !== null ? $emails[$firstEmailKey]['email'] : null,
+            ]);
+
+            $conjuge = $dados['conjuge'] ?? [];
+            $estadoComConjuge = in_array(
+                $dados['estado_civil'] ?? null,
+                ['CASADO', 'UNIAO_ESTAVEL'],
+                true,
+            );
+            if ($estadoComConjuge && $this->hasAnyValue($conjuge, ['nome', 'cpf', 'nascimento'])) {
+                $cliente->conjuge()->updateOrCreate([], [
+                    'nome' => $conjuge['nome'] ?? null,
+                    'cpf' => $conjuge['cpf'] ?? null,
+                    'nascimento' => $conjuge['nascimento'] ?? null,
+                ]);
+            } else {
+                $cliente->conjuge()->delete();
+            }
+
+            $cnh = $dados['cnh'] ?? [];
+            if (($dados['tem_cnh'] ?? false) && $this->hasAnyValue($cnh, ['numero_registro', 'categoria', 'validade', 'primeira_habilitacao'])) {
+                $cliente->cnh()->updateOrCreate([], [
+                    'numero_registro' => $cnh['numero_registro'] ?? null,
+                    'categoria' => isset($cnh['categoria']) ? mb_strtoupper($cnh['categoria']) : null,
+                    'validade' => $cnh['validade'] ?? null,
+                    'primeira_habilitacao' => $cnh['primeira_habilitacao'] ?? null,
+                ]);
+            } else {
+                $cliente->cnh()->delete();
+            }
+
+            $cliente->enderecos()->delete();
+            $cliente->telefones()->delete();
+            $cliente->emails()->delete();
+
+            $selectedAddress = (int) ($dados['endereco_padrao'] ?? array_key_first($enderecos) ?? 0);
+            $hasSelectedAddress = array_key_exists($selectedAddress, $enderecos);
+
+            foreach ($enderecos as $index => $endereco) {
+                $cliente->enderecos()->create([
+                    'padrao' => $hasSelectedAddress ? $index === $selectedAddress : $index === array_key_first($enderecos),
+                    'tipo' => $endereco['tipo'] ?? 'RESIDENCIAL',
+                    'cep' => $endereco['cep'] ?? null,
+                    'logradouro' => $endereco['logradouro'] ?? null,
+                    'numero' => $endereco['numero'] ?? null,
+                    'complemento' => $endereco['complemento'] ?? null,
+                    'bairro' => $endereco['bairro'] ?? null,
+                    'cidade' => $endereco['cidade'] ?? null,
+                    'uf' => $endereco['uf'] ?? null,
+                ]);
+            }
+
+            foreach ($telefones as $index => $telefone) {
+                $cliente->telefones()->create([
+                    'padrao' => $index === array_key_first($telefones),
+                    'tipo' => $telefone['tipo'] ?? 'CELULAR',
+                    'numero' => $telefone['numero'],
+                ]);
+            }
+
+            foreach ($emails as $index => $email) {
+                $cliente->emails()->create([
+                    'padrao' => $index === array_key_first($emails),
+                    'email' => $email['email'],
+                ]);
+            }
+
+            $after = $cliente->fresh()
+                ->load(['conjuge', 'cnh', 'enderecos', 'telefones', 'emails'])
+                ->toArray();
+
+            $auditLogger->record(
+                $usuario,
+                'clientes',
+                (int) $cliente->getKey(),
+                'ALTERAR',
+                $before,
+                $after,
+                $request->ip(),
+            );
+        });
+
+        return to_route('clientes.show', $cliente)
+            ->with('status', "Dados de {$cliente->codigo} atualizados com sucesso.");
+    }
+
+    private function findVisibleCliente(Request $request, int $cliente): Cliente
+    {
+        Gate::authorize('viewAny', Cliente::class);
+
+        $usuario = $request->user();
+        abort_unless($usuario instanceof Usuario, 403);
+
+        return Cliente::query()
+            ->visivelPara($usuario)
+            ->with([
+                'conjuge',
+                'cnh',
+                'enderecos' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
+                'telefones' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
+                'emails' => fn ($query) => $query->orderByDesc('padrao')->orderBy('id'),
+            ])
+            ->findOrFail($cliente);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function formData(Cliente $cliente): array
+    {
+        $enderecos = $cliente->enderecos->values();
+        $enderecoPadrao = $enderecos->search(fn ($endereco): bool => $endereco->padrao);
+
+        return [
+            'pessoa' => $cliente->pessoa,
+            'nome' => $cliente->nome,
+            'cpf_cnpj' => $cliente->cpf_cnpj,
+            'nascimento' => $cliente->nascimento?->toDateString(),
+            'estado_civil' => $cliente->estado_civil,
+            'sexo' => $cliente->sexo,
+            'profissao' => $cliente->profissao,
+            'faixa_renda' => $cliente->faixa_renda,
+            'tipo_cliente' => $cliente->tipo_cliente,
+            'intermedio' => in_array($cliente->intermedio, Cliente::ORIGENS, true)
+                ? $cliente->intermedio
+                : ($cliente->intermedio ? 'Outro' : null),
+            'conjuge' => $cliente->conjuge ? [
+                'nome' => $cliente->conjuge->nome,
+                'cpf' => $cliente->conjuge->cpf,
+                'nascimento' => $cliente->conjuge->nascimento?->toDateString(),
+            ] : [],
+            'tem_cnh' => $cliente->cnh !== null,
+            'cnh' => $cliente->cnh ? [
+                'numero_registro' => $cliente->cnh->numero_registro,
+                'categoria' => $cliente->cnh->categoria,
+                'validade' => $cliente->cnh->validade?->toDateString(),
+                'primeira_habilitacao' => $cliente->cnh->primeira_habilitacao?->toDateString(),
+            ] : [],
+            'endereco_padrao' => $enderecoPadrao === false ? 0 : $enderecoPadrao,
+            'enderecos' => $enderecos->map(fn ($endereco): array => [
+                'tipo' => $endereco->tipo,
+                'cep' => $endereco->cep,
+                'logradouro' => $endereco->logradouro,
+                'numero' => $endereco->numero,
+                'complemento' => $endereco->complemento,
+                'bairro' => $endereco->bairro,
+                'cidade' => $endereco->cidade,
+                'uf' => $endereco->uf,
+            ])->all(),
+            'telefones' => $cliente->telefones->values()->map(fn ($telefone): array => [
+                'tipo' => $telefone->tipo,
+                'numero' => $telefone->numero,
+            ])->all(),
+            'emails' => $cliente->emails->values()->map(fn ($email): array => [
+                'email' => $email->email,
+            ])->all(),
+        ];
     }
 
     /**

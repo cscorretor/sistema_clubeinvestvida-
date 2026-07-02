@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
     <style>
         .nav-disabled{display:flex;gap:11px;align-items:center;padding:9px 12px;border-radius:var(--r);font-size:14px;color:#718198;cursor:not-allowed}
+        .nav-disabled small{margin-left:auto;font-size:9px}
         .welcome-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
         .profile-line{display:flex;align-items:center;gap:12px}
         @media(max-width:760px){.welcome-grid{grid-template-columns:1fr}}
@@ -16,7 +17,7 @@
 </head>
 <body>
 <div class="app">
-    <aside class="sidebar">
+    <aside id="appSidebar" class="sidebar">
         <div class="brand">
             <img src="{{ asset('assets/brand/logo-simbolo-claro.svg') }}" width="34" height="34" alt="">
             <div><div class="bname">Clube Investvida</div><div class="btag">Corretora de Seguros</div></div>
@@ -24,18 +25,20 @@
         <nav class="nav" aria-label="Navegação principal">
             <a href="{{ route('dashboard') }}" class="on" aria-current="page"><span class="ico">▦</span> Dashboard</a>
             <a href="{{ route('clientes.index') }}"><span class="ico">◉</span> Clientes</a>
-            <span class="nav-disabled"><span class="ico">❤</span> Apólices</span>
-            <span class="nav-disabled"><span class="ico">◔</span> Leads / CRM</span>
-            <span class="nav-disabled"><span class="ico">◷</span> Chamados</span>
-            <span class="nav-disabled"><span class="ico">$</span> Financeiro</span>
-            <span class="nav-disabled"><span class="ico">⛁</span> Cofre Digital</span>
-            <span class="nav-disabled"><span class="ico">⚙</span> Configurações</span>
+            <span class="nav-disabled"><span class="ico">❤</span> Apólices <small>EM BREVE</small></span>
+            <span class="nav-disabled"><span class="ico">◔</span> Leads / CRM <small>EM BREVE</small></span>
+            <span class="nav-disabled"><span class="ico">◷</span> Chamados <small>EM BREVE</small></span>
+            <span class="nav-disabled"><span class="ico">$</span> Financeiro <small>EM BREVE</small></span>
+            <span class="nav-disabled"><span class="ico">⛁</span> Cofre Digital <small>EM BREVE</small></span>
+            <span class="nav-disabled"><span class="ico">⚙</span> Configurações <small>EM BREVE</small></span>
         </nav>
         <div class="foot">Ambiente de homologação</div>
     </aside>
 
+    <div class="sidebar-backdrop" data-sidebar-close></div>
     <div class="content">
         <header class="topbar">
+            <button type="button" class="mobile-nav-toggle" aria-controls="appSidebar" aria-expanded="false" aria-label="Abrir menu">☰</button>
             <img src="{{ asset('assets/brand/logo-horizontal.svg') }}" alt="Clube Investvida — Corretora de Seguros" style="height:30px">
             <div class="avatar mla" title="{{ auth()->user()->nome }}">{{ mb_strtoupper(mb_substr(auth()->user()->nome, 0, 2)) }}</div>
         </header>
@@ -85,5 +88,6 @@
         </main>
     </div>
 </div>
+<script src="{{ asset('assets/js/app.js') }}"></script>
 </body>
 </html>
