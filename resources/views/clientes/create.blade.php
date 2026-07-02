@@ -33,6 +33,17 @@
   .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
   .nav a.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 #FF6B00}
   .nav .nav-disabled{color:#718198;cursor:not-allowed}.nav .nav-disabled small{margin-left:auto;font-size:.6rem}
+  .contact-row{display:grid;grid-template-columns:9rem minmax(12rem,1fr) 2.5rem;gap:.5rem;align-items:center}
+  .email-row{display:grid;grid-template-columns:minmax(12rem,1fr) 2.5rem;gap:.5rem;align-items:center}
+  .phone-type,.phone-number{min-width:0}
+  .remove-contact{display:flex;align-items:center;justify-content:center;min-height:42px}
+  @media(max-width:520px){
+    .contact-row{grid-template-columns:minmax(0,1fr) 2.25rem}
+    .contact-row .phone-type{grid-column:1;grid-row:1}
+    .contact-row .phone-number{grid-column:1;grid-row:2}
+    .contact-row .remove-contact{grid-column:2;grid-row:1 / span 2}
+    .email-row{grid-template-columns:minmax(0,1fr) 2.25rem}
+  }
 </style>
 </head>
 <body>
@@ -46,7 +57,7 @@
     <nav class="nav p-3 space-y-1 flex-1">
       <a href="{{ route('dashboard') }}"><span>▦</span> Dashboard</a>
       <a href="{{ route('clientes.index') }}" class="on"><span>◉</span> Clientes</a>
-      <span class="nav-disabled"><span>❤</span> Apólices <small>EM BREVE</small></span>
+      <a href="{{ route('apolices.index') }}"><span>❤</span> Apólices</a>
       <span class="nav-disabled"><span>◔</span> Leads / CRM <small>EM BREVE</small></span>
       <span class="nav-disabled"><span>◷</span> Chamados <small>EM BREVE</small></span>
       <span class="nav-disabled"><span>$</span> Financeiro <small>EM BREVE</small></span>
@@ -363,18 +374,18 @@ document.getElementById('addEnd').onclick=()=>novoEndereco();
 const elTel=document.getElementById('telefones'),elEml=document.getElementById('emails');let telSeq=0,emlSeq=0;
 function novoTel(data={},forcedIndex=null){
   const index=forcedIndex===null?telSeq++:forcedIndex;telSeq=Math.max(telSeq,index+1);
-  const i=document.createElement('div');i.className='flex gap-2';
-  i.innerHTML=`<select name="telefones[${index}][tipo]" class="inp w-32 tipo"><option value="CELULAR">Celular</option><option value="WHATSAPP">WhatsApp</option><option value="RESIDENCIAL">Residencial</option><option value="COMERCIAL">Comercial</option><option value="0800">0800</option><option value="OUTRO">Outro</option></select>
-    <input name="telefones[${index}][numero]" class="inp fone flex-1" inputmode="numeric" placeholder="(00) 00000-0000">
-    <button type="button" class="rm px-3 text-red-600" aria-label="Remover telefone">✕</button>`;
+  const i=document.createElement('div');i.className='contact-row';
+  i.innerHTML=`<select name="telefones[${index}][tipo]" class="inp tipo phone-type" aria-label="Tipo de telefone"><option value="CELULAR">Celular</option><option value="WHATSAPP">WhatsApp</option><option value="RESIDENCIAL">Residencial</option><option value="COMERCIAL">Comercial</option><option value="0800">0800</option><option value="OUTRO">Outro</option></select>
+    <input name="telefones[${index}][numero]" class="inp fone phone-number" inputmode="tel" autocomplete="tel" maxlength="20" aria-label="Número do telefone" placeholder="(00) 00000-0000">
+    <button type="button" class="rm remove-contact text-red-600" aria-label="Remover telefone">✕</button>`;
   i.querySelector('.tipo').value=data.tipo||'CELULAR';const f=i.querySelector('.fone');f.value=maskFone(data.numero||'');
   f.addEventListener('input',()=>f.value=maskFone(f.value));i.querySelector('.rm').onclick=()=>i.remove();elTel.appendChild(i);
 }
 function novoEml(data={},forcedIndex=null){
   const index=forcedIndex===null?emlSeq++:forcedIndex;emlSeq=Math.max(emlSeq,index+1);
-  const i=document.createElement('div');i.className='flex gap-2';
-  i.innerHTML=`<input type="email" name="emails[${index}][email]" class="inp flex-1 email" placeholder="email@exemplo.com">
-    <button type="button" class="rm px-3 text-red-600" aria-label="Remover e-mail">✕</button>`;
+  const i=document.createElement('div');i.className='email-row';
+  i.innerHTML=`<input type="email" name="emails[${index}][email]" class="inp email" autocomplete="email" aria-label="Endereço de e-mail" placeholder="email@exemplo.com">
+    <button type="button" class="rm remove-contact text-red-600" aria-label="Remover e-mail">✕</button>`;
   i.querySelector('.email').value=data.email||'';i.querySelector('.rm').onclick=()=>i.remove();elEml.appendChild(i);
 }
 document.getElementById('addTel').onclick=()=>novoTel();

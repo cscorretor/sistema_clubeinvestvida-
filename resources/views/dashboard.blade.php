@@ -25,7 +25,7 @@
         <nav class="nav" aria-label="Navegação principal">
             <a href="{{ route('dashboard') }}" class="on" aria-current="page"><span class="ico">▦</span> Dashboard</a>
             <a href="{{ route('clientes.index') }}"><span class="ico">◉</span> Clientes</a>
-            <span class="nav-disabled"><span class="ico">❤</span> Apólices <small>EM BREVE</small></span>
+            <a href="{{ route('apolices.index') }}"><span class="ico">❤</span> Apólices</a>
             <span class="nav-disabled"><span class="ico">◔</span> Leads / CRM <small>EM BREVE</small></span>
             <span class="nav-disabled"><span class="ico">◷</span> Chamados <small>EM BREVE</small></span>
             <span class="nav-disabled"><span class="ico">$</span> Financeiro <small>EM BREVE</small></span>
@@ -65,6 +65,7 @@
                     <h2 class="h2">Acesso rápido</h2>
                     <p class="lead mb16">Continue pelos módulos já ligados ao banco.</p>
                     <a href="{{ route('clientes.index') }}" class="btn btn-primary btn-block">Consultar clientes</a>
+                    <a href="{{ route('apolices.index') }}" class="btn btn-ghost btn-block mt8">Consultar propostas e apólices</a>
                     @can('create', App\Models\Cliente::class)
                         <a href="{{ route('clientes.create') }}" class="btn btn-action btn-block mt8">Cadastrar cliente</a>
                     @endcan

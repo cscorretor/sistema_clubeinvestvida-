@@ -33,7 +33,7 @@
     <nav class="nav p-3 space-y-1 flex-1">
       <a href="{{ route('dashboard') }}"><span>▦</span> Dashboard</a>
       <a href="{{ route('clientes.index') }}" class="on"><span>◉</span> Clientes</a>
-      <span class="nav-disabled"><span>❤</span> Apólices <small>EM BREVE</small></span>
+      <a href="{{ route('apolices.index') }}"><span>❤</span> Apólices</a>
       <span class="nav-disabled"><span>◔</span> Leads / CRM <small>EM BREVE</small></span>
       <span class="nav-disabled"><span>◷</span> Chamados <small>EM BREVE</small></span>
       <span class="nav-disabled"><span>$</span> Financeiro <small>EM BREVE</small></span>

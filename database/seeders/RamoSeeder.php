@@ -9,8 +9,15 @@ class RamoSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (['Vida', 'Previdência', 'Saúde', 'Viagem', 'Renda'] as $nome) {
-            DB::table('ramos')->updateOrInsert(['nome' => $nome], ['grupo' => 'PESSOAS']);
+        foreach ([
+            'Vida' => 'PESSOAS',
+            'Previdência' => 'PESSOAS',
+            'Saúde' => 'PESSOAS',
+            'Viagem' => 'PESSOAS',
+            'Renda' => 'PESSOAS',
+            'Residencial' => 'PATRIMONIAL',
+        ] as $nome => $grupo) {
+            DB::table('ramos')->updateOrInsert(['nome' => $nome], ['grupo' => $grupo]);
         }
     }
 }

@@ -15,7 +15,9 @@ class FoundationTest extends TestCase
     {
         $this->seed();
 
-        $this->assertDatabaseCount('ramos', 5);
+        $this->assertDatabaseCount('ramos', 6);
+        $this->assertDatabaseCount('seguradoras', 7);
+        $this->assertDatabaseHas('ramos', ['nome' => 'Residencial', 'grupo' => 'PATRIMONIAL']);
         $this->assertDatabaseCount('produtores', 3);
         $this->assertDatabaseHas('usuarios', [
             'email' => 'admin@clubeinvestvida.local',

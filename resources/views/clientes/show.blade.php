@@ -41,7 +41,7 @@
     <nav class="nav p-3 space-y-1 flex-1">
       <a href="{{ route('dashboard') }}"><span>▦</span> Dashboard</a>
       <a href="{{ route('clientes.index') }}" class="on"><span>◉</span> Clientes</a>
-      <span class="nav-disabled"><span>❤</span> Apólices <small>EM BREVE</small></span>
+      <a href="{{ route('apolices.index') }}"><span>❤</span> Apólices</a>
       <span class="nav-disabled"><span>◔</span> Leads / CRM <small>EM BREVE</small></span>
       <span class="nav-disabled"><span>◷</span> Chamados <small>EM BREVE</small></span>
       <span class="nav-disabled"><span>$</span> Financeiro <small>EM BREVE</small></span>
@@ -89,7 +89,9 @@
           @can('update', $cliente)
             <a href="{{ route('clientes.edit', $cliente) }}" class="bg-white border border-line px-3 py-2 rounded-md text-sm font-semibold text-navy hover:bg-slate-50">Editar</a>
           @endcan
-          <span class="bg-navy/60 text-white px-3 py-2 rounded-md text-sm font-semibold" title="Cadastro de apólice ainda não ligado">+ Nova apólice</span>
+          @can('update', $cliente)
+            <a href="{{ route('apolices.create', $cliente) }}" class="bg-navy text-white px-3 py-2 rounded-md text-sm font-semibold">+ Nova proposta/apólice</a>
+          @endcan
           @if ($whatsapp)
             <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="bg-green-600 text-white px-3 py-2 rounded-md text-sm font-semibold">WhatsApp</a>
           @else
@@ -117,7 +119,7 @@
         <div class="card overflow-hidden">
           <div class="overflow-x-auto">
             <table class="w-full min-w-[720px] text-sm"><thead class="bg-slate-50 border-b border-line"><tr>
-              <th>Ramo</th><th>Seguradora</th><th>Apólice</th><th>Vigência</th><th>Parcela</th><th>Status</th></tr></thead>
+              <th>Ramo</th><th>Seguradora</th><th>Proposta / Apólice</th><th>Vigência</th><th>Parcela</th><th>Status</th><th></th></tr></thead>
               <tbody>
               @forelse ($cliente->apolices as $apolice)
                 @php
@@ -131,9 +133,10 @@
                   <td>{{ $apolice->fim_vigencia?->format('d/m/Y') ?? 'Sem prazo' }}</td>
                   <td>{{ $parcela ? 'R$ '.number_format((float) $parcela->valor_cliente, 2, ',', '.') : '—' }}</td>
                   <td><span class="chip {{ $apoliceStatusClass }}">{{ str($apolice->status)->replace('_', ' ')->title() }}</span></td>
+                  <td>@can('update', $cliente)<a href="{{ route('apolices.edit', $apolice) }}" class="text-orange font-semibold">Editar</a>@endcan</td>
                 </tr>
               @empty
-                <tr><td colspan="6" class="py-8 text-center text-slate-500">Nenhuma apólice cadastrada para este cliente.</td></tr>
+                <tr><td colspan="7" class="py-8 text-center text-slate-500">Nenhuma proposta ou apólice cadastrada para este cliente.</td></tr>
               @endforelse
               </tbody>
             </table>

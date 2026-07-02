@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApoliceController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProfissaoController;
 use App\Models\Cliente;
@@ -43,6 +44,25 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])
         ->whereNumber('cliente')
         ->name('clientes.show');
+
+    Route::get('/apolices', [ApoliceController::class, 'index'])
+        ->name('apolices.index');
+
+    Route::get('/clientes/{cliente}/apolices/nova', [ApoliceController::class, 'create'])
+        ->whereNumber('cliente')
+        ->name('apolices.create');
+
+    Route::post('/clientes/{cliente}/apolices', [ApoliceController::class, 'store'])
+        ->whereNumber('cliente')
+        ->name('apolices.store');
+
+    Route::get('/apolices/{apolice}/editar', [ApoliceController::class, 'edit'])
+        ->whereNumber('apolice')
+        ->name('apolices.edit');
+
+    Route::put('/apolices/{apolice}', [ApoliceController::class, 'update'])
+        ->whereNumber('apolice')
+        ->name('apolices.update');
 
     Route::get('/api/profissoes', [ProfissaoController::class, 'index'])
         ->name('api.profissoes.index');
